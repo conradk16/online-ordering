@@ -1,0 +1,3 @@
+webserver/__pycache__
+webserver/.*
+.gitignore.swp
