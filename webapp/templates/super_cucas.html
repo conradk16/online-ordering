@@ -10,14 +10,25 @@ function alertme() {
   alert("I am an alert box!");
 }
 
-function popup(item_name, choices, options, additional_instructions = "") {
+function popup(item) {
     var popup = document.getElementById("popup");
     popup.style.display = "block";
     document.body.style.overflow = "hidden";
+
+    // set header
     var header_name = document.getElementsByClassName("popup-header-name")[0];
-    header_name.textContent = item_name;
+    header_name.textContent = item.item_name;
+
+    // set body
     var popup_body = document.getElementsByClassName("popup-body")[0];
     popup_body.scrollTop = 0;
+    if (item.item_description != "") {
+        var description = document.getElementsByClassName("popup-description")[0];
+        description.innerHTML = item.item_description;
+    }
+
+    var quantity = document.getElementsByClassName("quantity")[0];
+    
 }
 
 function close_popup_if_open(event) {
@@ -33,14 +44,6 @@ function close_popup() {
     document.body.style.overflow = "auto";
 }
 
-function item1_clicked() {
-    popup("Chimichanga", ["warm", "cold"], ["no mayo", "no ketchup"], "make it with love, please");
-}
-
-function item2_clicked() {
-    popup("Melon", ["dumb", "smart"], ["soy sauce", "guac"]);
-}
-
 function load_menu() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
@@ -51,20 +54,77 @@ function load_menu() {
         new_header.innerHTML = menu_group.group_name;
         new_header.classList.add("group-header");
         food_items.appendChild(new_header);
+            
+        var group_box = document.createElement('div');
+        group_box.classList.add("group-box");
+        food_items.appendChild(group_box);
+            
+        var group_list_left = document.createElement('ul');
+        group_list_left.classList.add("group-list-left");
+        group_box.appendChild(group_list_left);
 
-        // add the items to the left column
-        
-        break;
+        var group_list_right = document.createElement('ul');
+        group_list_right.classList.add("group-list-right");
+        group_box.appendChild(group_list_right);
+
+        // add items to left stack
+
+        for (const item of menu_group.items) {
+            var list_item = document.createElement('li');
+            list_item.classList.add("list-item");
+            group_list_left.appendChild(list_item);
+            
+            var link = document.createElement('a');
+            link.classList.add("link");
+            link.onclick = function() { popup(item); };
+            list_item.appendChild(link);
+
+            var inside_box = document.createElement('div');
+            inside_box.classList.add("inside-box");
+            link.appendChild(inside_box);
+
+            var top_row = document.createElement('div');
+            top_row.classList.add("top-row");
+            inside_box.appendChild(top_row);
+    
+            var title = document.createElement('span');
+            title.classList.add("title");
+            title.innerHTML = item.item_name;
+            top_row.appendChild(title);
+            
+            var price = document.createElement('span');
+            price.classList.add("price");
+            price.innerHTML = item.price;
+            top_row.appendChild(price);
+            
+            var description = document.createElement('p');
+            description.classList.add("description");
+            description.innerHTML = item.item_description;
+            inside_box.appendChild(description);
+
+        }
+
+        // move items back to right stack
+
+        while (true) {
+            // move bottom left to top right
+            left_children = group_list_left.children;
+            moving_elem = left_children[left_children.length - 1];
+            group_list_left.removeChild(moving_elem);
+            group_list_right.prepend(moving_elem);
+            
+            // check if need to move it back
+            if (group_list_left.clientHeight < group_list_right.clientHeight) {
+                group_list_right.removeChild(moving_elem);
+                group_list_left.append(moving_elem);
+                break;
+            }
+        }
+
     }
 }
 
 function set_onclicks() {
-    var item1 = document.getElementById('item1');
-    item1.onclick = item1_clicked;
-
-    var item2 = document.getElementById('item2');
-    item2.onclick = item2_clicked;
-
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup;
 
@@ -109,9 +169,23 @@ class choice {
 }
 
 var menu_groups = [];
-var items = [];
 
 // first group
+var items = [];
+items.push(new menuItem("#1 Chorizo Burrito", "Mexican sausage, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+items.push(new menuItem("#2 Protein Burrito", "Beef, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+items.push(new menuItem("#3 Sausage Burrito", "Sausage scrambled eggs, cheese, and potatoes.", 10.99, []));
+
+items.push(new menuItem("#4 Ham Burrito", "Ham, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+items.push(new menuItem("#5 Veggie Burrito", "Grilled onions, bell peppers, zucchini, mushrooms, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, []));
+
+items.push(new menuItem("#6 Carnitas Burrito", "Pork meat, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+items.push(new menuItem("#7 Pastor Burrito", "Marinated pork meat, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
 items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99, 
         [
         new choiceSet(
@@ -140,6 +214,7 @@ items.push(new menuItem("#15 Chile Relleno Burrito", "Pico de gallo, scrambled e
 menu_groups.push(new menuGroup("Breakfast", items));
 
 // second group
+var items = [];
 items.push(new menuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94, 
         []));
 
@@ -270,6 +345,7 @@ body {
 .link {
     height: 100%;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .inside-box {
@@ -342,11 +418,46 @@ body {
 
 .popup-body {
     overflow-y: auto;
-    padding: 0 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
 }
 
-.popup-body-description {
-    
+.popup-description {
+    margin-top: 0px;
+    martin-bottom: 8px;
+}
+
+.quantity {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #f2f2f2;
+    align-items: center;
+    border-radius: 4px;
+    border: 0;
+}
+
+.plus-minus-bar {
+    float: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.plus-minus-symbol:hover {
+    background: #46bfcf;
+}
+
+.quantity-word {
+    padding: 0px 10px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.quantity-count {
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .popup-footer {
@@ -365,6 +476,10 @@ body {
     color: #fff;
     background-color: #2e7c87;
     border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 0;
+
 }
 
 /* The Close Button */
@@ -399,144 +514,6 @@ body {
 
 <div class="splitview">
     <div class="food-items">
-        <h2 class="group-header">Burritos</h2>
-        <div class="group-box">
-            <ul class="group-list-left">
-                <li class="list-item">
-                    <a class="link" href="#clicked" id="item1">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Chimichanga</span>
-                                <span class="price">13.75</span>
-                            </div>
-                            <p class="description">
-                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-                <li class="list-item">
-                    <a class="link" href="#clicked" id="item2">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Melon</span>
-                                <span class="price">1.00</span>
-                            </div>
-                            <p class="description">
-                                It's a fucking melon.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Soup</span>
-                                <span class="price">6.00</span>
-                            </div>
-                            <p class="description">
-                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="group-list-right">
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Soup</span>
-                                <span class="price">6.00</span>
-                            </div>
-                            <p class="description">
-                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-                <li class="list-item">
-                    <a class="link" href="#clicked" id="item1">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Chimichanga</span>
-                                <span class="price">13.75</span>
-                            </div>
-                            <p class="description">
-                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <h2 class="group-header">Tacos</h2>
-        <div class="group-box">
-            <ul class="group-list-left">
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Chimichanga</span>
-                                <span class="price">13.75</span>
-                            </div>
-                            <p class="description">
-                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="group-list-right">
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Soup</span>
-                                <span class="price">6.00</span>
-                            </div>
-                            <p class="description">
-                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <h2 class="group-header">Ensaladas</h2>
-        <div class="group-box">
-            <ul class="group-list-left">
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Chimichanga</span>
-                                <span class="price">13.75</span>
-                            </div>
-                            <p class="description">
-                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="group-list-right">
-                <li class="list-item">
-                    <a class="link" href="#clicked">
-                        <div class="inside-box">
-                            <div class="top-row">
-                                <span class="title">Soup</span>
-                                <span class="price">6.00</span>
-                            </div>
-                            <p class="description">
-                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
     </div>
     <div class="cart">
         <div class="cart-fixed">
@@ -561,34 +538,15 @@ body {
         </div>
         <!-- Popup body -->
         <div class="popup-body">
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
-            <p>hello</p>
+            <p class=popup-description></p>
+            <div class=quantity>
+                <div class="plus-minus-bar">
+                    <img src="../static/minus.png" class="plus-minus-symbol" width=30 height=30>
+                    <a class="quantity-word">Quantity</a>
+                    <img src="../static/plus.png" class="plus-minus-symbol" width=30 height=30>
+                </div>
+                <a class="quantity-count">1</a>
+            </div>
         </div>
         <!-- Popup footer -->
         <div class="popup-footer">
