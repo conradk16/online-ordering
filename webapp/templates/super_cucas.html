@@ -13,7 +13,7 @@ function alertme() {
 function popup(choices, options, additional_instructions = "") {
     var popup = document.getElementById("popup");
     popup.style.display = "block";
-    
+    document.body.style.overflow = "hidden";
 }
 
 function close_popup_if_open(event) {
@@ -26,6 +26,7 @@ function close_popup_if_open(event) {
 function close_popup() {
     var popup = document.getElementById("popup");
     popup.style.display = "none";
+    document.body.style.overflow = "auto";
 }
 
 function item1_clicked() {
@@ -57,8 +58,8 @@ function set_onclicks() {
 
 <style>
 body {
-  margin: 0;
-  font-family: Calibre,Helvetica,Lucida grande,sans-serif;
+    margin: 0;
+    font-family: Calibre,Helvetica,Lucida grande,sans-serif;
 }
 
 * {
@@ -78,7 +79,7 @@ body {
   align-items: center;
   padding: 0 32px 0 12px;
   top: 0px;
-  z-index: 3;
+  z-index: 1;
 }
 
 .topnav a {
@@ -125,7 +126,6 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     width: 100%;
-    overflow-y:scroll;
 }
 
 .group-header {
@@ -205,28 +205,66 @@ body {
 
 /* The Popup */
 .popup {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2;
+    padding: 30px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Popup content */
 .popup-content {
-  display: flex;
-  flex-direction: column;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 460px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    width: 460px;
+    border-radius: 4px;
+    border: 0;
+}
+
+.popup-header {
+    padding: 15px;
+}
+
+.popup-header-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    color: rgba(0,0,0,0.87);
+    margin: 8px 0 8px;
+}
+
+.popup-body {
+    overflow-y: auto;
+    padding: 0 10px;
+}
+
+.popup-footer {
+    
+}
+
+.popup-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 48px;
+    width: 100%;
+    color: #fff;
+    background-color: #2e7c87;
+    border: none;
 }
 
 /* The Close Button */
@@ -414,14 +452,49 @@ body {
 <!-- Popup -->
 <div id="popup" class="popup">
 
-  <!-- Popup content -->
-  <div class="popup-content">
-    <span class="close">&times;</span>
-    <!-- Popup header -->
-    <div class="popup-header">
-        
+    <!-- Popup content -->
+    <div class="popup-content">
+        <!-- Popup header -->
+        <div class="popup-header">
+            <span class="close">&times;</span>
+            <h2 class="popup-header-name">Default Item</h2>
+        </div>
+        <!-- Popup body -->
+        <div class="popup-body">
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+            <p>hello</p>
+        </div>
+        <!-- Popup footer -->
+        <div class="popup-footer">
+            <button class="popup-button">Add To Cart</button>
+        </div>
     </div>
-  </div>
 
 </div>
 
