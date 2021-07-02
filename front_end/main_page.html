@@ -11,21 +11,21 @@ function alertme() {
 }
 
 function popup(choices, options, additional_instructions = "") {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "block";
+    var popup = document.getElementById("popup");
+    popup.style.display = "block";
     
 }
 
 function close_popup_if_open(event) {
-    var modal = document.getElementById("myModal");
-    if (event.target == modal) {
+    var popup = document.getElementById("popup");
+    if (event.target == popup) {
         close_popup();
     }
 }
 
 function close_popup() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
+    var popup = document.getElementById("popup");
+    popup.style.display = "none";
 }
 
 function item1_clicked() {
@@ -203,8 +203,8 @@ body {
     margin: 5px 0px;
 }
 
-/* The Modal (background) */
-.modal {
+/* The Popup */
+.popup {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -218,8 +218,8 @@ body {
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-/* Modal Content */
-.modal-content {
+/* Popup header */
+.popup-header {
   background-color: #fefefe;
   margin: auto;
   padding: 20px;
@@ -409,13 +409,13 @@ body {
     </div>
 </div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
+<!-- Popup -->
+<div id="popup" class="popup">
 
-  <!-- Modal content -->
-  <div class="modal-content">
+  <!-- Popup header -->
+  <div class="popup-header">
     <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
+    <p>stuff</p>
   </div>
 
 </div>
