@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<p>M3 Ordering. Get started for $49.99/mo</p>
+
+<form action="/create-checkout-session" method="POST">
+    <label for="fname">Email address:</label><br>
+    <input type="text" id="fname" name="fname"><br>
+    <label for="lname">Password:</label><br>
+    <input type="text" id="lname" name="lname"><br>
+    <input type="radio" id="monthly" name="priceId" value="price_1J8t5yLGQW192ovf4Tkd70Ta">
+    <label for="monthly">Billed Monthly ($49.99/mo)</label><br>
+    <input type="radio" id="yearly" name="priceId" value="price_1J8t6xLGQW192ovfioaRFBEB">
+    <label for="yearly">Billed Yearly ($449/yr)</label><br>
+    <button type="submit">Next</button>
+</form>
+
+
+</body>
+</html>
