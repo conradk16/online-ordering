@@ -10,10 +10,14 @@ function alertme() {
   alert("I am an alert box!");
 }
 
-function popup(choices, options, additional_instructions = "") {
+function popup(item_name, choices, options, additional_instructions = "") {
     var popup = document.getElementById("popup");
     popup.style.display = "block";
     document.body.style.overflow = "hidden";
+    var header_name = document.getElementsByClassName("popup-header-name")[0];
+    header_name.textContent = item_name;
+    var popup_body = document.getElementsByClassName("popup-body")[0];
+    popup_body.scrollTop = 0;
 }
 
 function close_popup_if_open(event) {
@@ -30,15 +34,29 @@ function close_popup() {
 }
 
 function item1_clicked() {
-    popup(["warm", "cold"], ["no mayo", "no ketchup"], "make it with love, please");
+    popup("Chimichanga", ["warm", "cold"], ["no mayo", "no ketchup"], "make it with love, please");
 }
 
 function item2_clicked() {
-    popup(["dumb", "smart"], ["soy sauce", "guac"]);
+    popup("Melon", ["dumb", "smart"], ["soy sauce", "guac"]);
 }
 
+function load_menu() {
+    var food_items = document.getElementsByClassName("food-items")[0];
 
-window.onload = set_onclicks;
+    for (var menu_group of menu_groups) {
+
+        // add the header
+        var new_header = document.createElement('h2');
+        new_header.innerHTML = menu_group.group_name;
+        new_header.classList.add("group-header");
+        food_items.appendChild(new_header);
+
+        // add the items to the left column
+        
+        break;
+    }
+}
 
 function set_onclicks() {
     var item1 = document.getElementById('item1');
@@ -52,6 +70,84 @@ function set_onclicks() {
 
     window.onclick = close_popup_if_open;
 }
+
+function run_on_load() {
+    set_onclicks();
+    load_menu();
+}
+
+class menuGroup {
+    constructor(group_name, items) {
+        this.group_name = group_name;
+        this.items = items;
+    }
+}
+
+class menuItem {
+    constructor(item_name, item_description, price, choice_sets) {
+        this.item_name = item_name;
+        this.item_description = item_description;
+        this.price = price;
+        this.choice_sets = choice_sets;
+    }
+}
+
+class choiceSet {
+    constructor(title, choices, is_optional) {
+        this.title = title;
+        this.choices = choices;
+        this.is_optional = is_optional;
+    }
+}
+
+// null price means no additional cost
+class choice {
+    constructor(name, price) {
+        this.name = name;
+        this.price = price;
+    }
+}
+
+var menu_groups = [];
+var items = [];
+
+// first group
+items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99, 
+        [
+        new choiceSet(
+            "Meat", 
+            [
+            new choice("Chicken", null), 
+            new choice("Beef", null), 
+            new choice("Pork", null)
+            ]
+        ),
+        new choiceSet(
+            "Egg Style",
+            [
+            new choice("Scrambled", null),
+            new choice("Over Easy", null),
+            new choice("Over Medium", null),
+            new choice("Over Hard", null),
+            new choice("Sunny-Side Up", null)
+            ]
+        )
+        ]
+    ));
+
+items.push(new menuItem("#15 Chile Relleno Burrito", "Pico de gallo, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+menu_groups.push(new menuGroup("Breakfast", items));
+
+// second group
+items.push(new menuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94, 
+        []));
+
+items.push(new menuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantro.", 10.99, []));
+
+menu_groups.push(new menuGroup("Burritos", items));
+
+window.onload = run_on_load;
 
 </script>
 
@@ -232,7 +328,7 @@ body {
 }
 
 .popup-header {
-    padding: 15px;
+    padding: 5px 15px;
 }
 
 .popup-header-name {
@@ -247,6 +343,10 @@ body {
 .popup-body {
     overflow-y: auto;
     padding: 0 10px;
+}
+
+.popup-body-description {
+    
 }
 
 .popup-footer {
