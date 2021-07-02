@@ -218,13 +218,15 @@ body {
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-/* Popup header */
-.popup-header {
+/* Popup content */
+.popup-content {
+  display: flex;
+  flex-direction: column;
   background-color: #fefefe;
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 500px;
+  width: 460px;
 }
 
 /* The Close Button */
@@ -251,9 +253,9 @@ body {
 
 <div class="topnav">
   <a href="#menu">
-    <img src="menu.svg" alt="" width=20 height=20>
+    <img src="../static/menu.svg" alt="" width=20 height=20>
   </a>
-  <img src="logo.png" alt="" width=75 height=45>
+  <img src="../static/logo.png" alt="" width=75 height=45>
   <p></p>
 </div>
 
@@ -412,10 +414,13 @@ body {
 <!-- Popup -->
 <div id="popup" class="popup">
 
-  <!-- Popup header -->
-  <div class="popup-header">
+  <!-- Popup content -->
+  <div class="popup-content">
     <span class="close">&times;</span>
-    <p>stuff</p>
+    <!-- Popup header -->
+    <div class="popup-header">
+        
+    </div>
   </div>
 
 </div>
