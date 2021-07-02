@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--javascript-->
+<script>
+    
+function alertme() {
+  alert("I am an alert box!");
+}
+
+function popup(choices, options, additional_instructions = "") {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+    
+}
+
+function close_popup_if_open(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target == modal) {
+        close_popup();
+    }
+}
+
+function close_popup() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
+
+function item1_clicked() {
+    popup(["warm", "cold"], ["no mayo", "no ketchup"], "make it with love, please");
+}
+
+function item2_clicked() {
+    popup(["dumb", "smart"], ["soy sauce", "guac"]);
+}
+
+
+window.onload = set_onclicks;
+
+function set_onclicks() {
+    var item1 = document.getElementById('item1');
+    item1.onclick = item1_clicked;
+
+    var item2 = document.getElementById('item2');
+    item2.onclick = item2_clicked;
+
+    var popup_x = document.getElementsByClassName("close")[0];
+    popup_x.onclick = close_popup;
+
+    window.onclick = close_popup_if_open;
+}
+
+</script>
+
+
+<style>
+body {
+  margin: 0;
+  font-family: Calibre,Helvetica,Lucida grande,sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+/*css code*/
+.topnav {
+  height: 60px;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px 0 12px;
+  top: 0px;
+  z-index: 3;
+}
+
+.topnav a {
+  float: left;
+  color: #2e7c87;
+  text-align: center;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.splitview {
+    display: grid;
+    position: relative;
+    grid-template-areas: "food-items cart";
+    grid-template-columns: 1fr 375px;
+}
+
+.cart {
+    grid-area: cart;
+}
+
+.cart-fixed {
+    padding: 0 20px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+    top:60px;
+    position: sticky;
+    display:flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+}
+
+.cart-table {
+    height:40px;
+    overflow-y: auto;
+}
+
+.food-items {
+    grid-area: food-items;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    overflow-y:scroll;
+}
+
+.group-header {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    color: rgba(0,0,0,0.87);
+    margin: 18px 0 8px;
+}
+
+.group-box {
+    padding:0;
+    overflow:hidden;
+}
+
+.group-list-left, .group-list-right {
+    float: left;
+    width: 50%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.group-list-left {
+    padding-right: 6px;
+}
+
+.group-list-right {
+    padding-left: 6px;
+}
+
+
+.list-item {
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.12);
+    margin-bottom: 12px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.list-item:hover{
+    border: 1px solid #227599;
+}
+
+.link {
+    height: 100%;
+    text-decoration: none;
+}
+
+.inside-box {
+    padding: 5px;
+    height: 100%;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    height: 25px;
+}
+
+.title {
+    color: #227599;
+    font-size: 18px;
+}
+
+.price {
+    color: #227599;
+    font-size: 18px;
+}
+
+.description {
+    font-size: 14px;
+    color: black;
+    margin: 5px 0px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<div class="topnav">
+  <a href="#menu">
+    <img src="/static/menu.svg" alt="" width=20 height=20>
+  </a>
+  <img src="/static/logo.png" alt="" width=75 height=45>
+  <p></p>
+</div>
+
+<div class="splitview">
+    <div class="food-items">
+        <h2 class="group-header">Burritos</h2>
+        <div class="group-box">
+            <ul class="group-list-left">
+                <li class="list-item">
+                    <a class="link" href="#clicked" id="item1">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Chimichanga</span>
+                                <span class="price">13.75</span>
+                            </div>
+                            <p class="description">
+                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-item">
+                    <a class="link" href="#clicked" id="item2">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Melon</span>
+                                <span class="price">1.00</span>
+                            </div>
+                            <p class="description">
+                                It's a fucking melon.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Soup</span>
+                                <span class="price">6.00</span>
+                            </div>
+                            <p class="description">
+                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="group-list-right">
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Soup</span>
+                                <span class="price">6.00</span>
+                            </div>
+                            <p class="description">
+                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-item">
+                    <a class="link" href="#clicked" id="item1">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Chimichanga</span>
+                                <span class="price">13.75</span>
+                            </div>
+                            <p class="description">
+                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <h2 class="group-header">Tacos</h2>
+        <div class="group-box">
+            <ul class="group-list-left">
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Chimichanga</span>
+                                <span class="price">13.75</span>
+                            </div>
+                            <p class="description">
+                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="group-list-right">
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Soup</span>
+                                <span class="price">6.00</span>
+                            </div>
+                            <p class="description">
+                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <h2 class="group-header">Ensaladas</h2>
+        <div class="group-box">
+            <ul class="group-list-left">
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Chimichanga</span>
+                                <span class="price">13.75</span>
+                            </div>
+                            <p class="description">
+                                A nice, tasty, cheesy, super-delicious burrito filled with goodies. Add extra cheese $0.30.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="group-list-right">
+                <li class="list-item">
+                    <a class="link" href="#clicked">
+                        <div class="inside-box">
+                            <div class="top-row">
+                                <span class="title">Soup</span>
+                                <span class="price">6.00</span>
+                            </div>
+                            <p class="description">
+                                A rich, creamy, aromatic soup. Very salty, you probably won't taste anything else. Good if you are very cold. Not recommended for pregnant women or those with high blood pressure. If you are considering this soup, you should note that $6.00 is a steamin (har!) deal.
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="cart">
+        <div class="cart-fixed">
+            <h2>Your Order</h2>
+            <div class=cart-table>
+                <p>blahblah</p>
+                <p>blah</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+  </div>
+
+</div>
+
+</body>
+</html>
