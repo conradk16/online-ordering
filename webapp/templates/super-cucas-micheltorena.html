@@ -148,7 +148,8 @@ function add_to_order(item) {
             }
         }
         if (!at_least_one_selected) {
-            display_error("Please Select " + required_choice_set.title);
+            display_error("Please Select " + required_choice_set.title, "red");
+            window.setTimeout("hide_error();", 1500);
             return;
         }       
     }
@@ -167,13 +168,17 @@ function add_to_order(item) {
 
     close_popup();
     
-    //update the cart
+    // display "added to order"
+    display_error("Added To Order", "green");
+    window.setTimeout("hide_error();", 1000);
 
+    //update the cart
+    
     
     
 }
 
-function display_error(message) {
+function display_error(message, color) {
     var error_box = document.getElementsByClassName('error-alert')[0];
     error_box.style.display = "flex";
     
@@ -184,12 +189,20 @@ function display_error(message) {
     // create message
     var message_element = document.createElement('a');
     message_element.innerHTML = message;
+    if (color == "green") {
+        error_box.style.border = "3px solid #0e8f0e";
+        error_box.style.background = "#48db48";
+    }
+    else {
+        error_box.style.border = "3px solid #b00000";
+        error_box.style.background = "#ff8f8f";
+    }
     error_box.appendChild(message_element);
 }
 
 function hide_error() {
     var error_box = document.getElementsByClassName('error-alert')[0];
-    error_box.style.display = "none";
+    error_box.style.display = 'none';
 }
 
 function close_popup_if_open(event) {
@@ -209,19 +222,27 @@ function close_popup() {
 }
 
 function update_layout() {
-    if (window.innerWidth < width_one && current_layout != "narrow") {
+    if (is_cart == true && window.innerWidth < width_two && current_layout != "cart") {
+        load_cart_layout();
+        current_layout = "cart";
+    }
+    else if (is_cart == true && window.innerWidth > width_two) {
+        is_cart = false;
+        update_layout();
+    }
+    else if (is_cart == false && window.innerWidth < width_one && current_layout != "narrow") {
         load_narrow_layout();
         current_layout = "narrow";
     }
-    else if (window.innerWidth > width_one && window.innerWidth < width_two && current_layout != "medium") {
+    else if (is_cart == false && window.innerWidth > width_one && window.innerWidth < width_two && current_layout != "medium") {
         load_medium_layout();
         current_layout = "medium";
     }
-    else if (window.innerWidth > width_two && window.innerWidth < width_three && current_layout != "wide") {
+    else if (is_cart == false && window.innerWidth > width_two && window.innerWidth < width_three && current_layout != "wide") {
         load_wide_layout();
         current_layout = "wide";
     }
-    else if (window.innerWidth > width_three && current_layout != "extrawide") {
+    else if (is_cart == false && window.innerWidth > width_three && current_layout != "extrawide") {
         load_extrawide_layout();
         current_layout = "extrawide";
     }
@@ -246,6 +267,29 @@ function initialize_layout() {
     }
 }
 
+function load_cart_layout() {
+    // remove food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items != null) {
+        food_items.remove();
+    }
+
+    // set the cart
+    var main_body = document.getElementsByClassName("main-body")[0];
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart == null) {
+        cart = document.createElement('div');
+        cart.classList.add("cart");
+        main_body.appendChild(cart);
+        cart.style.width = "370px";
+    }
+
+    // set cart button to display menu
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.src = "../static/menu.png";
+    cart_button.height = "40";
+}
+
 function load_narrow_layout() {
     // clear cart
     var cart = document.getElementsByClassName("cart")[0];
@@ -253,11 +297,19 @@ function load_narrow_layout() {
         cart.remove();
     }
     
+    // create food-items
+    var main_body = document.getElementsByClassName("main-body")[0];
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
+
     // load narrow menu
     load_menu_narrow();
     
     // set margin
-    var main_body = document.getElementsByClassName("main-body")[0];
     main_body.style.margin = "0px 30px";
 
     // set automatic width for food-items
@@ -266,6 +318,8 @@ function load_narrow_layout() {
 
     // set cart button to display
     var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.src = "../static/cart.jpg"; 
+    cart_button.height = "50";
     cart_button.style.visibility = "visible";
 
     // set popup to be full width
@@ -279,12 +333,20 @@ function load_medium_layout() {
     if (cart != null) {
         cart.remove();
     }
+
+    // create food-items
+    var main_body = document.getElementsByClassName("main-body")[0];
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
     
     // load wide menu
     load_menu_wide();
     
     // set margin
-    var main_body = document.getElementsByClassName("main-body")[0];
     main_body.style.margin = "0px 30px";
 
     // set automatic width for food-items
@@ -293,6 +355,8 @@ function load_medium_layout() {
 
     // set cart button to display
     var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.src = "../static/cart.jpg";
+    cart_button.height = "50";
     cart_button.style.visibility = "visible";
 
     // set popup to be fixed width
@@ -301,26 +365,37 @@ function load_medium_layout() {
 }
 
 function load_wide_layout() {
-    // set the cart
+    // create food-items
     var main_body = document.getElementsByClassName("main-body")[0];
-    var cart = document.getElementsByClassName("cart")[0];
-    if (cart == null) {
-        cart = document.createElement('div');
-        cart.classList.add("cart");
-        main_body.appendChild(cart);
-        cart.style.width = "370px";
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
     }
+
+    // remove and add the cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    cart = document.createElement('div');
+    cart.classList.add("cart");
+    main_body.appendChild(cart);
+    cart.style.width = "430px";
 
     // load narrow menu
     load_menu_narrow();
 
     // set max-width for food-items
     var food_items = document.getElementsByClassName("food-items")[0];
-    food_items.style.width = '350px';
+    food_items.style.width = '420px';
     food_items.style.padding = '0px 10px';
 
     // set cart button to not display
     var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.src = "../static/cart.jpg";
+    cart_button.height = "50";
     cart_button.style.visibility = "hidden";
 
     // set popup to be fixed width
@@ -329,15 +404,24 @@ function load_wide_layout() {
 }
 
 function load_extrawide_layout() {
-    // set the cart
+    // create food-items
     var main_body = document.getElementsByClassName("main-body")[0];
-    var cart = document.getElementsByClassName("cart")[0];
-    if (cart == null) {
-        cart = document.createElement('div');
-        cart.classList.add("cart");
-        main_body.appendChild(cart);
-        cart.style.width = "470px";
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
     }
+
+    // remove and add the cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    cart = document.createElement('div');
+    cart.classList.add("cart");
+    main_body.appendChild(cart);
+    cart.style.width = "470px";
 
     // load wide menu
     load_menu_wide();
@@ -348,6 +432,8 @@ function load_extrawide_layout() {
 
     // set cart button to not display
     var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.src = "../static/cart.jpg";
+    cart_button.height = "50";
     cart_button.style.visibility = "hidden";
 
     // set popup to be fixed width
@@ -355,6 +441,7 @@ function load_extrawide_layout() {
     popup.style.width = "460px"
 }
 
+// assumes food-items exists
 function load_menu_narrow() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
@@ -413,6 +500,7 @@ function load_menu_narrow() {
     }
 }
 
+// assumes food-items exists
 function load_menu_wide() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
@@ -499,10 +587,23 @@ function load_menu_wide() {
     }
 }
 
-// remove this function
+function toggle_cart() {
+    if (is_cart == false) {
+        is_cart = true;
+        update_layout();
+    }
+    else {
+        is_cart = false;
+        update_layout();
+    }
+}
+
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup; 
+
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.onclick = toggle_cart;
 
     window.onclick = close_popup_if_open;
 }
@@ -619,7 +720,9 @@ items.push(new menuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantr
 
 menu_groups.push(new menuGroup("Burritos", items));
 
-var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide"
+var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide" "cart"
+
+var is_cart = false;
 
 const width_one = 550;
 const width_two = 830;
@@ -662,6 +765,7 @@ body {
     font-weight: 700;
     color: #5c5c5c;
     text-transform: uppercase;
+    padding: 10px;
 }
 
 .cart-button {
@@ -873,7 +977,7 @@ body {
 }
 
 .popup-footer {
-    
+    margin: 5px;
 }
 
 .popup-button {
@@ -921,8 +1025,6 @@ body {
     justify-content: center;
     background: #ff8f8f;
     z-index: 5;
-    border-radius: 4px;
-    border: 0;
     border: 3px solid #b00000;
     font-weight:bold;
     width: 100%;
@@ -937,8 +1039,8 @@ body {
 
 <div class="topnav">
     <img src="../static/super_cucas.jpg" alt="" height=45>
-    <a class="store-name">Super Cucas - Micheltorena</a>
-    <img src="../static/cart.jpg" class="cart-button" alt="" width=50 height=50>
+    <p class="store-name">Super Cucas - Micheltorena</p>
+    <img src="../static/cart.jpg" class="cart-button" alt="" height=50>
 </div>
 
 <div class="main-body">
