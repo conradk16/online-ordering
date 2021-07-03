@@ -32,7 +32,10 @@ function popup(item) {
         required_choice_header.classList.add("gray-bar");
         popup_body.insertBefore(required_choice_header, description.nextSibling);
         
-        var choice_name = document.createElement('p');
+        var choice_name = document.createElement('a');
+        choice_name.classList.add("choice-name");
+        choice_name.innerHTML = choice_set.title;
+        required_choice_header.appendChild(choice_name);
     }
 
     // set quantity controls
@@ -127,6 +130,10 @@ function load_narrow_layout() {
     // set cart button to display
     var cart_button = document.getElementsByClassName("cart-button")[0];
     cart_button.style.visibility = "visible";
+
+    // set popup to be full width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "100%";
 }
 
 function load_medium_layout() {
@@ -150,6 +157,10 @@ function load_medium_layout() {
     // set cart button to display
     var cart_button = document.getElementsByClassName("cart-button")[0];
     cart_button.style.visibility = "visible";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px";
 }
 
 function load_wide_layout() {
@@ -197,6 +208,10 @@ function load_extrawide_layout() {
     // set cart button to not display
     var cart_button = document.getElementsByClassName("cart-button")[0];
     cart_button.style.visibility = "hidden";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px"
 }
 
 function load_menu_narrow() {
@@ -658,7 +673,7 @@ body {
     martin-bottom: 8px;
 }
 
-.gray_bar {
+.gray-bar {
     display: flex;
     justify-content: space-between;
     padding: 8px;
@@ -666,6 +681,12 @@ body {
     align-items: center;
     border-radius: 4px;
     border: 0;
+}
+
+.choice_name {
+    font-size: 16px;
+    font-weight: 700;
+    float: left;
 }
 
 .plus-minus-bar {
@@ -759,7 +780,7 @@ body {
         <!-- Popup body -->
         <div class="popup-body">
             <p class=popup-description></p>
-            <div class=gray_bar>
+            <div class=gray-bar>
                 <div class="plus-minus-bar">
                     <img src="../static/minus.png" class="plus-minus-symbol" id="minus" width=30 height=30>
                     <a class="quantity-word">Quantity</a>
