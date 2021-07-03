@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, jsonify, session
 from webapp.models.user import User
 from webapp import db
+import stripe
 
 home = Blueprint('home', __name__)
 
@@ -39,7 +40,7 @@ def signup_submit_email_password():
         if user.password == request.form['password']:
             pass # log them in
         else:
-            pass # incorrect password
+            return redirect('/signup/enter-password') # incorrect password
     else:
         user.password = request.form['password']
         db.session.commit()
@@ -55,8 +56,10 @@ def signup_select_plan():
 def signup_payment():
     try:
         checkout_session = stripe.checkout.Session.create(
-            success_url='https://m3orders.com/login',
+            success_url='https://m3orders.com/',
             cancel_url='https://m3orders.com',
+            customer_email=session['email_address']
+            client_reference_id=session['email_address']
             payment_method_types=['card'],
             mode='subscription',
             line_items=[{

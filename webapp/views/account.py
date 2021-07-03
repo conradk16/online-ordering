@@ -28,3 +28,13 @@ def connect_with_stripe():
 
     return redirect(account_link_object.url)
 
+# POST endpoint for customers to manage their billing
+@account.route('/account/manage-billing', methods=['POST'])
+def manage_billing():
+    return_url = "https://m3orders.com/account"
+    
+    session = stripe.billing_portal.Session.create(
+        customer='{{CUSTOMER_ID}}',
+        return_url=return_url)
+    
+    return redirect(session.ur.)

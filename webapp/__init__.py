@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import stripe
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c0a5be14fe3cb64fbfba58ec0a74897c83511fc15f6c267b'
@@ -21,3 +22,5 @@ app.register_blueprint(home)
 app.register_blueprint(account)
 app.register_blueprint(order)
 app.register_blueprint(webhook)
+
+stripe.api_key = "sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL"
