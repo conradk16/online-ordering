@@ -25,17 +25,88 @@ function popup(item) {
         description.innerHTML = item.item_description;
     }
 
+    // clear choices titles
+    const old_choices = document.getElementsByClassName("gray-bar");
+    const num_old_choices = old_choices.length;
+    for (let i = 0; i < num_old_choices - 1; i++) {
+        old_choices[0].remove();
+    }
+
+    // clear specific choices
+    const old_specific_choice_bars = document.getElementsByClassName("specific-choice-bar");
+    const num_old_specific_choice_bars = old_specific_choice_bars.length;
+    for (let i = 0; i < num_old_specific_choice_bars; i++) {
+        old_specific_choice_bars[0].remove();
+    }
+
     // set required choices
+
+    var quantity_bar = popup_body.lastElementChild;
     for (const choice_set of item.required_choice_sets) {
         // add a header
         var required_choice_header = document.createElement('div');
         required_choice_header.classList.add("gray-bar");
-        popup_body.insertBefore(required_choice_header, description.nextSibling);
+        popup_body.insertBefore(required_choice_header, quantity_bar);
         
-        var choice_name = document.createElement('a');
-        choice_name.classList.add("choice-name");
-        choice_name.innerHTML = choice_set.title;
-        required_choice_header.appendChild(choice_name);
+        var choice_title = document.createElement('a');
+        choice_title.classList.add("choice-title");
+        choice_title.innerHTML = choice_set.title + " (required)";
+        required_choice_header.appendChild(choice_title);
+
+        for (const choice of choice_set.choices) {
+            var specific_choice_bar = document.createElement("div");
+            specific_choice_bar.classList.add("specific-choice-bar");
+            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+
+            var specific_choice_text = document.createElement('a');
+            specific_choice_text.classList.add("specific-choice-text");
+            specific_choice_text.innerHTML = choice.name;
+            if (choice.price != null) {
+                specific_choice_text.innerHTML += " - " + choice.price;
+            }
+            specific_choice_bar.appendChild(specific_choice_text);
+
+            var radiobox = document.createElement('input');
+            radiobox.type = 'radio';
+            radiobox.name = choice_set.title;
+            radiobox.style.cursor = "pointer";
+            specific_choice_bar.appendChild(radiobox);
+        }
+    }
+
+    // set optional choices
+    var optional_selections = [];
+    var quantity_bar = popup_body.lastElementChild;
+    for (const choice_set of item.optional_choice_sets) {
+        // add a header
+        var optional_choice_header = document.createElement('div');
+        optional_choice_header.classList.add("gray-bar");
+        popup_body.insertBefore(optional_choice_header, quantity_bar);
+        
+        var choice_title = document.createElement('a');
+        choice_title.classList.add("choice-title");
+        choice_title.innerHTML = choice_set.title;
+        optional_choice_header.appendChild(choice_title);
+
+        for (const choice of choice_set.choices) {
+            var specific_choice_bar = document.createElement("div");
+            specific_choice_bar.classList.add("specific-choice-bar");
+            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+
+            var specific_choice_text = document.createElement('a');
+            specific_choice_text.classList.add("specific-choice-text");
+            specific_choice_text.innerHTML = choice.name;
+            if (choice.price != null) {
+                specific_choice_text.innerHTML += " - " + choice.price;
+            }
+            specific_choice_bar.appendChild(specific_choice_text);
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = choice_set.title;
+            checkbox.style.cursor = "pointer";
+            specific_choice_bar.appendChild(checkbox);
+        }
     }
 
     // set quantity controls
@@ -54,8 +125,71 @@ function popup(item) {
             quantity_count.innerHTML = count - 1;
         }
     }
+
+    // set onclick for add_to_order_button
+    const add_to_order_button = document.getElementsByClassName("popup-button")[0];
+    add_to_order_button.onclick = function () { add_to_order(item); };
     
     
+}
+
+function add_to_order(item) {
+    // extract selected values from popup
+    var selections = [];
+    for (required_choice_set of item.required_choice_sets) {
+        const radio_buttons = document.getElementsByName(required_choice_set.title);
+        at_least_one_selected = false;
+        for (let i = 0; i < required_choice_set.choices.length; i++) {
+            radio_button = radio_buttons[i];
+            if (radio_button.checked) {
+                selections.push(required_choice_set.choices[i]);
+                at_least_one_selected = true;
+                break;
+            }
+        }
+        if (!at_least_one_selected) {
+            display_error("Please Select " + required_choice_set.title);
+            return;
+        }       
+    }
+
+    for (optional_choice_set of item.optional_choice_sets) {
+        const checkboxes = document.getElementsByName(optional_choice_set.title);
+        for (let i = 0; i < optional_choice_set.choices.length; i++) {
+            checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                selections.push(optional_choice_set.choices[i]);
+            }
+        }       
+    }
+    
+    var quantity_count = parseInt(document.getElementsByClassName("quantity-count")[0].innerHTML);
+
+    close_popup();
+    
+    //update the cart
+
+    
+    
+}
+
+function display_error(message) {
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = "flex";
+    
+    // clear message
+    var text = error_box.firstChild;
+    text.remove();
+
+    // create message
+    var message_element = document.createElement('a');
+    message_element.innerHTML = message;
+    error_box.appendChild(message_element);
+}
+
+function hide_error() {
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = "none";
 }
 
 function close_popup_if_open(event) {
@@ -69,6 +203,9 @@ function close_popup() {
     var popup = document.getElementById("popup");
     popup.style.display = "none";
     document.body.style.overflow = "auto";
+
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = "none";
 }
 
 function update_layout() {
@@ -185,6 +322,10 @@ function load_wide_layout() {
     // set cart button to not display
     var cart_button = document.getElementsByClassName("cart-button")[0];
     cart_button.style.visibility = "hidden";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px";
 }
 
 function load_extrawide_layout() {
@@ -438,7 +579,7 @@ items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, ri
         new choiceSet(
             "Meat", 
             [
-            new choice("Chicken", null), 
+            new choice("Chicken", "$1.00"), 
             new choice("Beef", null), 
             new choice("Pork", null)
             ]
@@ -454,7 +595,15 @@ items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, ri
             ]
         )
         ],
-        []
+        [
+        new choiceSet(
+            "Goodies",
+            [
+            new choice("Brownies", "$5.00"),
+            new choice("Sprinkles", null)
+            ]
+        )
+        ]
     ));
 
 items.push(new menuItem("#15 Chile Relleno Burrito", "Pico de gallo, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
@@ -683,9 +832,21 @@ body {
     border: 0;
 }
 
-.choice_name {
+.choice-title {
     font-size: 16px;
     font-weight: 700;
+    float: left;
+}
+
+.specific-choice-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+}
+
+.specific-choice-text {
+    font-size: 16px;
+    font-weight: 500;
     float: left;
 }
 
@@ -702,7 +863,7 @@ body {
 
 .quantity-word {
     padding: 0px 10px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
 }
 
@@ -736,17 +897,35 @@ body {
 
 /* The Close Button */
 .close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.error-alert {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 30px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #ff8f8f;
+    z-index: 5;
+    border-radius: 4px;
+    border: 0;
+    border: 3px solid #b00000;
+    font-weight:bold;
+    width: 100%;
 }
 
 </style>
@@ -795,6 +974,10 @@ body {
         </div>
     </div>
 
+</div>
+
+<!-- Error Alert -->
+<div class="error-alert">
 </div>
 
 </body>
