@@ -11,21 +11,21 @@ function alertme() {
 }
 
 function popup(choices, options, additional_instructions = "") {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "block";
+    var popup = document.getElementById("popup");
+    popup.style.display = "block";
     
 }
 
 function close_popup_if_open(event) {
-    var modal = document.getElementById("myModal");
-    if (event.target == modal) {
+    var popup = document.getElementById("popup");
+    if (event.target == popup) {
         close_popup();
     }
 }
 
 function close_popup() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
+    var popup = document.getElementById("popup");
+    popup.style.display = "none";
 }
 
 function item1_clicked() {
@@ -203,8 +203,8 @@ body {
     margin: 5px 0px;
 }
 
-/* The Modal (background) */
-.modal {
+/* The Popup */
+.popup {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -218,13 +218,15 @@ body {
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-/* Modal Content */
-.modal-content {
+/* Popup content */
+.popup-content {
+  display: flex;
+  flex-direction: column;
   background-color: #fefefe;
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: 460px;
 }
 
 /* The Close Button */
@@ -251,9 +253,9 @@ body {
 
 <div class="topnav">
   <a href="#menu">
-    <img src="/static/menu.svg" alt="" width=20 height=20>
+    <img src="../static/menu.svg" alt="" width=20 height=20>
   </a>
-  <img src="/static/logo.png" alt="" width=75 height=45>
+  <img src="../static/logo.png" alt="" width=75 height=45>
   <p></p>
 </div>
 
@@ -409,13 +411,16 @@ body {
     </div>
 </div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
+<!-- Popup -->
+<div id="popup" class="popup">
 
-  <!-- Modal content -->
-  <div class="modal-content">
+  <!-- Popup content -->
+  <div class="popup-content">
     <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
+    <!-- Popup header -->
+    <div class="popup-header">
+        
+    </div>
   </div>
 
 </div>
