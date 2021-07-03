@@ -5,10 +5,6 @@
 
 <!--javascript-->
 <script>
-    
-function alertme() {
-  alert("I am an alert box!");
-}
 
 function popup(item) {
     var popup = document.getElementById("popup");
@@ -27,7 +23,23 @@ function popup(item) {
         description.innerHTML = item.item_description;
     }
 
-    var quantity = document.getElementsByClassName("quantity")[0];
+    // set quantity controls
+    var minus = document.getElementById("minus");
+    var plus = document.getElementById("plus");
+    var quantity_count = document.getElementsByClassName("quantity-count")[0];
+
+    quantity_count.innerHTML = "1";
+    plus.onclick = function() {
+        count = parseInt(quantity_count.innerHTML);
+        quantity_count.innerHTML = count + 1;
+    }
+    minus.onclick = function() {
+        count = parseInt(quantity_count.innerHTML);
+        if (count != 1) {
+            quantity_count.innerHTML = count - 1;
+        }
+    }
+    
     
 }
 
@@ -44,9 +56,204 @@ function close_popup() {
     document.body.style.overflow = "auto";
 }
 
-function load_menu() {
+function update_layout() {
+    if (window.innerWidth < width_one && current_layout != "narrow") {
+        load_narrow_layout();
+        current_layout = "narrow";
+    }
+    else if (window.innerWidth > width_one && window.innerWidth < width_two && current_layout != "medium") {
+        load_medium_layout();
+        current_layout = "medium";
+    }
+    else if (window.innerWidth > width_two && window.innerWidth < width_three && current_layout != "wide") {
+        load_wide_layout();
+        current_layout = "wide";
+    }
+    else if (window.innerWidth > width_three && current_layout != "extrawide") {
+        load_extrawide_layout();
+        current_layout = "extrawide";
+    }
+}
+
+function initialize_layout() {
+    if (window.innerWidth < width_one) {
+        load_narrow_layout();
+        current_layout = "narrow";
+    }
+    else if (window.innerWidth < width_two)  {
+        load_medium_layout();
+        current_layout = "medium";
+    }
+    else if (window.innerWidth < width_three) {
+        load_wide_layout();
+        current_layout = "wide";
+    }
+    else {
+        load_extrawide_layout();
+        current_layout = "extrawide";
+    }
+}
+
+function load_narrow_layout() {
+    // clear cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    
+    // load narrow menu
+    load_menu_narrow();
+    
+    // set margin
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 30px";
+
+    // set automatic width for food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    food_items.style.width = 'auto';
+
+    // set cart button to display
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.style.visibility = "visible";
+}
+
+function load_medium_layout() {
+    // clear cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    
+    // load wide menu
+    load_menu_wide();
+    
+    // set margin
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 30px";
+
+    // set automatic width for food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    food_items.style.width = 'auto';
+
+    // set cart button to display
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.style.visibility = "visible";
+}
+
+function load_wide_layout() {
+    // set the cart
+    var main_body = document.getElementsByClassName("main-body")[0];
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart == null) {
+        cart = document.createElement('div');
+        cart.classList.add("cart");
+        main_body.appendChild(cart);
+        cart.style.width = "370px";
+    }
+
+    // load narrow menu
+    load_menu_narrow();
+
+    // set max-width for food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    food_items.style.width = '350px';
+    food_items.style.padding = '0px 10px';
+
+    // set cart button to not display
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.style.visibility = "hidden";
+}
+
+function load_extrawide_layout() {
+    // set the cart
+    var main_body = document.getElementsByClassName("main-body")[0];
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart == null) {
+        cart = document.createElement('div');
+        cart.classList.add("cart");
+        main_body.appendChild(cart);
+        cart.style.width = "470px";
+    }
+
+    // load wide menu
+    load_menu_wide();
+
+    // set max-width for food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    food_items.style.width = '600px';
+
+    // set cart button to not display
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.style.visibility = "hidden";
+}
+
+function load_menu_narrow() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
+    // clear the menu
+    while (food_items.firstChild) {
+        food_items.removeChild(food_items.firstChild);
+    }
+
+    // load the menu
+    for (var menu_group of menu_groups) {
+
+        // add the header
+        var new_header = document.createElement('h2');
+        new_header.innerHTML = menu_group.group_name;
+        new_header.classList.add("group-header");
+        food_items.appendChild(new_header);
+            
+        var group_list = document.createElement('ul');
+        group_list.classList.add("group-list");
+        food_items.appendChild(group_list);
+
+        // add items to list
+        for (const item of menu_group.items) {
+            var list_item = document.createElement('li');
+            list_item.classList.add("list-item");
+            group_list.appendChild(list_item);
+            
+            var link = document.createElement('a');
+            link.classList.add("link");
+            link.onclick = function() { popup(item); };
+            list_item.appendChild(link);
+
+            var inside_box = document.createElement('div');
+            inside_box.classList.add("inside-box");
+            link.appendChild(inside_box);
+
+            var top_row = document.createElement('div');
+            top_row.classList.add("top-row");
+            inside_box.appendChild(top_row);
+    
+            var title = document.createElement('a');
+            title.classList.add("title");
+            title.innerHTML = item.item_name;
+            top_row.appendChild(title);
+            
+            var price = document.createElement('span');
+            price.classList.add("price");
+            price.innerHTML = item.price;
+            top_row.appendChild(price);
+            
+            var description = document.createElement('p');
+            description.classList.add("description");
+            description.innerHTML = item.item_description;
+            inside_box.appendChild(description);
+        }
+    }
+}
+
+function load_menu_wide() {
+    var food_items = document.getElementsByClassName("food-items")[0];
+
+    // clear the menu
+    while (food_items.firstChild) {
+        food_items.removeChild(food_items.firstChild);
+    }
+
+    // load the menu
     for (var menu_group of menu_groups) {
 
         // add the header
@@ -87,7 +294,7 @@ function load_menu() {
             top_row.classList.add("top-row");
             inside_box.appendChild(top_row);
     
-            var title = document.createElement('span');
+            var title = document.createElement('a');
             title.classList.add("title");
             title.innerHTML = item.item_name;
             top_row.appendChild(title);
@@ -124,16 +331,17 @@ function load_menu() {
     }
 }
 
+// remove this function
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
-    popup_x.onclick = close_popup;
+    popup_x.onclick = close_popup; 
 
     window.onclick = close_popup_if_open;
 }
 
 function run_on_load() {
     set_onclicks();
-    load_menu();
+    initialize_layout();
 }
 
 class menuGroup {
@@ -186,6 +394,18 @@ items.push(new menuItem("#6 Carnitas Burrito", "Pork meat, scrambled eggs, chees
 
 items.push(new menuItem("#7 Pastor Burrito", "Marinated pork meat, scrambled eggs, cheese, and potatoes.", 7.99, []));
 
+items.push(new menuItem("#8 Eggs Burrito", "Scrambled eggs, cheese, and potatoes.", 7.99, []));
+
+items.push(new menuItem("#9 Ranchero Burrito", "Chorizo, bacon, scrambled eggs, cheese, potatoes, and ranchero salsa.", 7.99, []));
+
+items.push(new menuItem("#10 Macho Burrito (Spicy)", "Marinated pork, jalapenos, scrambled eggs, cheese, potatoes, and macho salsa.", 7.99, []));
+
+items.push(new menuItem("#11 Chicken Burrito", "Chicken, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, []));
+
+items.push(new menuItem("#12 Energy Burrito", "Beef, veggies, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, []));
+
+items.push(new menuItem("#13 Ham and Bacon Burrito", "Ham, bacon, scrambled eggs, cheese, and potatoes.", 7.99, []));
+
 items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99, 
         [
         new choiceSet(
@@ -222,7 +442,14 @@ items.push(new menuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantr
 
 menu_groups.push(new menuGroup("Burritos", items));
 
+var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide"
+
+const width_one = 550;
+const width_two = 830;
+const width_three = 1120;
+
 window.onload = run_on_load;
+window.onresize = update_layout;
 
 </script>
 
@@ -230,73 +457,61 @@ window.onload = run_on_load;
 <style>
 body {
     margin: 0;
-    font-family: Calibre,Helvetica,Lucida grande,sans-serif;
+    font-family: verdana, helvetica, sans-serif;
+    height: 100vh;
 }
 
 * {
     box-sizing: border-box;
 }
 
-
 /*css code*/
 .topnav {
-  height: 60px;
-  width: 100%;
-  background-color: white;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
-  position: sticky;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 32px 0 12px;
-  top: 0px;
-  z-index: 1;
+    height: 50px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px 0 12px;
+    top: 0px;
+    z-index: 1;
 }
 
-.topnav a {
-  float: left;
-  color: #2e7c87;
-  text-align: center;
-  padding-top: 15px;
-  padding-bottom: 10px;
-  margin-left: 15px;
-  margin-right: 15px;
-  text-decoration: none;
-  font-size: 14px;
+.store-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #5c5c5c;
+    text-transform: uppercase;
 }
 
-.splitview {
-    display: grid;
-    position: relative;
-    grid-template-areas: "food-items cart";
-    grid-template-columns: 1fr 375px;
+.cart-button {
+    cursor: pointer;
+}
+
+.main-body {
+    display: flex;
+    justify-content: space-around;
+    height: calc(100vh - 50px);
 }
 
 .cart {
-    grid-area: cart;
-}
-
-.cart-fixed {
-    padding: 0 20px;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
-    top:60px;
+    width: 300px;
+    border-radius: 20px;
+    border: 2px solid rgba(0,0,0,0.12);
     position: sticky;
-    display:flex;
-    flex-direction: column;
-    height: calc(100vh - 60px);
-}
-
-.cart-table {
-    height:40px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    height: calc(100vh - 50px - 2 * 30px);
+    margin: 30px 0;
+    padding: 15px;
 }
 
 .food-items {
-    grid-area: food-items;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px;
-    width: 100%;
+    margin: 0;
+    height: 100%;
+    overflow-y: scroll;
 }
 
 .group-header {
@@ -329,17 +544,20 @@ body {
     padding-left: 6px;
 }
 
+.group-list {
+    padding: 0;
+}
 
 .list-item {
     border-radius: 4px;
-    border: 1px solid rgba(0,0,0,0.12);
+    border: 2px solid rgba(0,0,0,0.12);
     margin-bottom: 12px;
     overflow: hidden;
     width: 100%;
 }
 
 .list-item:hover{
-    border: 1px solid #227599;
+    border: 2px solid #914b16;
 }
 
 .link {
@@ -356,16 +574,15 @@ body {
 .top-row {
     display: flex;
     justify-content: space-between;
-    height: 25px;
 }
 
 .title {
-    color: #227599;
+    color: #914b16;
     font-size: 18px;
 }
 
 .price {
-    color: #227599;
+    color: #914b16;
     font-size: 18px;
 }
 
@@ -445,8 +662,8 @@ body {
     align-items: center;
 }
 
-.plus-minus-symbol:hover {
-    background: #46bfcf;
+.plus-minus-symbol {
+    cursor: pointer;
 }
 
 .quantity-word {
@@ -474,7 +691,7 @@ body {
     height: 48px;
     width: 100%;
     color: #fff;
-    background-color: #2e7c87;
+    background-color: #914b16;
     border: none;
     cursor: pointer;
     border-radius: 4px;
@@ -505,24 +722,13 @@ body {
 <body>
 
 <div class="topnav">
-  <a href="#menu">
-    <img src="../static/menu.svg" alt="" width=20 height=20>
-  </a>
-  <img src="../static/logo.png" alt="" width=75 height=45>
-  <p></p>
+    <img src="../static/super_cucas.jpg" alt="" height=45>
+    <a class="store-name">Super Cucas - Micheltorena</a>
+    <img src="../static/cart.jpg" class="cart-button" alt="" width=50 height=50>
 </div>
 
-<div class="splitview">
+<div class="main-body">
     <div class="food-items">
-    </div>
-    <div class="cart">
-        <div class="cart-fixed">
-            <h2>Your Order</h2>
-            <div class=cart-table>
-                <p>blahblah</p>
-                <p>blah</p>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -541,9 +747,9 @@ body {
             <p class=popup-description></p>
             <div class=quantity>
                 <div class="plus-minus-bar">
-                    <img src="../static/minus.png" class="plus-minus-symbol" width=30 height=30>
+                    <img src="../static/minus.png" class="plus-minus-symbol" id="minus" width=30 height=30>
                     <a class="quantity-word">Quantity</a>
-                    <img src="../static/plus.png" class="plus-minus-symbol" width=30 height=30>
+                    <img src="../static/plus.png" class="plus-minus-symbol" id="plus" width=30 height=30>
                 </div>
                 <a class="quantity-count">1</a>
             </div>
