@@ -62,7 +62,7 @@ function popup(item) {
             specific_choice_text.classList.add("specific-choice-text");
             specific_choice_text.innerHTML = choice.name;
             if (choice.price != null) {
-                specific_choice_text.innerHTML += " - " + choice.price;
+                specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
             }
             specific_choice_bar.appendChild(specific_choice_text);
 
@@ -97,7 +97,7 @@ function popup(item) {
             specific_choice_text.classList.add("specific-choice-text");
             specific_choice_text.innerHTML = choice.name;
             if (choice.price != null) {
-                specific_choice_text.innerHTML += " - " + choice.price;
+                specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
             }
             specific_choice_bar.appendChild(specific_choice_text);
 
@@ -134,6 +134,9 @@ function popup(item) {
 }
 
 function add_to_order(item) {
+    var required_selections = [];
+    var optional_selections = [];
+
     // extract selected values from popup
     for (required_choice_set of item.required_choice_sets) {
         const radio_buttons = document.getElementsByName(required_choice_set.title);
@@ -141,7 +144,7 @@ function add_to_order(item) {
         for (let i = 0; i < required_choice_set.choices.length; i++) {
             radio_button = radio_buttons[i];
             if (radio_button.checked) {
-                selections.push(required_choice_set.choices[i]);
+                required_selections.push(required_choice_set.choices[i]);
                 at_least_one_selected = true;
                 break;
             }
@@ -158,7 +161,7 @@ function add_to_order(item) {
         for (let i = 0; i < optional_choice_set.choices.length; i++) {
             checkbox = checkboxes[i];
             if (checkbox.checked) {
-                selections.push(optional_choice_set.choices[i]);
+                optional_selections.push(optional_choice_set.choices[i]);
             }
         }       
     }
@@ -170,6 +173,8 @@ function add_to_order(item) {
     // display "added to order"
     display_error("Added To Order", "green");
     window.setTimeout("hide_error();", 1000);
+
+    cart_items.push(new cartItem(item, required_selections, optional_selections, quantity_count));
 
     if (current_layout == "wide" || current_layout == "extrawide") {
         load_cart(); 
@@ -188,11 +193,12 @@ function display_error(message, color) {
     var message_element = document.createElement('a');
     message_element.innerHTML = message;
     if (color == "green") {
-        error_box.style.border = "3px solid #0e8f0e";
-        error_box.style.background = "#48db48";
+        /*error_box.style.border = "3px solid #0e8f0e";*/
+        /*error_box.style.background = "#48db48";*/
+        error_box.style.background = "#75ff75";
     }
     else {
-        error_box.style.border = "3px solid #b00000";
+        /*error_box.style.border = "3px solid #b00000";*/
         error_box.style.background = "#ff8f8f";
     }
     error_box.appendChild(message_element);
@@ -286,10 +292,10 @@ function load_cart_layout() {
 
     load_cart();
 
-    // set cart button to display menu
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.src = "../static/menu.png";
-    cart_button.height = "40";
+    // set toggle button to display menu
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.src = "../static/menu.png";
+    toggle_button.height = "40";
 }
 
 function load_narrow_layout() {
@@ -319,10 +325,10 @@ function load_narrow_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.src = "../static/cart.jpg"; 
-    cart_button.height = "50";
-    cart_button.style.visibility = "visible";
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.src = "../static/cart.jpg"; 
+    toggle_button.height = "50";
+    toggle_button.style.visibility = "visible";
 
     // set popup to be full width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -356,10 +362,10 @@ function load_medium_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.src = "../static/cart.jpg";
-    cart_button.height = "50";
-    cart_button.style.visibility = "visible";
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.src = "../static/cart.jpg";
+    toggle_button.height = "50";
+    toggle_button.style.visibility = "visible";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -397,10 +403,10 @@ function load_wide_layout() {
     food_items.style.padding = '0px 10px';
 
     // set cart button to not display
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.src = "../static/cart.jpg";
-    cart_button.height = "50";
-    cart_button.style.visibility = "hidden";
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.src = "../static/cart.jpg";
+    toggle_button.height = "50";
+    toggle_button.style.visibility = "hidden";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -437,10 +443,10 @@ function load_extrawide_layout() {
     food_items.style.width = '600px';
 
     // set cart button to not display
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.src = "../static/cart.jpg";
-    cart_button.height = "50";
-    cart_button.style.visibility = "hidden";
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.src = "../static/cart.jpg";
+    toggle_button.height = "50";
+    toggle_button.style.visibility = "hidden";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -605,20 +611,158 @@ function load_cart() {
     }
 
     // add header
-    var header = document.createElement('a');
+    var header = document.createElement('div');
     header.classList.add("cart-header");
-    header.innerHTML = "Your Order";
     cart.appendChild(header);
+
+    var header_text = document.createElement('a');
+    header_text.innerHTML = "Your Order";
+    header.appendChild(header_text);
+
+    // add button
+    var cart_button = document.createElement('button');
+    cart_button.classList.add("cart-button");
+    cart_button.innerHTML = "Submit Order";
+    cart.appendChild(cart_button);
 
     // add body
     var body = document.createElement('div');
     body.classList.add("cart-body");
-    body.style.height = "200px";
+    body.style.height = "";
     cart.appendChild(body);
 
-    // add items
+    // to avoid confusion: 'item' is the div, 'cart_item' is the js object
+    for (let j = 0; j < cart_items.length; j++) {
+        const cart_item = cart_items[j];
 
-    // add footer
+        // add item
+        
+        var item = document.createElement('div');
+        item.classList.add("cart-item");
+        body.appendChild(item);
+
+        var item_info = document.createElement('div');
+        item_info.classList.add("cart-item-info");
+        item.appendChild(item_info);
+
+        var title = document.createElement('a');
+        title.classList.add("cart-item-title");
+        title.innerHTML = cart_item.item.item_name;
+        item_info.appendChild(title);
+            
+        for (let i = 0; i < cart_item.item.required_choice_sets.length; i++) {
+            var required_choice = document.createElement('a');
+            required_choice.classList.add("cart-item-choices");
+            const choice_title = cart_item.item.required_choice_sets[i].title;
+            const selection = cart_item.required_selections[i].name;
+            const required_choices_text = "• " + choice_title + ": " + selection;
+            
+            required_choice.innerHTML = required_choices_text;
+            item_info.appendChild(required_choice);
+        }
+
+        if (cart_item.optional_selections.length != 0) {
+            var optional_choices = document.createElement('a');
+            optional_choices.classList.add("cart-item-choices");
+            var optional_choices_text = "• ";
+            for (let i = 0; i < cart_item.optional_selections.length; i++) {
+                const selection = cart_item.optional_selections[i].name;
+                optional_choices_text = optional_choices_text + selection + ", ";
+            }
+            optional_choices_text = optional_choices_text.substring(0, optional_choices_text.length - 2); // remove comma at the end
+            optional_choices.innerHTML = optional_choices_text;
+            item_info.appendChild(optional_choices);
+        }
+
+        // add right section
+        var right_section = document.createElement('div');
+        right_section.classList.add("cart-item-right-section");
+        item.appendChild(right_section);
+
+        // add quantity section
+        var quantity_section = document.createElement('div');
+        quantity_section.classList.add("cart-item-quantity-section");
+        right_section.appendChild(quantity_section);
+
+        // add quantity elements
+        var minus_symbol = document.createElement('img');
+        minus_symbol.classList.add("cart-item-plus-minus-symbol");
+        minus_symbol.src = "../static/minus.png";
+        minus_symbol.width = 20;
+        minus_symbol.height = 20;
+        quantity_section.appendChild(minus_symbol);
+        minus_symbol.onclick = function() {
+            if (cart_item.quantity != 1) {
+                cart_item.quantity -= 1;
+                load_cart();
+            }
+        };
+
+        var quantity_count = document.createElement('a');
+        quantity_count.classList.add("cart-item-quantity-count");
+        quantity_count.innerHTML = cart_item.quantity;
+        quantity_section.appendChild(quantity_count);
+
+        var plus_symbol = document.createElement('img');
+        plus_symbol.classList.add("cart-item-plus-minus-symbol");
+        plus_symbol.src = "../static/plus.png";
+        plus_symbol.width = 20;
+        plus_symbol.height = 20;
+        quantity_section.appendChild(plus_symbol);
+        plus_symbol.onclick = function() {
+            cart_item.quantity += 1;
+            load_cart();
+        };
+
+        // add price
+        var price = document.createElement('a');
+        price.classList.add("cart-item-price");
+        price.innerHTML = cart_item.get_price();
+        right_section.appendChild(price);
+
+        // add trash
+        var trash = document.createElement('img');
+        trash.classList.add("cart-item-trash");
+        trash.src = "../static/trash.png";
+        trash.width = 30;
+        trash.height = 30;
+        right_section.appendChild(trash);
+        trash.onclick = function() {
+            cart_items.splice(j, 1);
+            load_cart();
+        };
+
+        // add horizontal line
+        var line = document.createElement('hr');
+        line.classList.add("cart-item-separator");
+        body.appendChild(line);
+        
+    }
+
+    // remove last line
+    if (body.firstChild) {
+        body.lastChild.remove();
+    }
+
+    // add large total line
+    if (body.firstChild) {
+        var total_line = document.createElement('hr');
+        total_line.classList.add("cart-total-line");
+        body.appendChild(total_line);
+    }
+
+    // add total
+    if (body.firstChild) {
+        var total_text = document.createElement('a');
+        total_text.classList.add("cart-total-text");
+        var total_price = 0;
+        var price_elements = document.getElementsByClassName('cart-item-price');
+        for (price_element of price_elements) {
+            total_price += parseFloat(price_element.innerHTML);
+        }
+        total_text.innerHTML = "Total: " + total_price.toFixed(2);
+        body.appendChild(total_text);
+    }
     
 }
 
@@ -637,8 +781,8 @@ function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup; 
 
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.onclick = toggle_cart;
+    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    toggle_button.onclick = toggle_cart;
 
     window.onclick = close_popup_if_open;
 }
@@ -680,6 +824,27 @@ class choice {
     }
 }
 
+// selections is a list of choices
+class cartItem {
+    constructor(item, required_selections, optional_selections, quantity) {
+        this.item = item;
+        this.required_selections = required_selections;
+        this.optional_selections = optional_selections;
+        this.quantity = quantity;
+    }
+
+    get_price() {
+        var total = this.item.price;
+        for (const required_selection of this.required_selections) {
+            total += required_selection.price;
+        }
+        for (const optional_selection of this.optional_selections) {
+            total += optional_selection.price;
+        }
+        return (total * this.quantity).toFixed(2);
+    }
+}
+
 var menu_groups = [];
 
 // first group
@@ -698,7 +863,7 @@ items.push(new menuItem("#6 Carnitas Burrito", "Pork meat, scrambled eggs, chees
 
 items.push(new menuItem("#7 Pastor Burrito", "Marinated pork meat, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
 
-items.push(new menuItem("#8 Eggs Burrito", "Scrambled eggs, cheese, and potatoes.", 7.99, []));
+items.push(new menuItem("#8 Eggs Burrito", "Scrambled eggs, cheese, and potatoes.", 7.99, [], []));
 
 items.push(new menuItem("#9 Ranchero Burrito", "Chorizo, bacon, scrambled eggs, cheese, potatoes, and ranchero salsa.", 7.99, [],[]));
 
@@ -715,7 +880,7 @@ items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, ri
         new choiceSet(
             "Meat", 
             [
-            new choice("Chicken", "$1.00"), 
+            new choice("Chicken", 1.00), 
             new choice("Beef", null), 
             new choice("Pork", null)
             ]
@@ -735,7 +900,7 @@ items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, ri
         new choiceSet(
             "Goodies",
             [
-            new choice("Brownies", "$5.00"),
+            new choice("Brownies", 1.00),
             new choice("Sprinkles", null)
             ]
         )
@@ -758,7 +923,7 @@ menu_groups.push(new menuGroup("Burritos", items));
 var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide" "cart"
 
 var is_cart = false;
-var selections = [];
+var cart_items = [];
 
 const width_one = 550;
 const width_two = 830;
@@ -806,7 +971,8 @@ body {
     padding: 10px;
 }
 
-.cart-button {
+.toggle-button {
+    margin: 5px;
     cursor: pointer;
 }
 
@@ -827,21 +993,117 @@ body {
     height: calc(100vh - 50px - 2 * 30px);
     margin-top: 30px;
     margin-bottom: 0px;
-    padding: 15px;
     top: 80px;
+    display: flex;
+    flex-direction: column
 }
 
 .cart-header {
     font-size: 30px;
     font-weight: 700;
+    padding: 15px;
 }
 
 .cart-body {
-
+    margin: 10px 0;
+    position: relative;
 }
 
-.cart-footer {
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 10px;
+}
 
+.cart-item-separator {
+    margin: 10px 20px;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-item-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+.cart-item-choices {
+    font-size: 15px;
+    color: #4a4a4a;
+    margin-left: 7px;
+}
+
+.cart-item-right-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 150px;
+}
+
+.cart-item-quantity-section {
+    display: flex;
+    align-items: center;
+    width: 62px;
+    justify-content: space-between;
+}
+
+.cart-item-plus-minus-symbol {
+    cursor: pointer;
+}
+
+.cart-item-quantity-count {
+    font-weight: 700;
+}
+
+.cart-item-trash {
+    cursor: pointer;
+}
+
+.cart-item-price {
+    width: 50px;
+    text-align: center;
+}
+
+.cart-total-line {
+    height: 3px;
+    border: none;
+    background-color: black;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.cart-total-text {
+    font-size: 22px;
+    font-weight: 700;
+    float: right;
+    margin-right: 40px;
+    margin-top: 5px;
+}
+
+.cart-button {
+    align-items: center;
+    font-size: 18px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 48px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 0;
+    margin: 5px;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 10px);
+}
+
+.cart-button:hover {
+    background-color: #2d5f91;
 }
 
 .food-items {
@@ -1042,13 +1304,17 @@ body {
     letter-spacing: .3px;
     height: 48px;
     color: #fff;
-    background-color: #914b16;
+    background-color: #4693e0;
     border: none;
     cursor: pointer;
     border-radius: 4px;
     border: 0;
     margin: 5px;
 
+}
+
+.popup-button:hover {
+    background-color: #2d5f91;
 }
 
 /* The Close Button */
@@ -1071,13 +1337,12 @@ body {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    height: 30px;
+    height: 50px;
     display: none;
     align-items: center;
     justify-content: center;
     background: #ff8f8f;
     z-index: 5;
-    border: 3px solid #b00000;
     font-weight:bold;
     width: 100%;
 }
@@ -1092,7 +1357,7 @@ body {
 <div class="topnav">
     <img src="../static/super_cucas.jpg" alt="" height=45>
     <p class="store-name">Super Cucas - Micheltorena</p>
-    <img src="../static/cart.jpg" class="cart-button" alt="" height=50>
+    <img src="../static/cart.jpg" class="toggle-button" alt="" height=50>
 </div>
 
 <div class="main-body">
@@ -1122,7 +1387,7 @@ body {
                 <a class="quantity-count">1</a>
             </div>
         </div>
-        <!-- Popup footer -->
+        <!-- Popup button -->
         <button class="popup-button">Add To Order</button>
     </div>
 
