@@ -1,7 +1,8 @@
 from flask import Blueprint, request, render_template, redirect, jsonify, session
 from webapp.models.user import User
-from webapp import db
+from webapp import db, bcrypt
 import stripe
+from flask_login import login_user, logout_user, current_user
 
 home = Blueprint('home', __name__)
 
@@ -12,12 +13,14 @@ def company_homepage():
 
 @home.route('/signup')
 def signup_begin():
+    if current_user.is_authenticated:
+        return redirect('/account')
     return render_template('begin-signup.html')
 
 @home.route('/signup/submit-email', methods=['POST'])
 def signup_submit_email():
     session['email_address'] = request.form['email_address']
-    
+
     user = User.query.filter_by(email_address=request.form['email_address']).first()
     if user:
         if user.password:
@@ -49,7 +52,8 @@ def signup_submit_email_password():
         else:
             return redirect('/signup/enter-password') # incorrect password
     else:
-        user.password = request.form['password']
+        hashed_password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
+        user.password = hashed_password
         db.session.commit()
         return redirect('/signup/select-plan')
 
@@ -63,7 +67,7 @@ def signup_select_plan():
 def signup_payment():
     try:
         checkout_session = stripe.checkout.Session.create(
-            success_url='https://m3orders.com/',
+            success_url='https://m3orders.com/login ',
             cancel_url='https://m3orders.com',
             customer_email=session['email_address'],
             client_reference_id=session['email_address'],
@@ -83,13 +87,22 @@ def signup_payment():
 @home.route('/login', methods=['GET', 'POST'])
 def login_page():
     if request.method == 'GET':
+        if current_user.is_authenticated:
+            return redirect('/account')
         return render_template('login-page.html')
     elif request.method == 'POST':
-        email_address, password = request.form['email_address'], request.form['password']
-        user = User.query.filter_by(email_address=email_address).first()
-        print(user.stripe_customer_id)
-        if user and user.password and password == user.password and user.stripe_customer_id:
-            return redirect('/account')
+        user = User.query.filter_by(email_address=request.form['email_address']).first()
+        if user and user.password:
+            if bcrypt.check_password_hash(user.password, request.form['password']) and user.stripe_customer_id:
+                login_user(user, remember=true)
+                return redirect('/account')
+            else:
+                return redirect('/signup/select-plan')
         else:
             return redirect('/login')
 
+# logout user
+@home.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/')
