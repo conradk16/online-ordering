@@ -135,7 +135,6 @@ function popup(item) {
 
 function add_to_order(item) {
     // extract selected values from popup
-    var selections = [];
     for (required_choice_set of item.required_choice_sets) {
         const radio_buttons = document.getElementsByName(required_choice_set.title);
         at_least_one_selected = false;
@@ -172,10 +171,9 @@ function add_to_order(item) {
     display_error("Added To Order", "green");
     window.setTimeout("hide_error();", 1000);
 
-    //update the cart
-    
-    
-    
+    if (current_layout == "wide" || current_layout == "extrawide") {
+        load_cart(); 
+    }
 }
 
 function display_error(message, color) {
@@ -281,8 +279,12 @@ function load_cart_layout() {
         cart = document.createElement('div');
         cart.classList.add("cart");
         main_body.appendChild(cart);
-        cart.style.width = "370px";
+        cart.style.width = "470px";
+        cart.style.margin_left = "30px";
+        cart.style.margin_left = "30px";
     }
+
+    load_cart();
 
     // set cart button to display menu
     var cart_button = document.getElementsByClassName("cart-button")[0];
@@ -384,6 +386,8 @@ function load_wide_layout() {
     main_body.appendChild(cart);
     cart.style.width = "430px";
 
+    load_cart();
+
     // load narrow menu
     load_menu_narrow();
 
@@ -422,6 +426,8 @@ function load_extrawide_layout() {
     cart.classList.add("cart");
     main_body.appendChild(cart);
     cart.style.width = "470px";
+
+    load_cart();
 
     // load wide menu
     load_menu_wide();
@@ -587,6 +593,35 @@ function load_menu_wide() {
     }
 }
 
+// makes use of global 'selections' variable
+// assumes cart exists
+    
+function load_cart() {
+    var cart = document.getElementsByClassName("cart")[0];
+    
+    // clear the cart
+    while (cart.firstChild) {
+        cart.removeChild(cart.firstChild);
+    }
+
+    // add header
+    var header = document.createElement('a');
+    header.classList.add("cart-header");
+    header.innerHTML = "Your Order";
+    cart.appendChild(header);
+
+    // add body
+    var body = document.createElement('div');
+    body.classList.add("cart-body");
+    body.style.height = "200px";
+    cart.appendChild(body);
+
+    // add items
+
+    // add footer
+    
+}
+
 function toggle_cart() {
     if (is_cart == false) {
         is_cart = true;
@@ -723,6 +758,7 @@ menu_groups.push(new menuGroup("Burritos", items));
 var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide" "cart"
 
 var is_cart = false;
+var selections = [];
 
 const width_one = 550;
 const width_two = 830;
@@ -737,8 +773,10 @@ window.onresize = update_layout;
 <style>
 body {
     margin: 0;
-    font-family: verdana, helvetica, sans-serif;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    top: 0;
     height: 100vh;
+    -webkit-overflow-scrolling: touch;
 }
 
 * {
@@ -751,13 +789,13 @@ body {
     width: 100%;
     background-color: white;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
-    position: sticky;
+    position: fixed;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 12px 0 12px;
     top: 0px;
-    z-index: 1;
+    z-index: 2;
 }
 
 .store-name {
@@ -775,23 +813,41 @@ body {
 .main-body {
     display: flex;
     justify-content: space-around;
-    height: calc(100vh - 50px);
+    /*height: calc(100vh - 50px);*/
+    position: relative;
+    z-index: 1;
+    top: 50px;
+    padding-bottom: 15px;
 }
 
 .cart {
-    width: 300px;
     border-radius: 20px;
     border: 2px solid rgba(0,0,0,0.12);
     position: sticky;
-    overflow-y: scroll;
     height: calc(100vh - 50px - 2 * 30px);
-    margin: 30px 0;
+    margin-top: 30px;
+    margin-bottom: 0px;
     padding: 15px;
+    top: 80px;
+}
+
+.cart-header {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.cart-body {
+
+}
+
+.cart-footer {
+
 }
 
 .food-items {
-    margin: 0;
+    margin: 0px;
     height: 100%;
+    position: sticky;
     overflow-y: scroll;
 }
 
@@ -976,10 +1032,6 @@ body {
     font-weight: 700;
 }
 
-.popup-footer {
-    margin: 5px;
-}
-
 .popup-button {
     display: flex;
     justify-content: center;
@@ -996,6 +1048,7 @@ body {
     cursor: pointer;
     border-radius: 4px;
     border: 0;
+    padding: 5px;
 
 }
 
@@ -1071,9 +1124,7 @@ body {
             </div>
         </div>
         <!-- Popup footer -->
-        <div class="popup-footer">
-            <button class="popup-button">Add To Order</button>
-        </div>
+        <button class="popup-button">Add To Order</button>
     </div>
 
 </div>
