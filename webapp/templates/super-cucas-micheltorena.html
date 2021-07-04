@@ -619,9 +619,16 @@ function load_cart() {
     header_text.innerHTML = "Your Order";
     header.appendChild(header_text);
 
+    // add button
+    var cart_button = document.createElement('button');
+    cart_button.classList.add("cart-button");
+    cart_button.innerHTML = "Submit Order";
+    cart.appendChild(cart_button);
+
     // add body
     var body = document.createElement('div');
     body.classList.add("cart-body");
+    body.style.height = "";
     cart.appendChild(body);
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
@@ -756,12 +763,6 @@ function load_cart() {
         total_text.innerHTML = "Total: " + total_price.toFixed(2);
         body.appendChild(total_text);
     }
-
-    // add button
-    var cart_button = document.createElement('button');
-    cart_button.classList.add("cart-button");
-    cart_button.innerHTML = "Submit Order";
-    cart.appendChild(cart_button);
     
 }
 
@@ -840,7 +841,7 @@ class cartItem {
         for (const optional_selection of this.optional_selections) {
             total += optional_selection.price;
         }
-        return total * this.quantity;
+        return (total * this.quantity).toFixed(2);
     }
 }
 
@@ -993,6 +994,8 @@ body {
     margin-top: 30px;
     margin-bottom: 0px;
     top: 80px;
+    display: flex;
+    flex-direction: column
 }
 
 .cart-header {
