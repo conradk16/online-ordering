@@ -193,11 +193,12 @@ function display_error(message, color) {
     var message_element = document.createElement('a');
     message_element.innerHTML = message;
     if (color == "green") {
-        error_box.style.border = "3px solid #0e8f0e";
-        error_box.style.background = "#48db48";
+        /*error_box.style.border = "3px solid #0e8f0e";*/
+        /*error_box.style.background = "#48db48";*/
+        error_box.style.background = "#75ff75";
     }
     else {
-        error_box.style.border = "3px solid #b00000";
+        /*error_box.style.border = "3px solid #b00000";*/
         error_box.style.background = "#ff8f8f";
     }
     error_box.appendChild(message_element);
@@ -1333,13 +1334,12 @@ body {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    height: 30px;
+    height: 50px;
     display: none;
     align-items: center;
     justify-content: center;
     background: #ff8f8f;
     z-index: 5;
-    border: 3px solid #b00000;
     font-weight:bold;
     width: 100%;
 }
