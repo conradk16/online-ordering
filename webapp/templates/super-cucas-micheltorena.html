@@ -619,16 +619,9 @@ function load_cart() {
     header_text.innerHTML = "Your Order";
     header.appendChild(header_text);
 
-    // add button
-    var cart_button = document.createElement('button');
-    cart_button.classList.add("cart-button");
-    cart_button.innerHTML = "Submit Order";
-    cart.appendChild(cart_button);
-
     // add body
     var body = document.createElement('div');
     body.classList.add("cart-body");
-    body.style.height = "";
     cart.appendChild(body);
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
@@ -763,6 +756,12 @@ function load_cart() {
         total_text.innerHTML = "Total: " + total_price.toFixed(2);
         body.appendChild(total_text);
     }
+
+    // add button
+    var cart_button = document.createElement('button');
+    cart_button.classList.add("cart-button");
+    cart_button.innerHTML = "Submit Order";
+    cart.appendChild(cart_button);
     
 }
 
@@ -940,7 +939,7 @@ body {
     margin: 0;
     font-family: Arial, verdana, helvetica, sans-serif;
     top: 0;
-    height: 100vh;
+    height: 100%;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -978,8 +977,7 @@ body {
 
 .main-body {
     display: flex;
-    justify-content: space-around;
-    /*height: calc(100vh - 50px);*/
+    justify-content: space-evenly;
     position: relative;
     z-index: 1;
     top: 50px;
