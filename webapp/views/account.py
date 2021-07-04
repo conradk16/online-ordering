@@ -3,14 +3,14 @@ import stripe
 
 account = Blueprint('account', __name__)
 
-# account page
+# account homepage
 @account.route('/account/')
 def account_homepage():
     return render_template('account-homepage.html')
 
 
 # POST endpoint for Connect With Stripe button, redirects to Stripe onboarding link
-@account.route('/account/connect-with-stripe', methods=['POST'])
+@account.route('/account/connect-with-stripe')
 def connect_with_stripe():
 
     # create account
@@ -37,4 +37,4 @@ def manage_billing():
         customer='{{CUSTOMER_ID}}',
         return_url=return_url)
     
-    return redirect(session.ur.)
+    return redirect(session.url)

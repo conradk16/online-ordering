@@ -12,7 +12,8 @@ webhook = Blueprint('webhook', __name__)
 # POST endpoint for receiving webhooks from Stripe
 @webhook.route('/webhook', methods=['POST'])
 def webhook_received():
-    webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU"
+    # webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
+    webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')
