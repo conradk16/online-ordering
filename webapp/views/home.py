@@ -44,7 +44,7 @@ def signup_create_password():
 def signup_submit_email_password():
     user = User.query.filter_by(email_address=request.form['email_address']).first()
     if user.password:
-        if user.password == request.form['password']:
+        if bcrypt.check_password_hash(user.password, request.form['password']):
             if user.stripe_customer_id:
                 return redirect('/account')
             else:
@@ -67,7 +67,7 @@ def signup_select_plan():
 def signup_payment():
     try:
         checkout_session = stripe.checkout.Session.create(
-            success_url='https://m3orders.com/login ',
+            success_url='https://m3orders.com/login',
             cancel_url='https://m3orders.com',
             customer_email=session['email_address'],
             client_reference_id=session['email_address'],
@@ -93,11 +93,14 @@ def login_page():
     elif request.method == 'POST':
         user = User.query.filter_by(email_address=request.form['email_address']).first()
         if user and user.password:
-            if bcrypt.check_password_hash(user.password, request.form['password']) and user.stripe_customer_id:
-                login_user(user, remember=true)
-                return redirect('/account')
+            if bcrypt.check_password_hash(user.password, request.form['password']):
+                if user.stripe_customer_id:
+                    login_user(user, remember=True)
+                    return redirect('/account')
+                else:
+                    return redirect('/signup/select-plan')
             else:
-                return redirect('/signup/select-plan')
+                return redirect('/login')
         else:
             return redirect('/login')
 
