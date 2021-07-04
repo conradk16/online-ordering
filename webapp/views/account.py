@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect
 import stripe
+from webapp import db
 from webapp.models.user import User
 from flask_login import login_user, logout_user, current_user 
 
@@ -9,7 +10,7 @@ account = Blueprint('account', __name__)
 @account.route('/account/')
 def account_homepage():
     if current_user.is_authenticated:
-        return render_template('account-homepage.html', connected_with_stripe=current_user.stripe_charges_enabled)
+        return render_template('account-homepage.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
     else:
         return redirect('/login')
 
@@ -19,14 +20,19 @@ def account_homepage():
 def connect_with_stripe():
 
     if current_user.is_authenticated:
-        # create account
-        account = stripe.Account.create(
-            type='standard',
-        )
+        # Use existing connected account if they have one, otherwise create account and store account.id in the Users table
+        account_id = current_user.stripe_connected_account_id
+        if not account_id:
+            account = stripe.Account.create(
+                type='standard',
+            )
+            account_id = account.id
+            current_user.stripe_connected_account_id = account_id
+            db.session.commit()
 
         # create account link (a Stripe URL) where the user can onboard with Stripe
         account_link_object = stripe.AccountLink.create(
-            account=account.id,
+            account=account_id,
             refresh_url='https://m3orders.com/account',
             return_url='https://m3orders.com/account',
             type='account_onboarding',

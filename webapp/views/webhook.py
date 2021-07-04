@@ -9,11 +9,11 @@ from email.mime.text import MIMEText
 
 webhook = Blueprint('webhook', __name__)
 
-# POST endpoint for receiving webhooks from Stripe
-@webhook.route('/webhook', methods=['POST'])
-def webhook_received():
-    # webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
-    webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
+# POST endpoint for receiving Account webhooks from Stripe
+@webhook.route('/webhook-account', methods=['POST'])
+def webhook_account_received():
+    webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
+    #webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')
@@ -55,10 +55,33 @@ def webhook_received():
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
         user.active_subscription = False
         db.session.commit()
-    elif event_type == 'account.updated':
-        stripe_customer_id = data_object.customer
-        user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
-        user.charges_enabled = data_object.charges_enabled
+    else:
+      print('Unhandled event type {}'.format(event_type))
+
+    return jsonify({'status': 'success'})
+
+# POST endpoint for receiving Connect webhooks from Stripe
+@webhook.route('/webhook-connect', methods=['POST'])
+def webhook_connect_received():
+    webhook_secret = "whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE" # TEST INTEGRATION WEBHOOK
+    #webhook_secret = "whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5" # TEST localhost webhook
+    request_data = json.loads(request.data)
+
+    signature = request.headers.get('stripe-signature')
+    try:
+        event = stripe.Webhook.construct_event(
+            payload=request.data, sig_header=signature, secret=webhook_secret)
+        data = event['data']
+    except Exception as e:
+        return e
+
+    event_type = event['type']
+    data_object = data['object']
+    
+    if event_type == 'account.updated':
+        account_id = data_object.id
+        user = User.query.filter_by(stripe_connected_account_id=account_id).first()
+        user.stripe_connected_account_details_submitted = data_object.details_submitted
         db.session.commit()
     else:
       print('Unhandled event type {}'.format(event_type))

@@ -10,7 +10,9 @@ class User(db.Model, UserMixin):
     email_address = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(60))
     stripe_customer_id = db.Column(db.String)
+    stripe_connected_account_id = db.Column(db.String)
     stripe_charges_enabled = db.Column(db.Boolean, default=False)
+    stripe_connected_account_details_submitted = db.Column(db.Boolean, default=False)
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
