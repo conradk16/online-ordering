@@ -55,6 +55,11 @@ def webhook_received():
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
         user.active_subscription = False
         db.session.commit()
+    elif event_type == 'account.updated':
+        stripe_customer_id = data_object.customer
+        user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
+        user.charges_enabled = data_object.charges_enabled
+        db.session.commit()
     else:
       print('Unhandled event type {}'.format(event_type))
 
