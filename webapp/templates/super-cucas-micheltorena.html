@@ -933,13 +933,20 @@ window.onresize = update_layout;
 
 </script>
 
-
 <style>
+
+html {
+    /*position: fixed;*/
+    height: 100%;
+    width: 100%;
+}
+
 body {
     margin: 0;
     font-family: Arial, verdana, helvetica, sans-serif;
-    top: 0;
     height: 100%;
+    width: 100%;
+    /*top: 0;*/
     -webkit-overflow-scrolling: touch;
 }
 
@@ -953,7 +960,7 @@ body {
     width: 100%;
     background-color: white;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
-    position: fixed;
+    position: sticky;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -980,7 +987,6 @@ body {
     justify-content: space-evenly;
     position: relative;
     z-index: 1;
-    top: 50px;
     padding-bottom: 15px;
 }
 
