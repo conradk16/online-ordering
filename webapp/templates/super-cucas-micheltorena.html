@@ -619,10 +619,16 @@ function load_cart() {
     header_text.innerHTML = "Your Order";
     header.appendChild(header_text);
 
+    // add button
+    var cart_button = document.createElement('button');
+    cart_button.classList.add("cart-button");
+    cart_button.innerHTML = "Submit Order";
+    cart.appendChild(cart_button);
+
     // add body
     var body = document.createElement('div');
     body.classList.add("cart-body");
-    cart.appendChild(body);
+    cart.insertBefore(body, cart_button);
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
     for (let j = 0; j < cart_items.length; j++) {
@@ -756,12 +762,6 @@ function load_cart() {
         total_text.innerHTML = "Total: " + total_price.toFixed(2);
         body.appendChild(total_text);
     }
-
-    // add button
-    var cart_button = document.createElement('button');
-    cart_button.classList.add("cart-button");
-    cart_button.innerHTML = "Submit Order";
-    cart.appendChild(cart_button);
     
 }
 
@@ -946,7 +946,7 @@ body {
     font-family: Arial, verdana, helvetica, sans-serif;
     height: 100%;
     width: 100%;
-    /*top: 0;*/
+    position: fixed;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -985,32 +985,29 @@ body {
 .main-body {
     display: flex;
     justify-content: space-evenly;
-    position: relative;
-    z-index: 1;
-    padding-bottom: 15px;
+    height: calc(100% - 50px);
 }
 
 .cart {
     border-radius: 20px;
     border: 2px solid rgba(0,0,0,0.12);
-    position: sticky;
-    height: calc(100vh - 50px - 2 * 30px);
-    margin-top: 30px;
-    margin-bottom: 0px;
-    top: 80px;
+    margin: 30px 0;
+    padding: 0px;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .cart-header {
     font-size: 30px;
     font-weight: 700;
     padding: 15px;
+    padding-bottom: 15px;
 }
 
 .cart-body {
-    margin: 10px 0;
-    position: relative;
+    flex: 2;
+    overflow-y: scroll;
+    padding: 5px;
 }
 
 .cart-item {
@@ -1101,8 +1098,9 @@ body {
     border-radius: 20px;
     border: 0;
     margin: 5px;
-    position: absolute;
+    position: sticky;
     bottom: 0;
+    left: 0;
     width: calc(100% - 10px);
 }
 
@@ -1111,9 +1109,7 @@ body {
 }
 
 .food-items {
-    margin: 0px;
-    height: 100%;
-    position: sticky;
+    padding-bottom: 15px;
     overflow-y: scroll;
 }
 
@@ -1346,7 +1342,7 @@ body {
     align-items: center;
     justify-content: center;
     background: #ff8f8f;
-    z-index: 5;
+    z-index: 3;
     font-weight:bold;
     width: 100%;
 }
