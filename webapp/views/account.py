@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, abort, send_file
 import stripe
 from webapp import db
 from webapp.models.user import User
@@ -10,12 +10,15 @@ account = Blueprint('account', __name__)
 @account.route('/account/')
 def account_homepage():
     if current_user.is_authenticated:
-        return render_template('account-homepage.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
+        if current_user.email_address == "kuklinskywork@gmail.com":
+            return render_template('admin-page.html')
+        else:
+            return render_template('account-homepage.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
     else:
         return redirect('/login')
 
 
-# POST endpoint for Connect With Stripe button, redirects to Stripe onboarding link
+# GET endpoint for Connect With Stripe button, redirects to Stripe onboarding link
 @account.route('/account/connect-with-stripe')
 def connect_with_stripe():
 
@@ -50,3 +53,10 @@ def manage_billing():
         return_url="https://m3orders.com/account")
     
     return redirect(session.url)
+
+@account.route('/account/admin-download-database')
+def admin_download_database():
+    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+        return send_file("database.db", as_attachment=True)
+    else:
+        abort(404)
