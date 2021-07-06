@@ -42,8 +42,24 @@ function popup(item) {
     // set up special instructions
     var gray_bars = document.getElementsByClassName("gray-bar");
     var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
-    special_instructions_gray_bar.innerHTML = "Special Instructions";
-    special_instructions_gray_bar.style.fontWeight = "700";
+    special_instructions_gray_bar.style.justifyContent = "flex-start";
+        
+    if (special_instructions_gray_bar.children.length == 0) {
+        var special_instructions_title = document.createElement("span");
+        special_instructions_title.innerHTML = "Special Instructions";
+        special_instructions_title.style.fontWeight = "700";
+        special_instructions_gray_bar.appendChild(special_instructions_title);
+
+        var special_instructions_info = document.createElement("span");
+        special_instructions_info.innerHTML = " (120 Characters or Fewer)";
+        special_instructions_info.style.fontWeight = "0px";
+        special_instructions_info.style.fontSize = "14px";
+        special_instructions_info.style.marginLeft = "5px";
+        special_instructions_gray_bar.appendChild(special_instructions_info);
+    }
+
+    var special_instructions = document.getElementsByClassName("special-instructions")[0];
+    special_instructions.value = "";
 
     // set required choices
     var quantity_bar = popup_body.lastElementChild;
@@ -182,6 +198,10 @@ function add_to_order(item) {
     
     var quantity_count = parseInt(document.getElementsByClassName("quantity-count")[0].innerHTML);
 
+    var special_instructions_element = document.getElementsByClassName("special-instructions")[0];
+    
+    var special_instructions_text = special_instructions_element.value;
+
     close_popup();
     
     // display "added to order"
@@ -189,8 +209,7 @@ function add_to_order(item) {
     window.setTimeout("hide_error();", 1000);
 
     // add to cart_items
-    var special_instructions = "blahblah"
-    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions);
+    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
     
     var matched = false;
     for (var cart_item of cart_items) {
@@ -203,9 +222,7 @@ function add_to_order(item) {
     if (!matched) {
         cart_items.push(cart_item_to_add);
     }
-
     
-
     if (current_layout == "wide" || current_layout == "extrawide") {
         load_cart(); 
     }
@@ -742,14 +759,21 @@ function load_cart() {
             item_info.appendChild(optional_choices);
         }
 
+        if (cart_item.special_instructions != "") {
+            var special_instructions = document.createElement('a');
+            special_instructions.classList.add("cart-item-choices");
+            special_instructions.innerHTML = "• " + cart_item.special_instructions;
+            item_info.appendChild(special_instructions);
+        }
+
         // add right section
         var right_section = document.createElement('div');
         right_section.classList.add("cart-item-right-section");
         if (current_layout == "cart") {
-            right_section.style.width = "172px";
+            right_section.style.maxWidth = "172px";
         }
         else {
-            right_section.style.width = "180px";
+            right_section.style.maxWidth = "180px";
         }
         item.appendChild(right_section);
 
@@ -1045,8 +1069,8 @@ window.onresize = update_layout;
 
 html {
     /*position: fixed;*/
-    height: 100%;
-    width: 100%;
+    min-height: 100%;
+    min-width: 100%;
 }
 
 body {
@@ -1155,6 +1179,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex: 2;
+    max-width: 
 }
 
 .cart-item-quantity-section {
@@ -1419,7 +1445,15 @@ body {
 }
 
 .special-instructions {
-
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 50px;
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: inherit;
 }
 
 .popup-button {
@@ -1508,7 +1542,7 @@ body {
             <p class=popup-description></p>
             <div class=gray-bar>
             </div>
-            <textarea class=special-instructions></textarea>
+            <textarea class=special-instructions rows="4" maxlength="120"></textarea>
             <div class=gray-bar>
                 <div class="plus-minus-bar">
                     <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
