@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+  function validateEmailAndPassword(emailInput, passwordInput) {
+    var mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+    validEmail = emailInput.match(mailFormat);
+    validPassword = passwordInput.length >= 8;
+
+    var emailBox = document.getElementsByClassName("input-box")[0];
+    var passwordBox = document.getElementsByClassName("input-box")[1];
+
+    if (validEmail) {
+      document.getElementById("invalid-email-message").remove();
+      emailBox.style.border = "1px solid #ccc";
+    } else {
+      if (!document.getElementById("invalid-email-message")) {
+        var invalidEmailMessage = document.createElement("span");
+        var passwordLabel = document.getElementById("password-label");
+        form = document.getElementById("form");
+
+        invalidEmailMessage.id = "invalid-email-message";
+        invalidEmailMessage.classList.add("invalid-input-text");
+        invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
+
+        form.insertBefore(invalidEmailMessage, passwordLabel);
+        emailBox.style.border = "1px solid #b92d2b";
+      }
+    }
+
+    if (validPassword) {
+      document.getElementById("invalid-password-message").remove();
+      passwordBox.style.border = "1px solid #ccc";
+    } else {
+      if (!document.getElementById("invalid-password-message")) {
+        var invalidPasswordMessage = document.createElement("span");
+        var nextButton = document.getElementById("next-button");
+        form = document.getElementById("form");
+
+        invalidPasswordMessage.id = "invalid-password-message";
+        invalidPasswordMessage.classList.add("invalid-input-text");
+        invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
+
+        form.insertBefore(invalidPasswordMessage, nextButton);
+        passwordBox.style.border = "1px solid #b92d2b";
+      }
+    }
+
+    if (validEmail && validPassword) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+  </script>
+</head>
+
+<style>
+body {
+  margin: 0;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Add a background color to the top navigation */
+.topnav {
+  background-color: white;
+  padding:8px 16px;
+  border-style:solid;
+  border-width: 0px 0px 1px 0px;
+  border-bottom-color: rgba(230, 230, 230, 1);
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: right;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  opacity: 1;
+  font-size: 17px;
+  font-family:verdana;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: rgba(240, 240, 240, 0.75);
+}
+
+.center {
+  margin: auto;
+  width: 400px;
+  padding: 10px;
+  background-color: white;
+}
+
+.step-one-of-three {
+  text-align: left;
+  font-size: 17px;
+  font-family:verdana;
+}
+
+.create-your-account {
+  font-size: 30px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  width: 400px;
+  padding: 12px 8px 8px 0px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  margin: 8px 8px 0px 0px;
+  height:10;
+}
+
+.invalid-input-text {
+  font-size: 12px;
+  margin: 0;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  color: #b92d2b;
+  height: 10;
+}
+
+.input-box {
+  width: 100%;
+  padding: 12px 8px;
+  margin: 4px 0px 4px 0px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family:verdana;
+  outline: none;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 12px 8px;
+  margin: 12px 0px 12px 0px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family:verdana;
+}
+
+input:focus ~ .floating-label,
+input:not(:focus):valid ~ .floating-label{
+  top: 8px;
+  bottom: 10px;
+  left: 20px;
+  font-size: 11px;
+  opacity: 1;
+}
+
+.inputText {
+  font-size: 14px;
+  width: 200px;
+  height: 35px;
+}
+
+.floating-label {
+  pointer-events: none;
+  left: 20px;
+  top: 18px;
+  transition: 0.2s ease all;
+}
+
+</style>
+
+
+<div class="topnav">
+  <a href="/login">Log in</a>
+</div>
+
+<br><br><br>
+
+<div class="center">
+      <div class="step-one-of-three">Step 1 of 3</div>
+      <div class="create-your-account">Create an account to get started</div>
+
+      <div>
+      <form name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value)" action="/signup" method="POST">
+        <div class="input-label" id="email-label" for="email_address">Email</div>
+        <input class="input-box" id="email_address" name="email_address" placeholder="Email">
+        <div class="input-label" id="password-label" for="password">Password</div>
+        <input class="input-box" type="password" id="password" name="password" placeholder="Add a password">
+
+        <input type="submit" id="next-button" value="Next">
+
+      </form>
+</div>
+</div>
+
+</html>
