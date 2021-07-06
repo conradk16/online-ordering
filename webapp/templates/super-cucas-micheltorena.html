@@ -111,6 +111,8 @@ function popup(item) {
 
     // set quantity controls
     var minus = document.getElementById("minus");
+    minus.style.backgroundColor = "gray";
+    minus.style.cursor = "auto";
     var plus = document.getElementById("plus");
     var quantity_count = document.getElementsByClassName("quantity-count")[0];
 
@@ -118,11 +120,17 @@ function popup(item) {
     plus.onclick = function() {
         count = parseInt(quantity_count.innerHTML);
         quantity_count.innerHTML = count + 1;
+        minus.style.cursor = "pointer";
+        minus.style.backgroundColor = "#4693e0";
     }
     minus.onclick = function() {
         count = parseInt(quantity_count.innerHTML);
         if (count != 1) {
             quantity_count.innerHTML = count - 1;
+        }
+        if (count == 2) {
+            minus.style.cursor = "auto";
+            minus.style.backgroundColor = "gray";
         }
     }
 
@@ -174,7 +182,23 @@ function add_to_order(item) {
     display_error("Added To Order", "green");
     window.setTimeout("hide_error();", 1000);
 
-    cart_items.push(new cartItem(item, required_selections, optional_selections, quantity_count));
+    // add to cart_items
+    var special_instructions = "blahblah"
+    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions);
+    
+    var matched = false;
+    for (var cart_item of cart_items) {
+        if (cart_item.is_equal(cart_item_to_add)) {
+            cart_item.quantity += quantity_count;
+            matched = true;
+            break;
+        }
+    }
+    if (!matched) {
+        cart_items.push(cart_item_to_add);
+    }
+
+    
 
     if (current_layout == "wide" || current_layout == "extrawide") {
         load_cart(); 
@@ -643,7 +667,7 @@ function load_cart() {
     // add button
     var cart_button = document.createElement('button');
     cart_button.classList.add("cart-button");
-    cart_button.innerHTML = "Submit Order";
+    cart_button.innerHTML = "Proceed to Payment";
     cart.appendChild(cart_button);
 
     // add body
@@ -651,6 +675,20 @@ function load_cart() {
     body.classList.add("cart-body");
     body.style.margin = "0px";
     cart.insertBefore(body, cart_button);
+
+    // if empty, gray payment button and add cart icon
+    if (cart_items.length == 0) {
+        var empty_cart_icon = document.createElement('img');
+        empty_cart_icon.classList.add("empty-cart-icon");
+        empty_cart_icon.src = "../static/empty_cart.svg";
+        body.appendChild(empty_cart_icon);
+        body.style.display = "flex";
+        body.style.justifyContent = "center";
+        body.style.alignItems = "center";
+
+        cart_button.style.backgroundColor = "gray";
+        cart_button.style.cursor = "auto";
+    }
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
     for (let j = 0; j < cart_items.length; j++) {
@@ -661,7 +699,7 @@ function load_cart() {
         var item = document.createElement('div');
         item.classList.add("cart-item");
         if (current_layout == "cart") {
-            item.style.margin = "5px 5px";
+            item.style.margin = "5px 15px";
         } else { item.style.margin = "5px 18px"; }
         body.appendChild(item);
 
@@ -702,7 +740,7 @@ function load_cart() {
         var right_section = document.createElement('div');
         right_section.classList.add("cart-item-right-section");
         if (current_layout == "cart") {
-            right_section.style.width = "155px";
+            right_section.style.width = "172px";
         }
         else {
             right_section.style.width = "180px";
@@ -720,6 +758,7 @@ function load_cart() {
         minus_symbol.src = "../static/minus-white.png";
         if (cart_item.quantity == 1) {
             minus_symbol.style.backgroundColor = "gray";
+            minus_symbol.style.cursor = "auto";
         }
         quantity_section.appendChild(minus_symbol);
         minus_symbol.onclick = function() {
@@ -763,26 +802,26 @@ function load_cart() {
         };
 
         // add horizontal line
-        var line = document.createElement('hr');
+        /*var line = document.createElement('hr');
         line.classList.add("cart-item-separator");
-        body.appendChild(line);
+        body.appendChild(line);*/
         
     }
 
     // remove last line
-    if (body.firstChild) {
+    if (document.getElementsByClassName("cart-item-separator").length != 0) {
         body.lastChild.remove();
     }
 
     // add large total line
-    if (body.firstChild) {
+    if (document.getElementsByClassName("cart-item").length != 0) {
         var total_line = document.createElement('hr');
         total_line.classList.add("cart-total-line");
         body.appendChild(total_line);
     }
 
     // add total
-    if (body.firstChild) {
+    if (document.getElementsByClassName("cart-item").length != 0) {
         var total_text = document.createElement('a');
         total_text.classList.add("cart-total-text");
         var total_price = 0;
@@ -792,6 +831,9 @@ function load_cart() {
         }
         total_text.innerHTML = "Total: " + total_price.toFixed(2);
         body.appendChild(total_text);
+
+        // add total to button text
+        cart_button.innerHTML += " ($" + total_price.toFixed(2) + ")";
     }
     
 }
@@ -852,15 +894,44 @@ class choice {
         this.name = name;
         this.price = price;
     }
+
+    is_equal(other) {
+        return this.name == other.name && this.price == other.price;
+    }
 }
 
 // selections is a list of choices
 class cartItem {
-    constructor(item, required_selections, optional_selections, quantity) {
+    constructor(item, required_selections, optional_selections, quantity, special_instructions) {
         this.item = item;
         this.required_selections = required_selections;
         this.optional_selections = optional_selections;
         this.quantity = quantity;
+        this.special_instructions = special_instructions;
+    }
+
+    is_equal(other) {
+        if (this.item != other.item || this.special_instructions != other.special_instructions) {
+                return false;
+        }
+        for (let i = 0; i < this.required_selections.length; i++) {
+            var this_choice = this.required_selections[i];
+            var other_choice = other.required_selections[i];
+            if (!this_choice.is_equal(other_choice)) {
+                return false;
+            }
+        }
+        if (this.optional_selections.length != other.optional_selections.length) {
+            return false;
+        }
+        for (let i = 0; i < this.optional_selections.length; i++) {
+            var this_choice = this.optional_selections[i];
+            var other_choice = other.optional_selections[i];
+            if (!this_choice.is_equal(other_choice)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     get_price() {
@@ -1035,7 +1106,12 @@ body {
 .cart-body {
     flex: 2;
     overflow-y: scroll;
-    padding: 5px 0px;
+    padding: 0px 0px;
+}
+
+.empty-cart-icon {
+    height: 28%;
+    margin-right: 30px;
 }
 
 .cart-item {
@@ -1081,7 +1157,7 @@ body {
     width: 96px;
     justify-content: space-between;
     border-radius: 20px;
-    background-color: #f2f2f2;
+    background-color: #f5f5f5;
     padding: 8px;
 }
 
@@ -1319,6 +1395,10 @@ body {
 
 .plus-minus-symbol {
     cursor: pointer;
+    background-color: #4693e0;
+    border-radius: 30px;
+    width: 25px;
+    height: 25px;
 }
 
 .quantity-word {
@@ -1418,9 +1498,9 @@ body {
             <p class=popup-description></p>
             <div class=gray-bar>
                 <div class="plus-minus-bar">
-                    <img src="../static/minus.png" class="plus-minus-symbol" id="minus" width=30 height=30>
+                    <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
                     <a class="quantity-word">Quantity</a>
-                    <img src="../static/plus.png" class="plus-minus-symbol" id="plus" width=30 height=30>
+                    <img src="../static/plus-white.png" class="plus-minus-symbol" id="plus">
                 </div>
                 <a class="quantity-count">1</a>
             </div>
