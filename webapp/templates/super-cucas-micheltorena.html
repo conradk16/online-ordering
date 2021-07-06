@@ -28,8 +28,8 @@ function popup(item) {
     // clear choices titles
     const old_choices = document.getElementsByClassName("gray-bar");
     const num_old_choices = old_choices.length;
-    for (let i = 0; i < num_old_choices - 1; i++) {
-        old_choices[0].remove();
+    for (let i = 1; i < num_old_choices - 1; i++) {
+        old_choices[1].remove();
     }
 
     // clear specific choices
@@ -39,14 +39,20 @@ function popup(item) {
         old_specific_choice_bars[0].remove();
     }
 
-    // set required choices
+    // set up special instructions
+    var gray_bars = document.getElementsByClassName("gray-bar");
+    var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
+    special_instructions_gray_bar.innerHTML = "Special Instructions";
+    special_instructions_gray_bar.style.fontWeight = "700";
 
+    // set required choices
     var quantity_bar = popup_body.lastElementChild;
+        
     for (const choice_set of item.required_choice_sets) {
         // add a header
         var required_choice_header = document.createElement('div');
         required_choice_header.classList.add("gray-bar");
-        popup_body.insertBefore(required_choice_header, quantity_bar);
+        popup_body.insertBefore(required_choice_header, special_instructions_gray_bar);
         
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
@@ -56,7 +62,7 @@ function popup(item) {
         for (const choice of choice_set.choices) {
             var specific_choice_bar = document.createElement("div");
             specific_choice_bar.classList.add("specific-choice-bar");
-            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
 
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
@@ -81,7 +87,7 @@ function popup(item) {
         // add a header
         var optional_choice_header = document.createElement('div');
         optional_choice_header.classList.add("gray-bar");
-        popup_body.insertBefore(optional_choice_header, quantity_bar);
+        popup_body.insertBefore(optional_choice_header, special_instructions_gray_bar);
         
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
@@ -91,7 +97,7 @@ function popup(item) {
         for (const choice of choice_set.choices) {
             var specific_choice_bar = document.createElement("div");
             specific_choice_bar.classList.add("specific-choice-bar");
-            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
 
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
@@ -829,7 +835,7 @@ function load_cart() {
         for (price_element of price_elements) {
             total_price += parseFloat(price_element.innerHTML);
         }
-        total_text.innerHTML = "Total: " + total_price.toFixed(2);
+        total_text.innerHTML = "Total: $" + total_price.toFixed(2);
         body.appendChild(total_text);
 
         // add total to button text
@@ -1097,7 +1103,7 @@ body {
 }
 
 .cart-header {
-    font-size: 30px;
+    font-size: 23px;
     font-weight: 700;
     display: flex;
     justify-content: space-evenly;
@@ -1412,6 +1418,10 @@ body {
     font-weight: 700;
 }
 
+.special-instructions {
+
+}
+
 .popup-button {
     display: flex;
     justify-content: center;
@@ -1496,6 +1506,9 @@ body {
         <!-- Popup body -->
         <div class="popup-body">
             <p class=popup-description></p>
+            <div class=gray-bar>
+            </div>
+            <textarea class=special-instructions></textarea>
             <div class=gray-bar>
                 <div class="plus-minus-bar">
                     <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
