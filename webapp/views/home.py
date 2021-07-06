@@ -8,14 +8,32 @@ home = Blueprint('home', __name__)
 
 # landing page
 @home.route('/')
-def company_homepage():
-    return render_template('company-homepage.html')
+def homepage():
+    return render_template('homepage.html')
 
-@home.route('/signup')
-def signup_begin():
-    if current_user.is_authenticated:
-        return redirect('/account')
-    return render_template('begin-signup.html')
+# signup endpoint - signup page and requests to sign up
+@home.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            return redirect('/account')
+        else:
+            return render_template('signup.html', user_already_exists=False)
+    elif request.method == 'POST':
+        user = User.query.filter_by(email_address=request.form['email_address']).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, request.form['password']):
+                if user.stripe_customer_id:
+                    return redirect('/account')
+                else:
+                    return redirect('/signup/select-plan')
+            else:
+                return render_template('signup.html', user_already_exists=True)
+        else:
+            user = User(email_address=request.form['email_address'], password=request.form['password'])
+            user.add_to_db()
+            return redirect('/signup/select-plan')
+
 
 @home.route('/signup/submit-email', methods=['POST'])
 def signup_submit_email():
