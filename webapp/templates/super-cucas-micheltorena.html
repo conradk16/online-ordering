@@ -817,7 +817,7 @@ function load_cart() {
         right_section.appendChild(quantity_section);
 
         // add quantity elements
-        var minus_symbol = document.createElement('img');
+        const minus_symbol = document.createElement('img');
         minus_symbol.classList.add("cart-item-plus-minus-symbol");
         minus_symbol.src = "../static/minus-white.png";
         if (cart_item.quantity == 1) {
@@ -831,7 +831,7 @@ function load_cart() {
         quantity_count.innerHTML = cart_item.quantity;
         quantity_section.appendChild(quantity_count);
 
-        var plus_symbol = document.createElement('img');
+        const plus_symbol = document.createElement('img');
         plus_symbol.classList.add("cart-item-plus-minus-symbol");
         plus_symbol.src = "../static/plus-white.png";
         quantity_section.appendChild(plus_symbol);
@@ -1237,7 +1237,8 @@ body {
 .cart-item-choices {
     font-size: 15px;
     color: black;
-    margin-left: 7px;
+    padding-left: 17px;
+    text-indent: -10px;
 }
 
 .cart-item-right-section {
