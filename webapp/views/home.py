@@ -34,7 +34,10 @@ def login_page():
         user = User.query.filter_by(email_address=request.form['email_address']).first()
         if user and user.password:
             if bcrypt.check_password_hash(user.password, request.form['password']):
-                login_user(user, remember=request.form['remember_me'])
+                if 'remember_me' in request.form:
+                    login_user(user, remember=True)
+                else:
+                    login_user(user, remember=False)
                 if user.stripe_customer_id:
                     return redirect('/account')
                 else:
@@ -111,7 +114,7 @@ def signup_select_plan():
 
 def is_valid_login_post_request(request):
     if request.form:
-        if ('email_address' in request.form) and ('password' in request.form) and ('remember_me' in request.form):
+        if ('email_address' in request.form) and ('password' in request.form):
             if (len(request.form['email_address']) <= 100) and (len(request.form['email_address']) > 0) and (len(request.form['password']) <= 100) and (len(request.form['password']) > 0):
                 return True
     return False

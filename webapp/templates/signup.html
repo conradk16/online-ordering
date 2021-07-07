@@ -74,28 +74,37 @@ body, html {
 
 /* Add a background color to the top navigation */
 .topnav {
+  display: flex;
+  justify-content: space-between;
   background-color: white;
   padding:8px 16px;
   border-style:solid;
   border-width: 0px 0px 1px 0px;
   border-bottom-color: rgba(230, 230, 230, 1);
   overflow: hidden;
+  align-items: center;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
-  float: right;
+.topnav-right {
   color: black;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
+  cursor: pointer;
   font-family:verdana;
 }
 
+.topnav-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
 /* Change the color of links on hover */
-.topnav a:hover {
+.topnav-right:hover {
   background-color: rgba(240, 240, 240, 0.75);
 }
 
@@ -213,7 +222,14 @@ input[type=submit] {
 <div class="overall-div">
 <div class="top-half">
 <div class="topnav">
-  <a href="/login">Log in</a>
+  <a href="/">
+  <div class="topnav-left">
+    <img src="/static/m3_logo.png" width="146.15px" height="49px">
+  </div>
+  </a>
+  <div class="topnav-right">
+  <a style="text-decoration:inherit; color:black" href="/login">Log in</a>
+  </div>
 </div>
 
 <br><br><br>
