@@ -356,9 +356,12 @@ function load_cart_layout() {
     load_cart();
 
     // set toggle button to display menu
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/menu.png";
-    toggle_button.height = "40";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "block";
+    
 }
 
 function load_narrow_layout() {
@@ -387,10 +390,11 @@ function load_narrow_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg"; 
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "visible";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
 
     // set popup to be full width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -423,10 +427,11 @@ function load_medium_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "visible";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -469,10 +474,11 @@ function load_wide_layout() {
     food_items.style.width = '420px';
 
     // set cart button to not display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "hidden";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -514,10 +520,11 @@ function load_extrawide_layout() {
     food_items.style.width = '600px';
 
     // set cart button to not display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "hidden";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -942,7 +949,7 @@ function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup; 
 
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    var toggle_button = document.getElementsByClassName("cart-menu-icon-holder")[0];
     toggle_button.onclick = toggle_cart;
 
     window.onclick = close_popup_if_open;
@@ -1170,9 +1177,12 @@ body {
     padding: 10px;
 }
 
-.toggle-button {
-    margin: 5px;
+.cart-menu-icon-holder {
     cursor: pointer;
+}
+
+.cart-menu-icon {
+    positon: absolute;
 }
 
 .main-body {
@@ -1589,7 +1599,10 @@ body {
 <div class="topnav">
     <img src="../static/super_cucas.jpg" alt="" height=45>
     <p class="store-name">Super Cucas - Micheltorena</p>
-    <img src="../static/cart.jpg" class="toggle-button" alt="" height=50>
+    <div class=cart-menu-icon-holder>
+        <img src="../static/cart.jpg" class="cart-menu-icon" alt="" height=50 style="display:block;">
+        <img src="../static/menu.png" class="cart-menu-icon" alt="" height=40 style="display:none;">
+    </div>
 </div>
 
 <div class="main-body">
