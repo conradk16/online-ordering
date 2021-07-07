@@ -11,9 +11,11 @@ account = Blueprint('account', __name__)
 def account_homepage():
     if current_user.is_authenticated:
         if current_user.email_address == "kuklinskywork@gmail.com":
-            return render_template('admin-page.html')
+            return render_template('admin.html')
+        elif current_user.stripe_customer_id:
+            return render_template('account.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
         else:
-            return render_template('account-homepage.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
+            return redirect('/signup/select-plan')
     else:
         return redirect('/login')
 

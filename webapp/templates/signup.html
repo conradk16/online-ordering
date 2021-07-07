@@ -4,63 +4,71 @@
 <head>
   <script>
   function validateEmailAndPassword(emailInput, passwordInput) {
-    var mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    validEmail = emailInput.match(mailFormat);
-    validPassword = passwordInput.length >= 8;
+    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+
+    var validEmail = (emailInput.match(mailFormat) != null) && (emailInput.length <= 100);
+    var validPassword = (passwordInput.length >= 8) && (passwordInput.length <= 100);
 
     var emailBox = document.getElementsByClassName("input-box")[0];
     var passwordBox = document.getElementsByClassName("input-box")[1];
 
+    var potential_user_already_exists_message = document.getElementById("user-already-exists-message");
+    if (potential_user_already_exists_message) {
+      potential_user_already_exists_message.remove();
+    }
+
     if (validEmail) {
-      document.getElementById("invalid-email-message").remove();
+      var potential_error_message = document.getElementById("invalid-email-message");
+      if (potential_error_message) {
+        potential_error_message.remove();
+      }
       emailBox.style.border = "1px solid #ccc";
     } else {
-      if (!document.getElementById("invalid-email-message")) {
-        var invalidEmailMessage = document.createElement("span");
-        var passwordLabel = document.getElementById("password-label");
-        form = document.getElementById("form");
+        if (!document.getElementById("invalid-email-message")) {
+          var invalidEmailMessage = document.createElement("span");
+          var passwordLabel = document.getElementById("password-label");
+          var form = document.getElementById("form");
 
-        invalidEmailMessage.id = "invalid-email-message";
-        invalidEmailMessage.classList.add("invalid-input-text");
-        invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
+          invalidEmailMessage.id = "invalid-email-message";
+          invalidEmailMessage.classList.add("invalid-input-text");
+          invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
 
-        form.insertBefore(invalidEmailMessage, passwordLabel);
-        emailBox.style.border = "1px solid #b92d2b";
-      }
+          form.insertBefore(invalidEmailMessage, passwordLabel);
+          emailBox.style.border = "1px solid #b92d2b";
+        }
     }
-
     if (validPassword) {
-      document.getElementById("invalid-password-message").remove();
+      var potential_password_error_message = document.getElementById("invalid-password-message");
+      if (potential_password_error_message) {
+        potential_password_error_message.remove();
+      }
       passwordBox.style.border = "1px solid #ccc";
     } else {
-      if (!document.getElementById("invalid-password-message")) {
-        var invalidPasswordMessage = document.createElement("span");
-        var nextButton = document.getElementById("next-button");
-        form = document.getElementById("form");
+        if (!document.getElementById("invalid-password-message")) {
+          var invalidPasswordMessage = document.createElement("span");
+          var nextButton = document.getElementById("next-button");
+          var form = document.getElementById("form");
 
-        invalidPasswordMessage.id = "invalid-password-message";
-        invalidPasswordMessage.classList.add("invalid-input-text");
-        invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
 
-        form.insertBefore(invalidPasswordMessage, nextButton);
-        passwordBox.style.border = "1px solid #b92d2b";
-      }
+          invalidPasswordMessage.id = "invalid-password-message";
+          invalidPasswordMessage.classList.add("invalid-input-text");
+          invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
+
+          form.insertBefore(invalidPasswordMessage, nextButton);
+          passwordBox.style.border = "1px solid #b92d2b";
+        }
     }
-
-    if (validEmail && validPassword) {
-        return true;
-    } else {
-        return false;
-    }
+    return (validEmail && validPassword);
   }
 
   </script>
 </head>
 
 <style>
-body {
+body, html {
   margin: 0;
+  height: 100%;
   background-color: rgba(255, 255, 255, 1);
 }
 
@@ -158,31 +166,52 @@ input[type=submit] {
   font-family:verdana;
 }
 
-input:focus ~ .floating-label,
-input:not(:focus):valid ~ .floating-label{
-  top: 8px;
-  bottom: 10px;
-  left: 20px;
-  font-size: 11px;
-  opacity: 1;
-}
-
 .inputText {
   font-size: 14px;
   width: 200px;
   height: 35px;
 }
 
-.floating-label {
-  pointer-events: none;
-  left: 20px;
-  top: 18px;
-  transition: 0.2s ease all;
+.overall-div {
+  height:100%;
+  display:flex;
+  flex-direction: column;
+}
+.top-half {
+  min-height: 550px;
+  flex:2;
+}
+.bottom-half {
+  min-height:150px;
+  background-color: #f3f3f3;
+}
+.questions {
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:18px;
+}
+
+.terms-of-use {
+  margin: 30px 60px 30px 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+  text-align: center;
+}
+
+.privacy {
+  text-align: center;
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
 }
 
 </style>
 
-
+<div class="overall-div">
+<div class="top-half">
 <div class="topnav">
   <a href="/login">Log in</a>
 </div>
@@ -194,7 +223,7 @@ input:not(:focus):valid ~ .floating-label{
       <div class="create-your-account">Create an account to get started</div>
 
       <div>
-      <form name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value)" action="/signup" method="POST">
+      <form name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value);"; action="/signup" method="POST">
         <div class="input-label" id="email-label" for="email_address">Email</div>
         <input class="input-box" id="email_address" name="email_address" placeholder="Email">
         <div class="input-label" id="password-label" for="password">Password</div>
@@ -205,5 +234,26 @@ input:not(:focus):valid ~ .floating-label{
       </form>
 </div>
 </div>
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-284-7912</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+</div>
+
+<script>
+if ({{user_already_exists|tojson}} == "true") {
+  var userAlreadyExistsErrorMessage = document.createElement("span");
+  var passwordLabel = document.getElementById("password-label");
+  var form = document.getElementById("form");
+
+  userAlreadyExistsErrorMessage.id = "user-already-exists-message";
+  userAlreadyExistsErrorMessage.classList.add("invalid-input-text");
+  userAlreadyExistsErrorMessage.innerHTML = "An account with that email address already exists. <br>";
+
+  form.insertBefore(userAlreadyExistsErrorMessage, passwordLabel);
+}
+</script>
 
 </html>
