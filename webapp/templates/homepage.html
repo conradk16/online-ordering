@@ -8,10 +8,8 @@
             var text = document.getElementsByClassName("main-text")[0];
                 if (window.innerWidth < 700) {
                     text.style.width = "500px";
-                    text.style.top  = "20%"
                 } else {
                     text.style.width = "600px"
-                    text.style.top = "25%"
                 }
         }
     </script>
@@ -21,14 +19,14 @@
 body {
   background-image: url('/static/pizza.jpg');
   background-repeat: no-repeat;
-  background-attachment: fixed; 
+  background-attachment: fixed;
   background-size: cover;
   margin: 0;
 }
 
 .main-text {
-  position: absolute;
-  top: 25%;
+  position: relative;
+  top: 280px;
   left: 64px;
   width: 600px;
   font-family:verdana;
@@ -82,7 +80,23 @@ body {
 .topnav a:hover {
   background-color: rgba(255, 255, 255, 0.75);
 }
+
+.logo {
+  position:fixed;
+  margin-left:64px;
+  margin-top:64px;
+}
+
 </style>
+
+<body>
+
+<div class="topnav">
+  <a href="/login">Log in</a>
+  <a href="/signup">Sign up</a>
+</div>
+
+<img src="/static/m3_logo.png" width="431px" height="144.5px" class="logo">
 
 <div class="main-text">
     <div>
@@ -94,10 +108,6 @@ body {
     <button type="button" onclick="location.href='/signup'" class="button">Get Online Ordering</button>
 </div>
 
-<div class="topnav">
-  <a href="/login">Log in</a>
-  <a href="/signup">Sign up</a>
-</div>
+</body>
 
 </html>
-
