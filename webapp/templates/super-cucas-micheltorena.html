@@ -28,8 +28,8 @@ function popup(item) {
     // clear choices titles
     const old_choices = document.getElementsByClassName("gray-bar");
     const num_old_choices = old_choices.length;
-    for (let i = 0; i < num_old_choices - 1; i++) {
-        old_choices[0].remove();
+    for (let i = 1; i < num_old_choices - 1; i++) {
+        old_choices[1].remove();
     }
 
     // clear specific choices
@@ -39,14 +39,36 @@ function popup(item) {
         old_specific_choice_bars[0].remove();
     }
 
-    // set required choices
+    // set up special instructions
+    var gray_bars = document.getElementsByClassName("gray-bar");
+    var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
+    special_instructions_gray_bar.style.justifyContent = "flex-start";
+        
+    if (special_instructions_gray_bar.children.length == 0) {
+        var special_instructions_title = document.createElement("span");
+        special_instructions_title.innerHTML = "Special Instructions";
+        special_instructions_title.style.fontWeight = "700";
+        special_instructions_gray_bar.appendChild(special_instructions_title);
 
+        var special_instructions_info = document.createElement("span");
+        special_instructions_info.innerHTML = " (120 Characters or Fewer)";
+        special_instructions_info.style.fontWeight = "0px";
+        special_instructions_info.style.fontSize = "14px";
+        special_instructions_info.style.marginLeft = "5px";
+        special_instructions_gray_bar.appendChild(special_instructions_info);
+    }
+
+    var special_instructions = document.getElementsByClassName("special-instructions")[0];
+    special_instructions.value = "";
+
+    // set required choices
     var quantity_bar = popup_body.lastElementChild;
+        
     for (const choice_set of item.required_choice_sets) {
         // add a header
         var required_choice_header = document.createElement('div');
         required_choice_header.classList.add("gray-bar");
-        popup_body.insertBefore(required_choice_header, quantity_bar);
+        popup_body.insertBefore(required_choice_header, special_instructions_gray_bar);
         
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
@@ -56,7 +78,7 @@ function popup(item) {
         for (const choice of choice_set.choices) {
             var specific_choice_bar = document.createElement("div");
             specific_choice_bar.classList.add("specific-choice-bar");
-            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
 
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
@@ -81,7 +103,7 @@ function popup(item) {
         // add a header
         var optional_choice_header = document.createElement('div');
         optional_choice_header.classList.add("gray-bar");
-        popup_body.insertBefore(optional_choice_header, quantity_bar);
+        popup_body.insertBefore(optional_choice_header, special_instructions_gray_bar);
         
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
@@ -91,7 +113,7 @@ function popup(item) {
         for (const choice of choice_set.choices) {
             var specific_choice_bar = document.createElement("div");
             specific_choice_bar.classList.add("specific-choice-bar");
-            popup_body.insertBefore(specific_choice_bar, quantity_bar);
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
 
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
@@ -176,6 +198,10 @@ function add_to_order(item) {
     
     var quantity_count = parseInt(document.getElementsByClassName("quantity-count")[0].innerHTML);
 
+    var special_instructions_element = document.getElementsByClassName("special-instructions")[0];
+    
+    var special_instructions_text = special_instructions_element.value;
+
     close_popup();
     
     // display "added to order"
@@ -183,8 +209,7 @@ function add_to_order(item) {
     window.setTimeout("hide_error();", 1000);
 
     // add to cart_items
-    var special_instructions = "blahblah"
-    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions);
+    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
     
     var matched = false;
     for (var cart_item of cart_items) {
@@ -197,9 +222,7 @@ function add_to_order(item) {
     if (!matched) {
         cart_items.push(cart_item_to_add);
     }
-
     
-
     if (current_layout == "wide" || current_layout == "extrawide") {
         load_cart(); 
     }
@@ -312,7 +335,7 @@ function load_cart_layout() {
         cart = document.createElement('div');
         cart.classList.add("cart");
         main_body.appendChild(cart);
-        cart.style.width = "1000px";
+        cart.style.width = "100%";
         cart.style.margin = "0px";
         cart.style.boxShadow = "0";
         cart.style.borderRadius = "0";
@@ -681,6 +704,7 @@ function load_cart() {
         var empty_cart_icon = document.createElement('img');
         empty_cart_icon.classList.add("empty-cart-icon");
         empty_cart_icon.src = "../static/empty_cart.svg";
+        empty_cart_icon.height = 
         body.appendChild(empty_cart_icon);
         body.style.display = "flex";
         body.style.justifyContent = "center";
@@ -736,14 +760,21 @@ function load_cart() {
             item_info.appendChild(optional_choices);
         }
 
+        if (cart_item.special_instructions != "") {
+            var special_instructions = document.createElement('a');
+            special_instructions.classList.add("cart-item-choices");
+            special_instructions.innerHTML = "• " + cart_item.special_instructions;
+            item_info.appendChild(special_instructions);
+        }
+
         // add right section
         var right_section = document.createElement('div');
         right_section.classList.add("cart-item-right-section");
         if (current_layout == "cart") {
-            right_section.style.width = "172px";
+            right_section.style.maxWidth = "172px";
         }
         else {
-            right_section.style.width = "180px";
+            right_section.style.maxWidth = "180px";
         }
         item.appendChild(right_section);
 
@@ -829,7 +860,7 @@ function load_cart() {
         for (price_element of price_elements) {
             total_price += parseFloat(price_element.innerHTML);
         }
-        total_text.innerHTML = "Total: " + total_price.toFixed(2);
+        total_text.innerHTML = "Total: $" + total_price.toFixed(2);
         body.appendChild(total_text);
 
         // add total to button text
@@ -1039,8 +1070,8 @@ window.onresize = update_layout;
 
 html {
     /*position: fixed;*/
-    height: 100%;
-    width: 100%;
+    min-height: 100%;
+    min-width: 100%;
 }
 
 body {
@@ -1094,10 +1125,11 @@ body {
     padding: 0px;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .cart-header {
-    font-size: 30px;
+    font-size: 23px;
     font-weight: 700;
     display: flex;
     justify-content: space-evenly;
@@ -1107,6 +1139,7 @@ body {
     flex: 2;
     overflow-y: scroll;
     padding: 0px 0px;
+    width: 100%;
 }
 
 .empty-cart-icon {
@@ -1149,6 +1182,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex: 2;
+    max-width: 
 }
 
 .cart-item-quantity-section {
@@ -1412,15 +1447,28 @@ body {
     font-weight: 700;
 }
 
+.special-instructions {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 50px;
+    width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: inherit;
+}
+
 .popup-button {
     display: flex;
+    flex: 2;
     justify-content: center;
     align-items: center;
     font-family: verdana;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.11;
     letter-spacing: .3px;
-    height: 48px;
+    min-height: 35px;
     color: #fff;
     background-color: #4693e0;
     border: none;
@@ -1496,6 +1544,9 @@ body {
         <!-- Popup body -->
         <div class="popup-body">
             <p class=popup-description></p>
+            <div class=gray-bar>
+            </div>
+            <textarea class=special-instructions rows="4" maxlength="120"></textarea>
             <div class=gray-bar>
                 <div class="plus-minus-bar">
                     <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
