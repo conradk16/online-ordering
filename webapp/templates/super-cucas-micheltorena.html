@@ -843,14 +843,28 @@ function load_cart() {
         plus_symbol.src = "../static/plus-white.png";
         quantity_section.appendChild(plus_symbol);
 
+        // add price
+        const price = document.createElement('a');
+        price.classList.add("cart-item-price");
+        price.innerHTML = cart_item.get_price();
+        right_section.appendChild(price);
+
         minus_symbol.onclick = function() {
             if (cart_item.quantity != 1) {
                 cart_item.quantity -= 1;
                 quantity_count.innerHTML = cart_item.quantity;
-
+                price.innerHTML = cart_item.get_price();
+                    
                 if (cart_item.quantity == 1) {
                     minus_symbol.style.backgroundColor = "gray";
                     minus_symbol.style.cursor = "auto";
+                }
+
+                var total_text = document.getElementsByClassName("cart-total-text")[0];
+                if (total_text != null) {
+                    var new_total = get_cart_total();
+                    total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                    cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
                 }
             }
         };
@@ -858,15 +872,18 @@ function load_cart() {
         plus_symbol.onclick = function() {
             cart_item.quantity += 1;
             quantity_count.innerHTML = cart_item.quantity;
+            price.innerHTML = cart_item.get_price();
+
             minus_symbol.style.backgroundColor = "#4693e0";
             minus_symbol.style.cursor = "pointer";
-        };
 
-        // add price
-        var price = document.createElement('a');
-        price.classList.add("cart-item-price");
-        price.innerHTML = cart_item.get_price();
-        right_section.appendChild(price);
+            total_text = document.getElementsByClassName("cart-total-text")[0];
+            if (total_text != null) {
+                new_total = get_cart_total();
+                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+            }
+        };
 
         // add trash
         var trash = document.createElement('img');
