@@ -1,52 +1,86 @@
 <!DOCTYPE html>
 <html>
 
+<meta name="viewport" content="width=device-width, initial-scale=1,  max-scale=1">
+
 <head>
     <script>
         window.onresize = resize;
         function resize() {
             var text = document.getElementsByClassName("main-text")[0];
-                if (window.innerWidth < 700) {
-                    text.style.width = "500px";
-                } else {
-                    text.style.width = "600px"
-                }
+            var main_body = document.getElementsByClassName("main-body")[0];
+            var main_text = document.getElementsByClassName("main-text")[0];
+            var main_content = document.getElementsByClassName("main-content")[0];
+            if (window.innerWidth < 700) {
+                text.style.maxWidth = "500px";
+                main_body.style.justifyContent = "center";
+                main_body.style.paddingLeft = "20px";
+                main_text.style.height = "450px";
+                main_content.style.height = "650px";
+            } else {
+                text.style.maxWidth = "600px"
+                main_body.style.justifyContent = "flex-start";
+                main_body.style.paddingLeft = "50px";
+                main_text.style.height = "350px";
+                main_content.style.height = "575px";
+            }
         }
     </script>
 </head>
 
 <style>
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   background-image: url('/static/pizza.jpg');
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
   margin: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-body {
+  flex: 2;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 50px;
+  padding-left: 50px;
+  justify-content: center;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .main-text {
-  position: relative;
-  top: 280px;
-  left: 64px;
-  width: 600px;
+  max-width: 600px;
   font-family:verdana;
   font-size:70px;
   font-weight:300;
   color:white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .sub-text {
-  position: relative;
-  top: 32px;
-  width: 600px;
+  max-width: 600px;
   font-family: verdana;
   font-size: 30px;
   color: white;
 }
 
 .button {
-  position:relative;
-  top:32px;
   border: none;
   background-color: rgba(255, 255, 255, 0.75);
   font-family: verdana;
@@ -55,36 +89,42 @@ body {
   font-size: 18px;
   cursor: pointer;
   display: inline-block;
+  width: 40%;
 }
 
 /* Add a background color to the top navigation */
 .topnav {
   background-color: rgba(255, 255, 255, .7);
-  padding:8px 16px;
-  overflow: hidden;
+  /*padding:8px 16px;*/
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
-  float: right;
-  color: black;
+.topnav-button {
   text-align: center;
   padding: 14px 16px;
-  text-decoration: none;
   opacity: 1;
-  font-size: 17px;
-  font-family:verdana;
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
+.topnav-button:hover {
   background-color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
+.topnav-button-text {
+  font-size: 17px;
+  font-family:verdana;
+  text-decoration: none;
+  color: black;
 }
 
 .logo {
-  position:fixed;
-  margin-left:64px;
-  margin-top:64px;
+  max-height:144.5px;
+  max-width:431px;
 }
 
 </style>
@@ -92,22 +132,33 @@ body {
 <body>
 
 <div class="topnav">
-  <a href="/login">Log in</a>
-  <a href="/signup">Sign up</a>
+  <div class="topnav-button">
+    <a href="/login" class="topnav-button-text">Log in</a>
+  </div>
+  <div class="topnav-button">
+    <a href="/signup" class="topnav-button-text">Sign up</a>
+  </div>
 </div>
 
-<img src="/static/m3_logo.png" width="431px" height="144.5px" class="logo">
-
-<div class="main-text">
-    <div>
-        Online Ordering for Restaurants
+<div class="main-body">
+  <div class="main-content">
+    <img src="/static/m3_logo.png" class="logo">
+    <div class="main-text">
+        <div>
+            Online Ordering for Restaurants
+        </div>
+        <div class="sub-text">
+            Get started for just $49/mo!
+        </div>
+        <button type="button" onclick="location.href='/signup'" class="button">Get Online Ordering</button>
     </div>
-    <div class="sub-text">
-        Get started for just $49/mo!
-    </div>
-    <button type="button" onclick="location.href='/signup'" class="button">Get Online Ordering</button>
+  </div>
 </div>
 
 </body>
+
+<script>
+resize();
+</script>
 
 </html>
