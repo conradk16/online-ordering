@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <!--javascript-->
 <script>
@@ -39,10 +39,19 @@ function popup(item) {
         old_specific_choice_bars[0].remove();
     }
 
+    // clear special instructions gray bar
+    var gray_bars = document.getElementsByClassName("gray-bar");
+    var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
+    while (special_instructions_gray_bar.firstChild) {
+        special_instructions_gray_bar.firstChild.remove();
+    }
+    
     // set up special instructions
     var gray_bars = document.getElementsByClassName("gray-bar");
     var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
     special_instructions_gray_bar.style.justifyContent = "flex-start";
+    special_instructions_gray_bar.style.flexDirection = "column";
+    special_instructions_gray_bar.style.alignItems = "flex-start";
         
     if (special_instructions_gray_bar.children.length == 0) {
         var special_instructions_title = document.createElement("span");
@@ -51,15 +60,17 @@ function popup(item) {
         special_instructions_gray_bar.appendChild(special_instructions_title);
 
         var special_instructions_info = document.createElement("span");
-        special_instructions_info.innerHTML = " (120 Characters or Fewer)";
+        special_instructions_info.innerHTML = " (Max 120 Characters)";
         special_instructions_info.style.fontWeight = "0px";
         special_instructions_info.style.fontSize = "14px";
-        special_instructions_info.style.marginLeft = "5px";
         special_instructions_gray_bar.appendChild(special_instructions_info);
     }
 
     var special_instructions = document.getElementsByClassName("special-instructions")[0];
     special_instructions.value = "";
+    special_instructions.onfocus = function() {
+        special_instructions.scrollIntoView({behavior: "smooth"});
+    }
 
     // set required choices
     var quantity_bar = popup_body.lastElementChild;
@@ -160,6 +171,7 @@ function popup(item) {
     const add_to_order_button = document.getElementsByClassName("popup-button")[0];
     add_to_order_button.onclick = function () { add_to_order(item); };
     
+    //popup.click();
     
 }
 
@@ -344,9 +356,12 @@ function load_cart_layout() {
     load_cart();
 
     // set toggle button to display menu
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/menu.png";
-    toggle_button.height = "40";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "block";
+    
 }
 
 function load_narrow_layout() {
@@ -375,10 +390,11 @@ function load_narrow_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg"; 
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "visible";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
 
     // set popup to be full width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -411,10 +427,11 @@ function load_medium_layout() {
     food_items.style.width = 'auto';
 
     // set cart button to display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "visible";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -457,10 +474,11 @@ function load_wide_layout() {
     food_items.style.width = '420px';
 
     // set cart button to not display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "hidden";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -502,10 +520,11 @@ function load_extrawide_layout() {
     food_items.style.width = '600px';
 
     // set cart button to not display
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
-    toggle_button.src = "../static/cart.jpg";
-    toggle_button.height = "50";
-    toggle_button.style.visibility = "hidden";
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
 
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
@@ -658,9 +677,26 @@ function load_menu_wide() {
     }
 }
 
-// makes use of global 'selections' variable
-// assumes cart exists
-    
+function remove_from_cart_items(to_remove) {
+    for (let i = 0; i < cart_items.length; i++) {
+        cart_item = cart_items[i];
+        if (cart_item.is_equal(to_remove)) {
+            cart_items.splice(i, 1);
+        }
+    }
+}
+
+function get_cart_total() {
+    var total_price = 0;
+    var price_elements = document.getElementsByClassName('cart-item-price');
+    for (price_element of price_elements) {
+        total_price += parseFloat(price_element.innerHTML);
+    }
+    return total_price;
+}
+
+// makes use of global `cart_items` variable
+// assumes cart exists   
 function load_cart() {
     var cart = document.getElementsByClassName("cart")[0];
     
@@ -699,19 +735,21 @@ function load_cart() {
     body.style.margin = "0px";
     cart.insertBefore(body, cart_button);
 
-    // if empty, gray payment button and add cart icon
+    // set empty cart icon
+    var empty_cart_icon = document.createElement('img');
+    empty_cart_icon.classList.add("empty-cart-icon");
+    empty_cart_icon.src = "../static/empty_cart.svg";
+    empty_cart_icon.style.display = "none";
+    body.appendChild(empty_cart_icon);
+
+    // if empty, gray payment button and show cart icon
     if (cart_items.length == 0) {
-        var empty_cart_icon = document.createElement('img');
-        empty_cart_icon.classList.add("empty-cart-icon");
-        empty_cart_icon.src = "../static/empty_cart.svg";
-        empty_cart_icon.height = 
-        body.appendChild(empty_cart_icon);
+        cart_button.style.backgroundColor = "gray";
+        cart_button.style.cursor = "auto";
+        empty_cart_icon.style.display = "block";
         body.style.display = "flex";
         body.style.justifyContent = "center";
         body.style.alignItems = "center";
-
-        cart_button.style.backgroundColor = "gray";
-        cart_button.style.cursor = "auto";
     }
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
@@ -720,7 +758,7 @@ function load_cart() {
 
         // add item
         
-        var item = document.createElement('div');
+        const item = document.createElement('div');
         item.classList.add("cart-item");
         if (current_layout == "cart") {
             item.style.margin = "5px 15px";
@@ -771,9 +809,11 @@ function load_cart() {
         var right_section = document.createElement('div');
         right_section.classList.add("cart-item-right-section");
         if (current_layout == "cart") {
+            right_section.style.minWidth = "172px";
             right_section.style.maxWidth = "172px";
         }
         else {
+            right_section.style.minWidth = "180px";
             right_section.style.maxWidth = "180px";
         }
         item.appendChild(right_section);
@@ -784,7 +824,7 @@ function load_cart() {
         right_section.appendChild(quantity_section);
 
         // add quantity elements
-        var minus_symbol = document.createElement('img');
+        const minus_symbol = document.createElement('img');
         minus_symbol.classList.add("cart-item-plus-minus-symbol");
         minus_symbol.src = "../static/minus-white.png";
         if (cart_item.quantity == 1) {
@@ -792,25 +832,34 @@ function load_cart() {
             minus_symbol.style.cursor = "auto";
         }
         quantity_section.appendChild(minus_symbol);
-        minus_symbol.onclick = function() {
-            if (cart_item.quantity != 1) {
-                cart_item.quantity -= 1;
-                load_cart();
-            }
-        };
 
-        var quantity_count = document.createElement('a');
+        const quantity_count = document.createElement('a');
         quantity_count.classList.add("cart-item-quantity-count");
         quantity_count.innerHTML = cart_item.quantity;
         quantity_section.appendChild(quantity_count);
 
-        var plus_symbol = document.createElement('img');
+        const plus_symbol = document.createElement('img');
         plus_symbol.classList.add("cart-item-plus-minus-symbol");
         plus_symbol.src = "../static/plus-white.png";
         quantity_section.appendChild(plus_symbol);
+
+        minus_symbol.onclick = function() {
+            if (cart_item.quantity != 1) {
+                cart_item.quantity -= 1;
+                quantity_count.innerHTML = cart_item.quantity;
+
+                if (cart_item.quantity == 1) {
+                    minus_symbol.style.backgroundColor = "gray";
+                    minus_symbol.style.cursor = "auto";
+                }
+            }
+        };
+
         plus_symbol.onclick = function() {
             cart_item.quantity += 1;
-            load_cart();
+            quantity_count.innerHTML = cart_item.quantity;
+            minus_symbol.style.backgroundColor = "#4693e0";
+            minus_symbol.style.cursor = "pointer";
         };
 
         // add price
@@ -828,14 +877,27 @@ function load_cart() {
         trash.style.marginBottom = "2px";
         right_section.appendChild(trash);
         trash.onclick = function() {
-            cart_items.splice(j, 1);
-            load_cart();
+            remove_from_cart_items(cart_item);
+            var items = document.getElementsByClassName("cart-item");
+            if (items.length == 1) {
+                document.getElementsByClassName("cart-total-line")[0].remove();
+                document.getElementsByClassName("cart-total-text")[0].remove();
+                cart_button.style.backgroundColor = "gray";
+                cart_button.style.cursor = "auto";
+                cart_button.innerHTML = "Proceed to Payment";
+                empty_cart_icon.style.display = "block";
+                body.style.display = "flex";
+                body.style.justifyContent = "center";
+                body.style.alignItems = "center";
+            }
+            total_text = document.getElementsByClassName("cart-total-text")[0];
+            if (total_text != null) {
+                new_total = get_cart_total() - cart_item.get_price();
+                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+            }
+            item.remove();
         };
-
-        // add horizontal line
-        /*var line = document.createElement('hr');
-        line.classList.add("cart-item-separator");
-        body.appendChild(line);*/
         
     }
 
@@ -855,11 +917,7 @@ function load_cart() {
     if (document.getElementsByClassName("cart-item").length != 0) {
         var total_text = document.createElement('a');
         total_text.classList.add("cart-total-text");
-        var total_price = 0;
-        var price_elements = document.getElementsByClassName('cart-item-price');
-        for (price_element of price_elements) {
-            total_price += parseFloat(price_element.innerHTML);
-        }
+        total_price = get_cart_total();
         total_text.innerHTML = "Total: $" + total_price.toFixed(2);
         body.appendChild(total_text);
 
@@ -880,11 +938,18 @@ function toggle_cart() {
     }
 }
 
+function preload_images()
+{
+    var img=new Image();
+    img.src="../static/empty_cart.svg";
+    img.src="../static/menu.png";
+}
+
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup; 
 
-    var toggle_button = document.getElementsByClassName("toggle-button")[0];
+    var toggle_button = document.getElementsByClassName("cart-menu-icon-holder")[0];
     toggle_button.onclick = toggle_cart;
 
     window.onclick = close_popup_if_open;
@@ -893,6 +958,7 @@ function set_onclicks() {
 function run_on_load() {
     set_onclicks();
     initialize_layout();
+    preload_images();
 }
 
 class menuGroup {
@@ -1081,6 +1147,7 @@ body {
     width: 100%;
     position: fixed;
     -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
 }
 
 * {
@@ -1110,9 +1177,12 @@ body {
     padding: 10px;
 }
 
-.toggle-button {
-    margin: 5px;
+.cart-menu-icon-holder {
     cursor: pointer;
+}
+
+.cart-menu-icon {
+    positon: absolute;
 }
 
 .main-body {
@@ -1143,8 +1213,10 @@ body {
 }
 
 .empty-cart-icon {
-    height: 28%;
-    margin-right: 30px;
+    position: absolute;
+    display: none;
+    height: 20%;
+    margin-right: 15px;
 }
 
 .cart-item {
@@ -1175,7 +1247,8 @@ body {
 .cart-item-choices {
     font-size: 15px;
     color: black;
-    margin-left: 7px;
+    padding-left: 17px;
+    text-indent: -10px;
 }
 
 .cart-item-right-section {
@@ -1183,7 +1256,7 @@ body {
     align-items: center;
     justify-content: space-between;
     flex: 2;
-    max-width: 
+    min-width:  
 }
 
 .cart-item-quantity-section {
@@ -1202,6 +1275,7 @@ body {
     border-radius: 30px;
     width: 25px;
     height: 25px;
+    touch-action: manipulation
 }
 
 .cart-item-quantity-count {
@@ -1451,12 +1525,14 @@ body {
     margin-top: 10px;
     margin-bottom: 5px;
     height: 50px;
-    width: calc(100% - 10px);
+    min-width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
     margin-left: 5px;
     margin-right: 5px;
     border: 1px solid #d4d4d4;
     border-radius: 5px;
     font-family: inherit;
+    font-size: 15px;
 }
 
 .popup-button {
@@ -1523,7 +1599,10 @@ body {
 <div class="topnav">
     <img src="../static/super_cucas.jpg" alt="" height=45>
     <p class="store-name">Super Cucas - Micheltorena</p>
-    <img src="../static/cart.jpg" class="toggle-button" alt="" height=50>
+    <div class=cart-menu-icon-holder>
+        <img src="../static/cart.jpg" class="cart-menu-icon" alt="" height=50 style="display:block;">
+        <img src="../static/menu.png" class="cart-menu-icon" alt="" height=40 style="display:none;">
+    </div>
 </div>
 
 <div class="main-body">
@@ -1546,7 +1625,7 @@ body {
             <p class=popup-description></p>
             <div class=gray-bar>
             </div>
-            <textarea class=special-instructions rows="4" maxlength="120"></textarea>
+            <textarea class=special-instructions rows="4" maxlength="120" spellcheck="False" content="width=device-width, initial-scale=1, maximum-scale=1"></textarea>
             <div class=gray-bar>
                 <div class="plus-minus-bar">
                     <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
