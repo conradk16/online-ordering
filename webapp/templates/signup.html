@@ -79,12 +79,13 @@ body, html {
   display: flex;
   justify-content: space-between;
   background-color: white;
-  padding:8px 16px;
   border-style:solid;
   border-width: 0px 0px 1px 0px;
   border-bottom-color: rgba(230, 230, 230, 1);
   overflow: hidden;
   align-items: center;
+  padding: 0;
+  margin: 0;
 }
 
 /* Style the links inside the navigation bar */
@@ -103,6 +104,7 @@ body, html {
   display: flex;
   align-items: center;
   cursor: pointer;
+  margin-left: 4px;
 }
 
 /* Change the color of links on hover */
@@ -225,7 +227,7 @@ input[type=submit] {
 <div class="topnav">
   <a href="/">
   <div class="topnav-left">
-    <img src="/static/m3_logo.png" width="146.15px" height="49px">
+    <img src="/static/m3_logo.png" width="122.25px" height="41px">
   </div>
   </a>
   <div class="topnav-right">
@@ -246,7 +248,7 @@ input[type=submit] {
         <div class="input-label" id="password-label" for="password">Password</div>
         <input class="input-box" type="password" id="password" name="password" placeholder="Add a password">
 
-        <input type="submit" id="next-button" value="Next">
+        <input type="submit" id="next-button" value="Next" style="-webkit-appearance:none;">
 
       </form>
 </div>

@@ -11,18 +11,23 @@
             var main_body = document.getElementsByClassName("main-body")[0];
             var main_text = document.getElementsByClassName("main-text")[0];
             var main_content = document.getElementsByClassName("main-content")[0];
+            var logo = document.getElementsByClassName("logo")[0];
             if (window.innerWidth < 700) {
                 text.style.maxWidth = "500px";
                 main_body.style.justifyContent = "center";
                 main_body.style.paddingLeft = "20px";
-                main_text.style.height = "450px";
-                main_content.style.height = "650px";
+                main_body.style.paddingTop = "30px";
+                main_text.style.fontSize = "40px";
+                logo.style.height = "90px";
+                logo.style.width = (431 * 90 / 144.5) + "px";
             } else {
                 text.style.maxWidth = "600px"
                 main_body.style.justifyContent = "flex-start";
                 main_body.style.paddingLeft = "50px";
-                main_text.style.height = "350px";
-                main_content.style.height = "575px";
+                main_body.style.paddingTop = "50px";
+                main_text.style.fontSize = "70px";
+                logo.style.height = "144.5px";
+                logo.style.width = "431px";
             }
         }
     </script>
@@ -45,6 +50,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 .main-body {
@@ -57,9 +63,9 @@ body {
 }
 
 .main-content {
-  display: flex;
+  /*display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between;*/
 }
 
 .main-text {
@@ -68,9 +74,7 @@ body {
   font-size:70px;
   font-weight:300;
   color:white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  margin-top: 30px;
 }
 
 .sub-text {
@@ -78,6 +82,7 @@ body {
   font-family: verdana;
   font-size: 30px;
   color: white;
+  margin-top: 20px;
 }
 
 .button {
@@ -89,7 +94,8 @@ body {
   font-size: 18px;
   cursor: pointer;
   display: inline-block;
-  width: 40%;
+  width: 70%;
+  margin-top: 20px;
 }
 
 /* Add a background color to the top navigation */
@@ -123,8 +129,8 @@ body {
 }
 
 .logo {
-  max-height:144.5px;
-  max-width:431px;
+  height:144.5px;
+  width:431px;
 }
 
 </style>
