@@ -73,6 +73,7 @@ body, html {
   margin: 0;
   height: 100%;
   background-color: rgba(255, 255, 255, 1);
+  font-family: Arial, verdana, helvetica, sans-serif;
 }
 
 /* Add a background color to the top navigation */
@@ -80,7 +81,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   background-color: white;
-  padding:8px 16px;
+  padding: 8px 16px;
   border-style:solid;
   border-width: 0px 0px 1px 0px;
   border-bottom-color: rgba(230, 230, 230, 1);
@@ -92,7 +93,6 @@ body, html {
 .topnav-right {
   color: black;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
@@ -112,18 +112,77 @@ body, html {
 }
 
 .center {
-  margin: auto;
-  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
   padding: 10px;
   background-color: white;
 }
 
-.flex-container {
-  display: flex;
-  flex-direction: row;
-  max-width:800px;
-  justify-content: center;
+.plans {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
+
+.plan {
+    display: flex;
+    flex-direction: column;
+    height: 325px;
+    width: 40%;
+    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.plan:hover {
+    cursor: pointer;
+}
+
+.plan-title {
+    font-family: inherit;
+    font-size: 26px;
+}
+
+.plan-caption {
+    color: #8f8f8f;
+    font-size: 15px;
+}
+
+.plan-img {
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-bottom: 50px;
+    margin-top: 40px;
+}
+
+.img-orange {
+    filter: invert(61%) sepia(34%) saturate(751%) hue-rotate(335deg) brightness(90%) contrast(97%);
+}
+
+.img-red {
+    filter: invert(35%) sepia(56%) saturate(1222%) hue-rotate(280deg) brightness(84%) contrast(89%);
+}
+
+.plan-bullet-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.plan-bullet {
+    max-width: 10px;
+}
+
+.plan-bullet-text {
+    flex: 2;
+    padding-left: 10px;
+}
+
+
 
 .step-one-of-three {
   text-align: center;
@@ -136,9 +195,10 @@ body, html {
   font-size: 30px;
   font-family:verdana;
   font-weight: 400;
+  margin: auto;
   text-align: center;
   width: 400px;
-  padding: 12px 8px 8px 8px;
+  padding: 8px 8px 35px 8px;
 }
 
 .input-label {
@@ -229,11 +289,9 @@ input[type=submit] {
 }
 
 .columns {
-  float: left;
-  width: 50%;
-  padding: 8px;
-  box-sizing: border-box;
-}
+    float: left;
+    width: 50%;
+    box-sizing: border-box;}
 
 .price {
   list-style-type: none;
@@ -242,6 +300,9 @@ input[type=submit] {
   padding: 0;
   -webkit-transition: 0.3s;
   transition: 0.3s;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
+  border-radius: 20px;
+
 }
 
 .price:hover {
@@ -296,39 +357,48 @@ input[type=submit] {
     </div>
   </div>
 
-<br><br><br>
-
+<br>
 <div class="center">
-      <div class="step-one-of-three">Step 2 of 3</div>
-      <div class="create-your-account">Select a plan</div>
+        <div class="step-one-of-three">Step 2 of 3</div>
+        <div class="create-your-account">Select a plan</div>
+        <div class="plans">
+            <div class="plan" name="plan1">
+                <div class="plan-title" style="color: #e38552">Monthly</div>
+                <div class="plan-caption">$49 / month</div>
+                <img src="../static/month.jpg" class="img-orange plan-img"></img>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                    <div class="plan-bullet-text">Great option! Buy buy buy!</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                    <div class="plan-bullet-text">Incredible! Fucking buy!!!</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                    <div class="plan-bullet-text">okey plz buy</div>
+                </div>
 
-      <br>
-
-      <div class="flex-container">
-
-      <div class="columns">
-        <ul class="price">
-          <li class="header">Billed<br>monthly</li>
-          <li class="grey">$ 49 / mo</li>
-          <form action="/signup/select-plan" method="post">
-          <input type="submit" name="select" value="Select"/>
-          <input type="hidden" name="price_id" value="price_1J8t5yLGQW192ovf4Tkd70Ta">
-          </form>
-        </ul>
-      </div>
-
-      <div class="columns">
-        <ul class="price">
-          <li class="header">Billed<br>yearly</li>
-          <li class="grey">$ 49 / mo</li>
-          <form action="/signup/select-plan" method="post">
-          <input type="submit" name="select" value="Select"/>
-          <input type="hidden" name="price_id" value="price_1J8t6xLGQW192ovfioaRFBEB">
-          </form>
-        </ul>
-      </div>
-
-      </div>
+            </div>
+            <div class="plan" name="plan2">
+                <div class="plan-title" style="color: #b53e89">Annual</div>
+                <div class="plan-caption">$449 / year</div>
+                <img src="../static/year.png" class="img-red plan-img"></img>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                    <div class="plan-bullet-text">Great option! Buy buy buy!</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                    <div class="plan-bullet-text">Incredible! Fucking buy!!!</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                    <div class="plan-bullet-text">okey plz buy</div>
+                </div>
+            </div>
+        </div>
+        <br>
 </div>
 </div>
 <div class="bottom-half">
