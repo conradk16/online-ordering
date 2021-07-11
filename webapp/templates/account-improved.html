@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+  <script>
+
+  </script>
+</head>
+
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Add a background color to the top navigation */
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-style:solid;
+  border-width: 0px 0px 1px 0px;
+  border-bottom-color: rgba(230, 230, 230, 1);
+  overflow: hidden;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the links inside the navigation bar */
+.topnav-right {
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  opacity: 1;
+  font-size: 17px;
+  cursor: pointer;
+  font-family:verdana;
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* Change the color of links on hover */
+.topnav-right:hover {
+  background-color: rgba(240, 240, 240, 0.75);
+}
+
+.overall-div {
+  height:100%;
+  display:flex;
+  flex-direction: column;
+}
+.top-half {
+  min-height: 550px;
+  flex:2;
+}
+.bottom-half {
+  min-height:150px;
+  background-color: #f3f3f3;
+}
+.questions {
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:18px;
+}
+
+.terms-of-use {
+  margin: 30px 60px 30px 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+  text-align: center;
+}
+
+.privacy {
+  text-align: center;
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+}
+
+
+</style>
+
+<div class="overall-div">
+<div class="top-half">
+  <div class="topnav">
+    <a href="/">
+    <div class="topnav-left">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+    </div>
+    </a>
+    <div class="topnav-right">
+    <a style="text-decoration:inherit; color:black" href="/signout">Sign Out</a>
+    </div>
+  </div>
+  </div>
+
+<br><br><br>
+
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-284-7912</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+</div>
+
+</html>
