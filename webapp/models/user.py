@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     stripe_charges_enabled = db.Column(db.Boolean, default=False)
     stripe_connected_account_details_submitted = db.Column(db.Boolean, default=False)
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
+    order_url = db.Column(db.String)
 
     def __repr__(self):
         return f"User('{self.email_address}', '{self.password}')"

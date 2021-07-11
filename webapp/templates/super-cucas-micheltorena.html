@@ -45,14 +45,14 @@ function popup(item) {
     while (special_instructions_gray_bar.firstChild) {
         special_instructions_gray_bar.firstChild.remove();
     }
-    
+
     // set up special instructions
     var gray_bars = document.getElementsByClassName("gray-bar");
     var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
     special_instructions_gray_bar.style.justifyContent = "flex-start";
     special_instructions_gray_bar.style.flexDirection = "column";
     special_instructions_gray_bar.style.alignItems = "flex-start";
-        
+
     if (special_instructions_gray_bar.children.length == 0) {
         var special_instructions_title = document.createElement("span");
         special_instructions_title.innerHTML = "Special Instructions";
@@ -74,13 +74,13 @@ function popup(item) {
 
     // set required choices
     var quantity_bar = popup_body.lastElementChild;
-        
+
     for (const choice_set of item.required_choice_sets) {
         // add a header
         var required_choice_header = document.createElement('div');
         required_choice_header.classList.add("gray-bar");
         popup_body.insertBefore(required_choice_header, special_instructions_gray_bar);
-        
+
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
         choice_title.innerHTML = choice_set.title + " (required)";
@@ -115,7 +115,7 @@ function popup(item) {
         var optional_choice_header = document.createElement('div');
         optional_choice_header.classList.add("gray-bar");
         popup_body.insertBefore(optional_choice_header, special_instructions_gray_bar);
-        
+
         var choice_title = document.createElement('a');
         choice_title.classList.add("choice-title");
         choice_title.innerHTML = choice_set.title;
@@ -170,9 +170,9 @@ function popup(item) {
     // set onclick for add_to_order_button
     const add_to_order_button = document.getElementsByClassName("popup-button")[0];
     add_to_order_button.onclick = function () { add_to_order(item); };
-    
+
     //popup.click();
-    
+
 }
 
 function add_to_order(item) {
@@ -195,7 +195,7 @@ function add_to_order(item) {
             display_error("Please Select " + required_choice_set.title, "red");
             window.setTimeout("hide_error();", 1500);
             return;
-        }       
+        }
     }
 
     for (optional_choice_set of item.optional_choice_sets) {
@@ -205,24 +205,24 @@ function add_to_order(item) {
             if (checkbox.checked) {
                 optional_selections.push(optional_choice_set.choices[i]);
             }
-        }       
+        }
     }
-    
+
     var quantity_count = parseInt(document.getElementsByClassName("quantity-count")[0].innerHTML);
 
     var special_instructions_element = document.getElementsByClassName("special-instructions")[0];
-    
+
     var special_instructions_text = special_instructions_element.value;
 
     close_popup();
-    
+
     // display "added to order"
     display_error("Added To Order", "green");
     window.setTimeout("hide_error();", 750);
 
     // add to cart_items
     var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
-    
+
     var matched = false;
     for (var cart_item of cart_items) {
         if (cart_item.is_equal(cart_item_to_add)) {
@@ -234,16 +234,16 @@ function add_to_order(item) {
     if (!matched) {
         cart_items.push(cart_item_to_add);
     }
-    
+
     if (current_layout == "wide" || current_layout == "extrawide") {
-        load_cart(); 
+        load_cart();
     }
 }
 
 function display_error(message, color) {
     var error_box = document.getElementsByClassName('error-alert')[0];
     error_box.style.display = "flex";
-    
+
     // clear message
     var text = error_box.firstChild;
     text.remove();
@@ -361,7 +361,7 @@ function load_cart_layout() {
     menu_icon = icons[1];
     cart_icon.style.display = "none";
     menu_icon.style.display = "block";
-    
+
 }
 
 function load_narrow_layout() {
@@ -374,7 +374,7 @@ function load_narrow_layout() {
     if (cart != null) {
         cart.remove();
     }
-    
+
     // create food-items
     var food_items = document.getElementsByClassName("food-items")[0];
     if (food_items == null) {
@@ -419,7 +419,7 @@ function load_medium_layout() {
         food_items.classList.add("food-items");
         main_body.appendChild(food_items);
     }
-    
+
     // load wide menu
     load_menu_wide();
 
@@ -548,7 +548,7 @@ function load_menu_narrow() {
         new_header.innerHTML = menu_group.group_name;
         new_header.classList.add("group-header");
         food_items.appendChild(new_header);
-            
+
         var group_list = document.createElement('ul');
         group_list.classList.add("group-list");
         food_items.appendChild(group_list);
@@ -558,7 +558,7 @@ function load_menu_narrow() {
             var list_item = document.createElement('li');
             list_item.classList.add("list-item");
             group_list.appendChild(list_item);
-            
+
             var link = document.createElement('a');
             link.classList.add("link");
             link.onclick = function() { popup(item); };
@@ -571,17 +571,17 @@ function load_menu_narrow() {
             var top_row = document.createElement('div');
             top_row.classList.add("top-row");
             inside_box.appendChild(top_row);
-    
+
             var title = document.createElement('a');
             title.classList.add("title");
             title.innerHTML = item.item_name;
             top_row.appendChild(title);
-            
+
             var price = document.createElement('span');
             price.classList.add("price");
             price.innerHTML = item.price;
             top_row.appendChild(price);
-            
+
             var description = document.createElement('p');
             description.classList.add("description");
             description.innerHTML = item.item_description;
@@ -607,11 +607,11 @@ function load_menu_wide() {
         new_header.innerHTML = menu_group.group_name;
         new_header.classList.add("group-header");
         food_items.appendChild(new_header);
-            
+
         var group_box = document.createElement('div');
         group_box.classList.add("group-box");
         food_items.appendChild(group_box);
-            
+
         var group_list_left = document.createElement('ul');
         group_list_left.classList.add("group-list-left");
         group_box.appendChild(group_list_left);
@@ -626,7 +626,7 @@ function load_menu_wide() {
             var list_item = document.createElement('li');
             list_item.classList.add("list-item");
             group_list_left.appendChild(list_item);
-            
+
             var link = document.createElement('a');
             link.classList.add("link");
             link.onclick = function() { popup(item); };
@@ -639,17 +639,17 @@ function load_menu_wide() {
             var top_row = document.createElement('div');
             top_row.classList.add("top-row");
             inside_box.appendChild(top_row);
-    
+
             var title = document.createElement('a');
             title.classList.add("title");
             title.innerHTML = item.item_name;
             top_row.appendChild(title);
-            
+
             var price = document.createElement('span');
             price.classList.add("price");
             price.innerHTML = item.price;
             top_row.appendChild(price);
-            
+
             var description = document.createElement('p');
             description.classList.add("description");
             description.innerHTML = item.item_description;
@@ -665,7 +665,7 @@ function load_menu_wide() {
             moving_elem = left_children[left_children.length - 1];
             group_list_left.removeChild(moving_elem);
             group_list_right.prepend(moving_elem);
-            
+
             // check if need to move it back
             if (group_list_left.clientHeight < group_list_right.clientHeight) {
                 group_list_right.removeChild(moving_elem);
@@ -696,10 +696,10 @@ function get_cart_total() {
 }
 
 // makes use of global `cart_items` variable
-// assumes cart exists   
+// assumes cart exists
 function load_cart() {
     var cart = document.getElementsByClassName("cart")[0];
-    
+
     // clear the cart
     while (cart.firstChild) {
         cart.removeChild(cart.firstChild);
@@ -709,14 +709,14 @@ function load_cart() {
     var header = document.createElement('div');
     header.classList.add("cart-header");
     cart.appendChild(header);
-        
+
     if (current_layout == "cart") {
         header.style.paddingTop = "10px";
         header.style.paddingLeft = "4px";
         header.style.paddingRight = "4px";
         header.style.paddingBottom = "0px";
-    } else { 
-        header.style.padding = "15px"; 
+    } else {
+        header.style.padding = "15px";
     }
 
     var header_text = document.createElement('a');
@@ -727,6 +727,14 @@ function load_cart() {
     var cart_button = document.createElement('button');
     cart_button.classList.add("cart-button");
     cart_button.innerHTML = "Proceed to Payment";
+    cart_button.onclick = function() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/super-cucas-micheltorena", true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        cart_items: cart_items,
+      }));
+    }
     cart.appendChild(cart_button);
 
     // add body
@@ -757,7 +765,7 @@ function load_cart() {
         const cart_item = cart_items[j];
 
         // add item
-        
+
         const item = document.createElement('div');
         item.classList.add("cart-item");
         if (current_layout == "cart") {
@@ -773,14 +781,14 @@ function load_cart() {
         title.classList.add("cart-item-title");
         title.innerHTML = cart_item.item.item_name;
         item_info.appendChild(title);
-            
+
         for (let i = 0; i < cart_item.item.required_choice_sets.length; i++) {
             var required_choice = document.createElement('a');
             required_choice.classList.add("cart-item-choices");
             const choice_title = cart_item.item.required_choice_sets[i].title;
             const selection = cart_item.required_selections[i].name;
             const required_choices_text = "• " + choice_title + ": " + selection;
-            
+
             required_choice.innerHTML = required_choices_text;
             item_info.appendChild(required_choice);
         }
@@ -854,7 +862,7 @@ function load_cart() {
                 cart_item.quantity -= 1;
                 quantity_count.innerHTML = cart_item.quantity;
                 price.innerHTML = cart_item.get_price();
-                    
+
                 if (cart_item.quantity == 1) {
                     minus_symbol.style.backgroundColor = "gray";
                     minus_symbol.style.cursor = "auto";
@@ -915,7 +923,7 @@ function load_cart() {
             }
             item.remove();
         };
-        
+
     }
 
     // remove last line
@@ -941,7 +949,7 @@ function load_cart() {
         // add total to button text
         cart_button.innerHTML += " ($" + total_price.toFixed(2) + ")";
     }
-    
+
 }
 
 function toggle_cart() {
@@ -964,7 +972,7 @@ function preload_images()
 
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
-    popup_x.onclick = close_popup; 
+    popup_x.onclick = close_popup;
 
     var toggle_button = document.getElementsByClassName("cart-menu-icon-holder")[0];
     toggle_button.onclick = toggle_cart;
@@ -1090,24 +1098,24 @@ items.push(new menuItem("#12 Energy Burrito", "Beef, veggies, scrambled eggs, ch
 
 items.push(new menuItem("#13 Ham and Bacon Burrito", "Ham, bacon, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
 
-items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99, 
+items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99,
         [
         new choiceSet(
-            "Meat", 
+            "Meat",
             [
-            new choice("Chicken", 1.00), 
-            new choice("Beef", null), 
-            new choice("Pork", null)
+            new choice("Chicken", 1.00),
+            new choice("Beef", 0),
+            new choice("Pork", 0)
             ]
         ),
         new choiceSet(
             "Egg Style",
             [
-            new choice("Scrambled", null),
-            new choice("Over Easy", null),
-            new choice("Over Medium", null),
-            new choice("Over Hard", null),
-            new choice("Sunny-Side Up", null)
+            new choice("Scrambled", 0),
+            new choice("Over Easy", 0),
+            new choice("Over Medium", 0),
+            new choice("Over Hard", 0),
+            new choice("Sunny-Side Up", 0)
             ]
         )
         ],
@@ -1116,7 +1124,7 @@ items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, ri
             "Goodies",
             [
             new choice("Brownies", 1.00),
-            new choice("Sprinkles", null)
+            new choice("Sprinkles", 0)
             ]
         )
         ]
@@ -1128,7 +1136,7 @@ menu_groups.push(new menuGroup("Breakfast", items));
 
 // second group
 var items = [];
-items.push(new menuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94, 
+items.push(new menuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94,
         [],[]));
 
 items.push(new menuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantro.", 10.99, [],[]));
@@ -1249,7 +1257,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    
+
 }
 
 .cart-item-title {
@@ -1273,7 +1281,7 @@ body {
     align-items: center;
     justify-content: space-between;
     flex: 2;
-    min-width:  
+    min-width:
 }
 
 .cart-item-quantity-section {
