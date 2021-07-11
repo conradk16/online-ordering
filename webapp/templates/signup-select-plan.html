@@ -65,6 +65,28 @@
     return (validEmail && validPassword);
   }
 
+  function run_on_load() {
+    run_on_resize();
+  }
+
+  function run_on_resize() {
+    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
+    center = document.getElementsByClassName("center")[0];
+    for (const elem of bullet_text_elements) {
+        if (window.innerWidth < 500) {
+            elem.style.fontSize = "12px";
+            center.style.padding = "30px 15px";
+            
+        } else {
+            elem.style.fontSize = "15px";
+            center.style.padding = "30px 30px";
+        }
+    }
+  }
+
+  window.onload = run_on_load;
+  window.onresize = run_on_resize;
+
   </script>
 </head>
 
@@ -74,6 +96,7 @@ body, html {
   height: 100%;
   background-color: rgba(255, 255, 255, 1);
   font-family: Arial, verdana, helvetica, sans-serif;
+  box-sizing: border-box;
 }
 
 /* Add a background color to the top navigation */
@@ -81,18 +104,20 @@ body, html {
   display: flex;
   justify-content: space-between;
   background-color: white;
-  padding: 8px 16px;
   border-style:solid;
   border-width: 0px 0px 1px 0px;
   border-bottom-color: rgba(230, 230, 230, 1);
   overflow: hidden;
   align-items: center;
+  padding: 0;
+  margin: 0;
 }
 
 /* Style the links inside the navigation bar */
 .topnav-right {
   color: black;
   text-align: center;
+  padding: 14px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
@@ -115,8 +140,8 @@ body, html {
 .center {
   margin-left: auto;
   margin-right: auto;
-  max-width: 600px;
-  padding: 10px;
+  max-width: 575px;
+  padding: 30px;
   background-color: white;
 }
 
@@ -124,20 +149,27 @@ body, html {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    box-sizing: inherit;
 }
 
 .plan {
     display: flex;
     flex-direction: column;
-    height: 325px;
-    width: 40%;
+    height: 310px;
+    max-width: 100%;
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
     border-radius: 20px;
-    padding: 20px;
+    padding: 15px;
+    margin: 0;
 }
 
 .plan:hover {
     cursor: pointer;
+}
+
+.link {
+    text-decoration: none;
+    width: 47%;
 }
 
 .plan-title {
@@ -153,7 +185,7 @@ body, html {
 .plan-img {
     margin-left: 35%;
     margin-right: 35%;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
     margin-top: 40px;
 }
 
@@ -166,8 +198,6 @@ body, html {
 }
 
 .plan-bullet-container {
-    margin-left: 10px;
-    margin-right: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -181,8 +211,9 @@ body, html {
 .plan-bullet-text {
     flex: 2;
     padding-left: 10px;
+    font-size: 15px;
+    color: black;
 }
-
 
 
 .step-one-of-three {
@@ -198,7 +229,6 @@ body, html {
   font-weight: 400;
   margin: auto;
   text-align: center;
-  width: 400px;
   padding: 8px 8px 35px 8px;
 }
 
@@ -350,7 +380,7 @@ input[type=submit] {
   <div class="topnav">
     <a href="/">
     <div class="topnav-left">
-      <img src="/static/m3_logo.png" width="122.25px" height="41px">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
     </div>
     </a>
     <div class="topnav-right">
@@ -363,41 +393,40 @@ input[type=submit] {
         <div class="step-one-of-three">Step 2 of 3</div>
         <div class="create-your-account">Select a plan</div>
         <div class="plans">
-            <div class="plan" name="plan1">
-                <div class="plan-title" style="color: #e38552">Monthly</div>
-                <div class="plan-caption">$49 / month</div>
-                <img src="../static/month.jpg" class="img-orange plan-img"></img>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">Great option! Buy buy buy!</div>
+            <a href="monthly_plan_link" class="link">
+                <div class="plan" name="plan1">
+                    <div class="plan-title" style="color: #e38552">Monthly</div>
+                    <div class="plan-caption">$49 / month</div>
+                    <img src="../static/month.jpg" class="img-orange plan-img"></img>
+                    <div class="plan-bullet-container">
+                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                        <div class="plan-bullet-text">Affordable monthly rate</div>
+                    </div>
+                    <div class="plan-bullet-container">
+                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                        <div class="plan-bullet-text">No long-term commitment</div>
+                    </div>
+                    <div class="plan-bullet-container">
+                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                        <div class="plan-bullet-text">Personalized Customer Service</div>
+                    </div>
                 </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">Incredible! Fucking buy!!!</div>
+            </a>
+            <a href="annual_plan_link" class="link">
+                <div class="plan" name="plan2">
+                    <div class="plan-title" style="color: #b53e89">Annual</div>
+                    <div class="plan-caption">$449 / year</div>
+                    <img src="../static/year.png" class="img-red plan-img"></img>
+                    <div class="plan-bullet-container">
+                        <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                        <div class="plan-bullet-text">25% discount over monthly plan</div>
+                    </div>
+                    <div class="plan-bullet-container">
+                        <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                        <div class="plan-bullet-text">Personalized Customer Service</div>
+                    </div>
                 </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">okey plz buy</div>
-                </div>
-
-            </div>
-            <div class="plan" name="plan2">
-                <div class="plan-title" style="color: #b53e89">Annual</div>
-                <div class="plan-caption">$449 / year</div>
-                <img src="../static/year.png" class="img-red plan-img"></img>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">Great option! Buy buy buy!</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">Incredible! Fucking buy!!!</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">okey plz buy</div>
-                </div>
-            </div>
+            </a>
         </div>
         <br>
 </div>
