@@ -393,25 +393,27 @@ input[type=submit] {
         <div class="step-one-of-three">Step 2 of 3</div>
         <div class="create-your-account">Select a plan</div>
         <div class="plans">
-            <a href="monthly_plan_link" class="link">
-                <div class="plan" name="plan1">
-                    <div class="plan-title" style="color: #e38552">Monthly</div>
-                    <div class="plan-caption">$49 / month</div>
-                    <img src="../static/month.jpg" class="img-orange plan-img"></img>
-                    <div class="plan-bullet-container">
-                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                        <div class="plan-bullet-text">Affordable monthly rate</div>
+            <form action="/account/admin-download-database">
+                <input type="hidden" value="Monthly Plan">
+                    <div class="plan" name="plan1">
+                        <div class="plan-title" style="color: #e38552">Monthly</div>
+                        <div class="plan-caption">$49 / month</div>
+                        <img src="../static/month.jpg" class="img-orange plan-img"></img>
+                        <div class="plan-bullet-container">
+                            <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                            <div class="plan-bullet-text">Affordable monthly rate</div>
+                        </div>
+                        <div class="plan-bullet-container">
+                            <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                            <div class="plan-bullet-text">No long-term commitment</div>
+                        </div>
+                        <div class="plan-bullet-container">
+                            <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                            <div class="plan-bullet-text">Personalized Customer Service</div>
+                        </div>
                     </div>
-                    <div class="plan-bullet-container">
-                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                        <div class="plan-bullet-text">No long-term commitment</div>
-                    </div>
-                    <div class="plan-bullet-container">
-                        <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                        <div class="plan-bullet-text">Personalized Customer Service</div>
-                    </div>
-                </div>
-            </a>
+                </input>
+            </form>
             <a href="annual_plan_link" class="link">
                 <div class="plan" name="plan2">
                     <div class="plan-title" style="color: #b53e89">Annual</div>
