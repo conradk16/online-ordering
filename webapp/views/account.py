@@ -62,3 +62,12 @@ def admin_download_database():
         return send_file("database.db", as_attachment=True)
     else:
         abort(404)
+
+@account.route('/account/admin-assign-url-to-account')
+def admin_assign_url_to_account():
+    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+        account_email = request.form['email_address']
+        account_url = request.form['url']
+        user = User.query.filter_by(email_address=account_email).first()
+        user.order_url = account_url
+        db.session.commit()
