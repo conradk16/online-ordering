@@ -728,6 +728,13 @@ function load_cart() {
     cart_button.classList.add("cart-button");
     cart_button.innerHTML = "Proceed to Payment";
     cart_button.onclick = function() {
+      form = document.getElementById("proceed_to_payment_form");
+      input = document.getElementById("proceed_to_payment_order_data");
+      input.value = JSON.stringify(cart_items);
+      form.submit();
+    }
+    /*
+    cart_button.onclick = function() {
       var xhr = new XMLHttpRequest();
       xhr.open("POST", "/super-cucas-micheltorena", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
@@ -735,6 +742,7 @@ function load_cart() {
         order: cart_items,
       }));
     }
+    */
     cart.appendChild(cart_button);
 
     // add body
@@ -1619,4 +1627,9 @@ body {
 </div>
 
 </body>
+
+<form action="/super-cucas-micheltorena", method="POST", id="proceed_to_payment_form">
+  <input type="hidden" id="proceed_to_payment_order_data" name="order">
+</form>
+
 </html>

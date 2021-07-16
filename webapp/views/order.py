@@ -34,7 +34,8 @@ def super_cucas_micheltorena():
     if request.method == 'GET':
         return render_template('super-cucas-micheltorena.html', menu=json.dumps(super_cucas_menu, default=lambda x:x.__dict__))
     elif request.method == 'POST':
-        order = ConvertJsonToOrder(request.json['order'], super_cucas_menu.order_url).order()
+        print(request.form)
+        order = ConvertJsonToOrder(json.loads(request.form['order']), super_cucas_menu.order_url).order()
 
         if not order.is_valid_order(super_cucas_menu):
             print("Order invalid")
@@ -49,7 +50,7 @@ def super_cucas_micheltorena():
             stripe_account=order.connected_account().stripe_connected_account_id,
         )
 
-        db_order = Order(client_secret=payment_intent.client_secret, json_order=json.dumps(request.json['order']), paid=False, order_url=super_cucas_menu.order_url)
+        db_order = Order(client_secret=payment_intent.client_secret, json_order=request.form['order'], paid=False, order_url=super_cucas_menu.order_url)
         db_order.add_to_db()
 
         session['stripe_client_secret'] = payment_intent.client_secret
