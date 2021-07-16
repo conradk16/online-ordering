@@ -150,13 +150,14 @@ body, html {
   max-width: 575px;
   padding: 30px;
   background-color: white;
+  box-sizing: border-box;
 }
 
 .plans {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    box-sizing: inherit;
+    max-width: 100%;
+    margin: 0;
 }
 
 .plan {
@@ -395,7 +396,7 @@ input[type=submit] {
         <div class="step-one-of-three">Step 2 of 3</div>
         <div class="create-your-account">Select a plan</div>
         <div class="plans">
-            <div class="plan" name="plan1" onclick="submit_form('Monthly')">
+            <div class="plan" name="plan1" onclick="submit_form('price_1J8t5yLGQW192ovf4Tkd70Ta')">
                 <div class="plan-title" style="color: #e38552">Monthly</div>
                 <div class="plan-caption">$49 / month</div>
                 <img src="../static/month.jpg" class="img-orange plan-img"></img>
@@ -412,7 +413,7 @@ input[type=submit] {
                     <div class="plan-bullet-text">Personalized Customer Service</div>
                 </div>
             </div>
-            <div class="plan" name="plan2" onclick="submit_form('Annual')">
+            <div class="plan" name="plan2" onclick="submit_form('price_1J8t6xLGQW192ovfioaRFBEB')">
                 <div class="plan-title" style="color: #b53e89">Annual</div>
                 <div class="plan-caption">$449 / year</div>
                 <img src="../static/year.png" class="img-red plan-img"></img>
@@ -438,7 +439,7 @@ input[type=submit] {
 </div>
 
 <form id="select-form" action="/account/admin-download-database">
-    <input type="hidden" id="inp" value="null">
+    <input type="hidden" id="inp" name="price_id">
 </form>
 
 </html>
