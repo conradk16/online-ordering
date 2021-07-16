@@ -17,7 +17,7 @@ from .views.home import home
 from .views.account import account
 from .views.order import order
 from .views.webhook import webhook
-from .models.user import User
+from .models.db_models import User, Order
 
 db.create_all()
 db.session.commit()
