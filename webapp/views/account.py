@@ -60,7 +60,7 @@ def manage_billing():
 @account.route('/account/orders')
 def view_orders():
     if current_user.is_authenticated:
-        orders = Order.query.filter_by(order_url=current_user.order_url)# TODO: filter where paid=true
+        orders = Order.query.filter_by(order_url=current_user.order_url, paid=True)
         return render_template('view-orders', orders=orders)
     else:
         return redirect('/login')
@@ -85,3 +85,4 @@ def admin_assign_url_to_account():
         user = User.query.filter_by(email_address=account_email).first()
         user.order_url = account_url
         db.session.commit()
+    return redirect('/account')

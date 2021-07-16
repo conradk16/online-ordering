@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import json
 import stripe
-from webapp.models.db_models import User
+from webapp.models.db_models import User, Order
 from webapp import db
 
 import smtplib
@@ -12,8 +12,8 @@ webhook = Blueprint('webhook', __name__)
 # POST endpoint for receiving Account webhooks from Stripe
 @webhook.route('/webhook-account', methods=['POST'])
 def webhook_account_received():
-    webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
-    #webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
+    #webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
+    webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')
@@ -38,8 +38,10 @@ def webhook_account_received():
     elif event_type == 'invoice.paid':
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
-        user.active_subscription = True
-        db.session.commit()
+        # If invoice.paid webhook sent right when checkout.session.completed, user might not exist
+        if user:
+            user.active_subscription = True
+            db.session.commit()
     elif event_type == 'invoice.payment_failed':
         # The payment failed or the customer does not have a valid payment method.
         # The subscription becomes past_due. Notify your customer (email them) and send them to the
@@ -63,8 +65,8 @@ def webhook_account_received():
 # POST endpoint for receiving Connect webhooks from Stripe
 @webhook.route('/webhook-connect', methods=['POST'])
 def webhook_connect_received():
-    webhook_secret = "whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE" # TEST INTEGRATION WEBHOOK
-    #webhook_secret = "whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5" # TEST localhost webhook
+    #webhook_secret = "whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE" # TEST INTEGRATION WEBHOOK
+    webhook_secret = "whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5" # TEST localhost webhook
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')
@@ -86,6 +88,9 @@ def webhook_connect_received():
     elif event_type == "payment_intent.succeeded":
         payment_intent = data_object
         connected_account_id = event["account"]
+        order = Order.query.filter_by(client_secret=payment_intent.client_secret).first()
+        order.paid = True
+        db.session.commit()
         handle_successful_payment_intent(connected_account_id, payment_intent)
     else:
       print('Unhandled event type {}'.format(event_type))

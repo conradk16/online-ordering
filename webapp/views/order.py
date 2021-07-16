@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, session, redirect
 from webapp.models.order import *
-from webapp.models.db_models import User
+from webapp.models.db_models import User, Order
 from webapp import db
 import stripe
 import json
@@ -36,21 +36,20 @@ def super_cucas_micheltorena():
     elif request.method == 'POST':
         order = ConvertJsonToOrder(request.json['order'], super_cucas_menu.order_url).order()
 
-        print(request.json['order'])
-
         if not order.is_valid_order(super_cucas_menu):
             print("Order invalid")
             return jsonify({'error': {'message': "Order invalid"}}), 400
 
+        # price in cents
         payment_intent = stripe.PaymentIntent.create(
             payment_method_types=['card'],
-            amount=order.price(),
+            amount=int(order.price()*100),
             currency='usd',
             application_fee_amount=0,
             stripe_account=order.connected_account().stripe_connected_account_id,
         )
 
-        db_order = Order(client_secret=payment_intent.client_secret, json_order=request.json['order'], paid=False, order_url=super_cucas_menu.order_url)
+        db_order = Order(client_secret=payment_intent.client_secret, json_order=json.dumps(request.json['order']), paid=False, order_url=super_cucas_menu.order_url)
         db_order.add_to_db()
 
         session['stripe_client_secret'] = payment_intent.client_secret
@@ -64,4 +63,4 @@ def super_cucas_micheltorena():
 def super_cucas_micheltorena_payment():
 
     if request.method == 'GET':
-        return render_template('order-payment-page', stripe_client_secret=session['stripe_client_secret'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
