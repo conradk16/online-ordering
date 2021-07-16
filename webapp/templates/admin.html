@@ -1,8 +1,13 @@
+<a href="/logout">Log out</a><br><br>
+
 <form action="/account/admin-download-database" >
-    <input type="submit" value="Download database" /><br><br><br>
+    <input type="submit" value="Download database" /><br>
 </form>
 
-<a href="/logout">Log out</a>
+<p> Account emails without websites:</p>
+<p> {{ account_emails_without_websites }} </p>
+
+<p> Associate email with website url:</p>
 
 <form name="form" id="form" action="/account/admin-assign-url-to-account" method="POST">
   <div id="email_address_label" for="email_address">Account email</div>

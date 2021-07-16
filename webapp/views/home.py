@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, jsonify, session, url_for
 from flask_login import login_user, logout_user, current_user
 
-from webapp.models.user import User
+from webapp.models.db_models import User
 from webapp import db, bcrypt
 
 import stripe

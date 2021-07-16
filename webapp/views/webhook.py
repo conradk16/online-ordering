@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import json
 import stripe
-from webapp.models.user import User
+from webapp.models.db_models import User
 from webapp import db
 
 import smtplib
@@ -83,6 +83,10 @@ def webhook_connect_received():
         user = User.query.filter_by(stripe_connected_account_id=account_id).first()
         user.stripe_connected_account_details_submitted = data_object.details_submitted
         db.session.commit()
+    elif event_type == "payment_intent.succeeded":
+        payment_intent = data_object
+        connected_account_id = event["account"]
+        handle_successful_payment_intent(connected_account_id, payment_intent)
     else:
       print('Unhandled event type {}'.format(event_type))
 

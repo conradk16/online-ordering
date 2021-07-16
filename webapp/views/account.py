@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, redirect, abort, send_file
+from flask import Blueprint, render_template, redirect, abort, send_file, request
 import stripe
 from webapp import db
-from webapp.models.user import User
+from webapp.models.db_models import User, Order
 from flask_login import login_user, logout_user, current_user 
 
 account = Blueprint('account', __name__)
@@ -11,7 +11,7 @@ account = Blueprint('account', __name__)
 def account_homepage():
     if current_user.is_authenticated:
         if current_user.email_address == "kuklinskywork@gmail.com":
-            return render_template('admin.html')
+            return get_admin_page()
         elif current_user.stripe_customer_id:
             return render_template('account.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
         else:
@@ -56,6 +56,20 @@ def manage_billing():
     
     return redirect(session.url)
 
+# GET endpoint for viewing orders
+@account.route('/account/orders')
+def view_orders():
+    if current_user.is_authenticated:
+        orders = Order.query.filter_by(order_url=current_user.order_url)
+        return render_template('view-orders', orders=orders)
+    else:
+        return redirect('/login')
+
+def get_admin_page():
+    users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)
+    account_emails_without_websites = [user_without_website.email_address for user_without_website in users_without_websites]
+    return render_template('admin.html', account_emails_without_websites=account_emails_without_websites)
+
 @account.route('/account/admin-download-database')
 def admin_download_database():
     if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
@@ -63,7 +77,7 @@ def admin_download_database():
     else:
         abort(404)
 
-@account.route('/account/admin-assign-url-to-account')
+@account.route('/account/admin-assign-url-to-account', methods=['POST'])
 def admin_assign_url_to_account():
     if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
         account_email = request.form['email_address']

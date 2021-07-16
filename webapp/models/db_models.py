@@ -22,3 +22,18 @@ class User(db.Model, UserMixin):
     def add_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_secret = db.Column(db.String)
+    json_order = db.Column(db.String)
+    paid = db.Column(db.Boolean, default=False)
+    order_url = db.Column(db.String)
+
+    def __repr__(self):
+        return f"Order('{self.json_order}', '{self.price}')"
+
+    def add_to_db(self):
+        db.session.add(self)
+        db.session.commit()

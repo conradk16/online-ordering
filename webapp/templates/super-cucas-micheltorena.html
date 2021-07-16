@@ -732,7 +732,7 @@ function load_cart() {
       xhr.open("POST", "/super-cucas-micheltorena", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify({
-        cart_items: cart_items,
+        order: cart_items,
       }));
     }
     cart.appendChild(cart_button);
