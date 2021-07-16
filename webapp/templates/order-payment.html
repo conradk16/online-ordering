@@ -1,0 +1,449 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<head>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    function setup() {
+        var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx', {
+            stripeAccount: '{{stripe_connected_account_id}}'
+        });
+        
+        // Set up Stripe.js and Elements to use in checkout form
+        var elements = stripe.elements();
+        var style = {
+            base: {
+                color: "#32325d",
+            }
+        };
+
+        var card = elements.create("card", { style: style });
+        card.mount("#card-element");
+
+        card.on('change', function(event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+    }
+
+    function setup_example() {
+        'use strict';
+
+        var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx', {
+            stripeAccount: '{{stripe_connected_account_id}}'
+        });
+
+        var elements = stripe.elements({
+            fonts: [
+                {
+                cssSrc: 'https://fonts.googleapis.com/css?family=Source+Code+Pro',
+                },
+            ],
+            // Stripe's examples are localized to specific languages, but if
+            // you wish to have Elements automatically detect your user's locale,
+            // use `locale: 'auto'` instead.
+            locale: window.__exampleLocale
+        });
+
+        // Floating labels
+        var inputs = document.querySelectorAll('.cell.example.example2 .input');
+        Array.prototype.forEach.call(inputs, function(input) {
+            input.addEventListener('focus', function() {
+                input.classList.add('focused');
+            });
+            input.addEventListener('blur', function() {
+                input.classList.remove('focused');
+            });
+            input.addEventListener('keyup', function() {
+                if (input.value.length === 0) {
+                    input.classList.add('empty');
+                } else {
+                    input.classList.remove('empty');
+                }
+            });
+        });
+
+        var elementStyles = {
+            base: {
+                color: '#32325D',
+                fontWeight: 500,
+                fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
+                fontSize: '16px',
+                fontSmoothing: 
+                    'antialiased', 
+                    '::placeholder': {
+                        color: '#CFD7DF',
+                    },
+                    ':-webkit-autofill': {
+                        color: '#e39f48',
+                    },
+            },
+            invalid: {
+                color: '#E25950',
+
+                '::placeholder': {
+                    color: '#FFCCA5',
+                },
+            },
+        };
+
+        var elementClasses = {
+            focus: 'focused',
+            empty: 'empty',
+            invalid: 'invalid',
+        };
+
+        var cardNumber = elements.create('cardNumber', {
+            style: elementStyles,
+            classes: elementClasses,
+        });
+        cardNumber.mount('#example2-card-number');
+
+        var cardExpiry = elements.create('cardExpiry', {
+            style: elementStyles,
+            classes: elementClasses,
+        });
+        cardExpiry.mount('#example2-card-expiry');
+
+        var cardCvc = elements.create('cardCvc', {
+            style: elementStyles,
+            classes: elementClasses,
+        });
+        cardCvc.mount('#example2-card-cvc');
+
+        //registerElements([cardNumber, cardExpiry, cardCvc], 'example2');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setup();
+        setup_example();
+    }, false);
+
+</script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    background-color: #f6f9fc;
+}
+
+.payment-box {
+    height: 500px;
+    width: 500px;
+    margin: 0;
+    background-color: #fff;
+    margin-top: 20px;
+    padding: 30px;
+}
+
+.example.example2 {
+  background-color: #fff;
+  padding: 40px;
+  box-shadow: 0 7px 14px rgb(50 50 93 / 10%), 0 3px 6px rgb(0 0 0 / 8%);
+  border-radius: 20px;
+  align-items: center;
+  width: 500px;
+}
+
+.example.example2 * {
+  font-family: Source Code Pro, Consolas, Menlo, monospace;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.example.example2 .row {
+  display: -ms-flexbox;
+  display: flex;
+  margin: 0 5px 10px;
+}
+
+.example.example2 .field {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 0 10px;
+}
+
+.example.example2 .field.half-width {
+  width: 50%;
+}
+
+.example.example2 .field.quarter-width {
+  width: calc(25% - 10px);
+}
+
+.example.example2 .baseline {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  left: 0;
+  bottom: 0;
+  background-color: #cfd7df;
+  transition: background-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 label {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 8px;
+  color: #cfd7df;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform-origin: 0 50%;
+  cursor: text;
+  pointer-events: none;
+  transition-property: color, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  padding-bottom: 7px;
+  color: #32325d;
+  background-color: transparent;
+}
+
+.example.example2 .input::-webkit-input-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input::-moz-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input:-ms-input-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input.StripeElement {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: opacity;
+}
+
+.example.example2 .input.focused,
+.example.example2 .input:not(.empty) {
+  opacity: 1;
+}
+
+.example.example2 .input.focused::-webkit-input-placeholder,
+.example.example2 .input:not(.empty)::-webkit-input-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused::-moz-placeholder,
+.example.example2 .input:not(.empty)::-moz-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused:-ms-input-placeholder,
+.example.example2 .input:not(.empty):-ms-input-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused + label,
+.example.example2 .input:not(.empty) + label {
+  color: #aab7c4;
+  transform: scale(0.85) translateY(-25px);
+  cursor: default;
+}
+
+.example.example2 .input.focused + label {
+  color: #24b47e;
+}
+
+.example.example2 .input.invalid + label {
+  color: #ffa27b;
+}
+
+.example.example2 .input.focused + label + .baseline {
+  background-color: #24b47e;
+}
+
+.example.example2 .input.focused.invalid + label + .baseline {
+  background-color: #e25950;
+}
+
+.example.example2 input, .example.example2 button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border-style: none;
+}
+
+.example.example2 input:-webkit-autofill {
+  -webkit-text-fill-color: #e39f48;
+  transition: background-color 100000000s;
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example2 .StripeElement--webkit-autofill {
+  background: transparent !important;
+}
+
+.example.example2 input, .example.example2 button {
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example2 button {
+  display: block;
+  width: calc(100% - 30px);
+  height: 40px;
+  margin: 40px 15px 0;
+  background-color: #24b47e;
+  border-radius: 4px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.example.example2 .error svg {
+  margin-top: 0 !important;
+}
+
+.example.example2 .error svg .base {
+  fill: #e25950;
+}
+
+.example.example2 .error svg .glyph {
+  fill: #fff;
+}
+
+.example.example2 .error .message {
+  color: #e25950;
+}
+
+.example.example2 .success .icon .border {
+  stroke: #abe9d2;
+}
+
+.example.example2 .success .icon .checkmark {
+  stroke: #24b47e;
+}
+
+.example.example2 .success .title {
+  color: #32325d;
+  font-size: 16px !important;
+}
+
+.example.example2 .success .message {
+  color: #8898aa;
+  font-size: 13px !important;
+}
+
+.example.example2 .success .reset path {
+  fill: #24b47e;
+}
+
+.success {
+    display: none;
+}
+
+.error {
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="cell example example2" id="example-2">
+        <form>
+          <div data-locale-reversible="">
+            <div class="row">
+              <div class="field">
+                <input id="example2-name" data-tid="elements_examples.form.name_placeholder" class="input empty" type="text" placeholder="John Smith" required="">
+                <label for="example2-name" data-tid="elements_examples.form.name_label">Name</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+            <div class="row" data-locale-reversible="">
+              <div class="field half-width">
+                <input id="example2-email" data-tid="elements_examples.form.city_placeholder" class="input empty" type="text" placeholder="john@example.com" required="">
+                <label for="example2-email" data-tid="elements_examples.form.email_label">Email</label>
+                <div class="baseline"></div>
+              </div>
+              <div class="field half-width">
+                <input id="example2-phone" data-tid="elements_examples.form.phone_placeholder" class="input empty" type="text" placeholder="987-654-3210" required="">
+                <label for="example2-phone" data-tid="elements_examples.form.phone_label">Phone</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <div id="example2-card-number" class="input StripeElement empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe name="__privateStripeFrame4508" frameborder="0" allowtransparency="true" scrolling="no" allow="payment *" src="https://js.stripe.com/v3/elements-inner-card-dd495df4db6100dd6e3b5f6b504a2b1b.html#locale=en&amp;wait=true&amp;style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;rtl=false&amp;componentName=cardNumber&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController4501" title="Secure card number input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; will-change: transform !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+              <label for="example2-card-number" data-tid="elements_examples.form.card_number_label">Card number</label>
+              <div class="baseline"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field half-width">
+              <div id="example2-card-expiry" class="input StripeElement empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe name="__privateStripeFrame4509" frameborder="0" allowtransparency="true" scrolling="no" allow="payment *" src="https://js.stripe.com/v3/elements-inner-card-dd495df4db6100dd6e3b5f6b504a2b1b.html#locale=en&amp;wait=true&amp;style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;rtl=false&amp;componentName=cardExpiry&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController4501" title="Secure expiration date input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; will-change: transform !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+              <label for="example2-card-expiry" data-tid="elements_examples.form.card_expiry_label">Expiration</label>
+              <div class="baseline"></div>
+            </div>
+            <div class="field half-width">
+              <div id="example2-card-cvc" class="input StripeElement empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe name="__privateStripeFrame45010" frameborder="0" allowtransparency="true" scrolling="no" allow="payment *" src="https://js.stripe.com/v3/elements-inner-card-dd495df4db6100dd6e3b5f6b504a2b1b.html#locale=en&amp;wait=true&amp;style[base][color]=%2332325D&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Source+Code+Pro%2C+Consolas%2C+Menlo%2C+monospace&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][::placeholder][color]=%23CFD7DF&amp;style[base][:-webkit-autofill][color]=%23e39f48&amp;style[invalid][color]=%23E25950&amp;style[invalid][::placeholder][color]=%23FFCCA5&amp;rtl=false&amp;componentName=cardCvc&amp;keyMode=test&amp;apiKey=pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;referrer=https%3A%2F%2Fstripe.dev%2Felements-examples%2F&amp;controllerId=__privateStripeController4501" title="Secure CVC input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; will-change: transform !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+              <label for="example2-card-cvc" data-tid="elements_examples.form.card_cvc_label">CVC</label>
+              <div class="baseline"></div>
+            </div>
+          </div>
+        <button type="submit" data-tid="elements_examples.form.pay_button">Pay $25</button>
+          <div class="error" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
+              <path class="base" fill="#000" d="M8.5,17 C3.80557963,17 0,13.1944204 0,8.5 C0,3.80557963 3.80557963,0 8.5,0 C13.1944204,0 17,3.80557963 17,8.5 C17,13.1944204 13.1944204,17 8.5,17 Z"></path>
+              <path class="glyph" fill="#FFF" d="M8.5,7.29791847 L6.12604076,4.92395924 C5.79409512,4.59201359 5.25590488,4.59201359 4.92395924,4.92395924 C4.59201359,5.25590488 4.59201359,5.79409512 4.92395924,6.12604076 L7.29791847,8.5 L4.92395924,10.8739592 C4.59201359,11.2059049 4.59201359,11.7440951 4.92395924,12.0760408 C5.25590488,12.4079864 5.79409512,12.4079864 6.12604076,12.0760408 L8.5,9.70208153 L10.8739592,12.0760408 C11.2059049,12.4079864 11.7440951,12.4079864 12.0760408,12.0760408 C12.4079864,11.7440951 12.4079864,11.2059049 12.0760408,10.8739592 L9.70208153,8.5 L12.0760408,6.12604076 C12.4079864,5.79409512 12.4079864,5.25590488 12.0760408,4.92395924 C11.7440951,4.59201359 11.2059049,4.59201359 10.8739592,4.92395924 L8.5,7.29791847 L8.5,7.29791847 Z"></path>
+            </svg>
+            <span class="message">Your card's security code is incomplete.</span></div>
+        </form>
+        <div class="success">
+          <div class="icon">
+            <svg width="84px" height="84px" viewBox="0 0 84 84" version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink">
+              <circle class="border" cx="42" cy="42" r="40" stroke-linecap="round" stroke-width="4" stroke="#000" fill="none"></circle>
+              <path class="checkmark" stroke-linecap="round" stroke-linejoin="round" d="M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338" stroke-width="4" stroke="#000" fill="none"></path>
+            </svg>
+          </div>
+          <h3 class="title" data-tid="elements_examples.success.title">Payment successful</h3>
+        </div>
+
+      </div>
+
+<div class="payment-box">
+
+    <form id="payment-form">
+        <div id="card-element">
+            <!-- Elements will create input elements here -->
+        </div>
+
+        <!-- We'll put the error messages in this element -->
+        <div id="card-errors" role="alert"></div>
+
+        <button id="submit">Pay</button>
+    </form>
+</div>
+
+</body>
+</html>
