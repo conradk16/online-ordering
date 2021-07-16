@@ -104,6 +104,7 @@ body, html {
   background-color: rgba(255, 255, 255, 1);
   font-family: Arial, verdana, helvetica, sans-serif;
   box-sizing: border-box;
+  -webkit-appearance: none;
 }
 
 /* Add a background color to the top navigation */
@@ -161,8 +162,6 @@ body, html {
 }
 
 .plan {
-    display: flex;
-    flex-direction: column;
     height: 310px;
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
     border-radius: 20px;
@@ -186,10 +185,14 @@ body, html {
 }
 
 .plan-img {
-    margin-left: 35%;
-    margin-right: 35%;
+    margin: auto;
     margin-bottom: 70px;
     margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    object-fit: contain;
+    width: 30%;
 }
 
 .img-orange {
