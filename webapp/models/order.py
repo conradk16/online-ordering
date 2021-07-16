@@ -99,12 +99,13 @@ class Menu:
 
 class MenuItem:
 
-        def __init__(self, item_name, item_description, price, required_choice_sets, optional_choice_sets):
+        def __init__(self, item_name, item_description, price, required_choice_sets, optional_choice_sets, category):
             self.item_name = item_name
             self.item_description = item_description
             self.price = price
             self.required_choice_sets = required_choice_sets
             self.optional_choice_sets = optional_choice_sets
+            self.category = category
 
         def __eq__(self, other):
             if (self.item_name == other.item_name) and (self.item_description == other.item_description) and (self.price == other.price):
@@ -149,7 +150,7 @@ class ConvertJsonToOrder:
         optional_choice_sets = []
         for json_optional_choice_set in json_menu_item['optional_choice_sets']:
             optional_choice_sets.append(ConvertJsonToOrder.json_choice_set_to_class(json_optional_choice_set))
-        return MenuItem(json_menu_item['item_name'], json_menu_item['item_description'], json_menu_item['price'], required_choice_sets, optional_choice_sets)
+        return MenuItem(json_menu_item['item_name'], json_menu_item['item_description'], json_menu_item['price'], required_choice_sets, optional_choice_sets, json_menu_item['category'])
 
     @staticmethod
     def json_choice_set_to_class(json_choice_set):

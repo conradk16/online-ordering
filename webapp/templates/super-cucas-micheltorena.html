@@ -994,12 +994,13 @@ class menuGroup {
 }
 
 class menuItem {
-    constructor(item_name, item_description, price, required_choice_sets, optional_choice_sets) {
+    constructor(item_name, item_description, price, required_choice_sets, optional_choice_sets, category) {
         this.item_name = item_name;
         this.item_description = item_description;
         this.price = price;
         this.required_choice_sets = required_choice_sets;
         this.optional_choice_sets = optional_choice_sets;
+        this.category = category;
     }
 }
 
@@ -1068,80 +1069,27 @@ class cartItem {
     }
 }
 
-var menu_groups = [];
+function get_menu_groups_from_menu(menu) {
+  var menu_groups = {}; // dictionary of category to list of MenuItems
+  for (const menu_item of menu["menu_items"]) {
+    const category = menu_item["category"];
+    if (category in menu_groups) {
+      menu_groups[category].push(menu_item);
+    } else {
+      menu_groups[category] = [menu_item];
+    }
+  }
 
-// first group
-var items = [];
-items.push(new menuItem("#1 Chorizo Burrito", "Mexican sausage, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
 
-items.push(new menuItem("#2 Protein Burrito", "Beef, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
+  var final_menu_groups = [];
+  for (const [k, v] of Object.entries(menu_groups)) {
+    final_menu_groups.push(new menuGroup(k, v));
+  }
 
-items.push(new menuItem("#3 Sausage Burrito", "Sausage scrambled eggs, cheese, and potatoes.", 10.99, [],[]));
+  return final_menu_groups;
 
-items.push(new menuItem("#4 Ham Burrito", "Ham, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
-
-items.push(new menuItem("#5 Veggie Burrito", "Grilled onions, bell peppers, zucchini, mushrooms, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, [],[]));
-
-items.push(new menuItem("#6 Carnitas Burrito", "Pork meat, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
-
-items.push(new menuItem("#7 Pastor Burrito", "Marinated pork meat, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
-
-items.push(new menuItem("#8 Eggs Burrito", "Scrambled eggs, cheese, and potatoes.", 7.99, [], []));
-
-items.push(new menuItem("#9 Ranchero Burrito", "Chorizo, bacon, scrambled eggs, cheese, potatoes, and ranchero salsa.", 7.99, [],[]));
-
-items.push(new menuItem("#10 Macho Burrito (Spicy)", "Marinated pork, jalapenos, scrambled eggs, cheese, potatoes, and macho salsa.", 7.99, [],[]));
-
-items.push(new menuItem("#11 Chicken Burrito", "Chicken, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, [],[]));
-
-items.push(new menuItem("#12 Energy Burrito", "Beef, veggies, scrambled eggs, cheese, potatoes, and home style salsa.", 7.99, [],[]));
-
-items.push(new menuItem("#13 Ham and Bacon Burrito", "Ham, bacon, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
-
-items.push(new menuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 7.99,
-        [
-        new choiceSet(
-            "Meat",
-            [
-            new choice("Chicken", 1.00),
-            new choice("Beef", 0),
-            new choice("Pork", 0)
-            ]
-        ),
-        new choiceSet(
-            "Egg Style",
-            [
-            new choice("Scrambled", 0),
-            new choice("Over Easy", 0),
-            new choice("Over Medium", 0),
-            new choice("Over Hard", 0),
-            new choice("Sunny-Side Up", 0)
-            ]
-        )
-        ],
-        [
-        new choiceSet(
-            "Goodies",
-            [
-            new choice("Brownies", 1.00),
-            new choice("Sprinkles", 0)
-            ]
-        )
-        ]
-    ));
-
-items.push(new menuItem("#15 Chile Relleno Burrito", "Pico de gallo, scrambled eggs, cheese, and potatoes.", 7.99, [],[]));
-
-menu_groups.push(new menuGroup("Breakfast", items));
-
-// second group
-var items = [];
-items.push(new menuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94,
-        [],[]));
-
-items.push(new menuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantro.", 10.99, [],[]));
-
-menu_groups.push(new menuGroup("Burritos", items));
+}
+var menu_groups = get_menu_groups_from_menu(JSON.parse({{menu|tojson}}));
 
 var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide" "cart"
 
