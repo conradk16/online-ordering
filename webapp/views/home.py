@@ -14,6 +14,16 @@ home = Blueprint('home', __name__)
 def homepage():
     return render_template('homepage.html')
 
+# privacy policy
+@home.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy-policy.html')
+
+# terms of use
+@home.route('/terms-of-use')
+def terms_of_use():
+    return render_template('terms-of-use.html')
+
 # login page, also a POST endpoint for attempting to log in
 @home.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -87,7 +97,7 @@ def send_reset_email(user):
 
     token = user.get_reset_token()
 
-    msg = Message('M3 Orders Password Reset', sender="stefankuklinsky@gmail.com", recipients=[user.email_address])
+    msg = Message('M3 Orders Password Reset', sender="no-reply@m3orders.com", recipients=[user.email_address])
     link = url_for('home.reset_password', token=token, _external=True)
     msg.body = f'''To reset your password, visit the following link:
 
