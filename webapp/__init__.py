@@ -9,11 +9,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c0a5be14fe3cb64fbfba58ec0a74897c83511fc15f6c267b'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_SERVER'] = 'smtppro.zoho.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'stefankuklinsky@gmail.com'
-app.config['MAIL_PASSWORD'] = '493Jackrabbitsandturkeys29!!'
+app.config['MAIL_USERNAME'] = 'no-reply@m3orders.com'
+app.config['MAIL_PASSWORD'] = 'YB\'S!#4GqUZPsP"6'
 mail = Mail(app)
 
 
