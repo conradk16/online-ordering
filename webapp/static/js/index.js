@@ -1,6 +1,9 @@
 'use strict';
-
-var stripe = Stripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+ 
+var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id'); 
+var stripe = Stripe('pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj', {
+    stripeAccount: stripe_account_id
+  });
 
 function registerElements(elements, exampleName) {
   var formClass = '.' + exampleName;
@@ -117,48 +120,44 @@ function registerElements(elements, exampleName) {
       address_zip: zip ? zip.value : undefined,
     };
 
-    // Use Stripe.js to create a token. We only need to pass in one Element
-    // from the Element group in order to create a token. We can also pass
-    // in the additional customer data we collected in our form.
-    
 
-    stripe.createToken(elements[0], additionalData).then(function(result) {
-      var success = false;
-
+    var card = elements[0];
+    var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
+    stripe.confirmCardPayment(client_secret, {
+      payment_method: {
+        card: card,
+        billing_details: {
+          address: {
+            postal_code: 93434
+          }
+        }
+      }
+    }).then(function(result) {
       // Stop loading!
       example.classList.remove('submitting');
-
-      if (result.token) {
+      example.classList.add('submitted');
         
-        // use the token
-        var client_secret = {{stripe_client_secret|tojson}};
-        stripe.confirmCardPayment(client_secret, {
-          payment_method: {
-            card: result.token.card
-          }
-        }).then(function(submission_result) {
-          if (submission_result.error) {
-            console.log(submission_result.error.message);
-          } else {
-            // The payment has been processed!
-            if (submission_result.paymentIntent.status == 'succeeded') {
-              alert("success!");
-              success = true;
-            }
-          }
+
+      var checkmark = document.getElementsByClassName("checkmark")[0];
+      var border = document.getElementsByClassName("border")[0];
+      var result_title = document.getElementsByClassName("result-title")[0];
+
+      if (result.error) {
+        console.log(result.error.message);
+        checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
+        border.style.stroke = "#de0909";
+        result_title.innerHTML = "Payment failed";
+      } 
+      else {
+        // The payment has been processed!
+        if (result.paymentIntent.status == 'succeeded') {
+          console.log("success");
+          checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
+          result_title.innerHTML = "Payment successful";
+          resetButton.style.display = "none";
         }
-
-        if (success == false) {
-          alert("failed");
-        } else {
-          example.querySelector('.token').innerText = result.token.id;
-          example.classList.add('submitted');
-        }
-
-      });
-
-
-    });
+      }
+    });    
 
   resetButton.addEventListener('click', function(e) {
     e.preventDefault();
@@ -174,8 +173,18 @@ function registerElements(elements, exampleName) {
     // Reset error state as well.
     error.classList.remove('visible');
 
+    // reset border
+    var border = document.getElementsByClassName("border")[0];
+    border.style.stroke = "#87bbfd";
+    
+
     // Resetting the form does not un-disable inputs, so we need to do it separately:
     enableInputs();
     example.classList.remove('submitted');
   });
+});
+  var price = document.getElementById("helper").getAttribute('data-price');
+  price = price / 100;
+  var submit_button = document.getElementById("submit-button");
+  submit_button.innerHTML = "Pay $" + price;
 }
