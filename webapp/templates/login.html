@@ -199,21 +199,33 @@ input:not(:focus):valid ~ .floating-label{
   font-size:14px;
 }
 
+.checkboxes {
+  margin-top: 8px;
+  margin-bottom: 0px;
+  vertical-align: middle;
+}
+
 .checkboxes label {
   display: inline-block;
   padding-right: 10px;
   white-space: nowrap;
   font-size: 14px;
   font-family:verdana;
-  margin-top: 4px;
 }
 .checkboxes input {
-  margin-top: 4px;
   vertical-align: middle;
 }
 .checkboxes label span {
   vertical-align: middle;
-  margin-top: 4px;
+}
+
+.checkboxes a {
+  display: inline-block;
+  vertical-align: middle;
+  float: right;
+  font-size: 14px;
+  font-family:verdana;
+  margin-top:1px;
 }
 
 </style>
@@ -245,6 +257,7 @@ input:not(:focus):valid ~ .floating-label{
 
         <div class="checkboxes">
           <label><input type="checkbox" id="remember_me" name="remember_me"> <span>Remember me</span></label>
+          <a href="/password-reset">Forgot password?</a>
         </div>
 
         <input type="submit" id="next-button" value="Log in" style="-webkit-appearance:none;">

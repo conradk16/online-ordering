@@ -61,7 +61,9 @@ def manage_billing():
 def view_orders():
     if current_user.is_authenticated:
         orders = Order.query.filter_by(order_url=current_user.order_url, paid=True)
-        return render_template('view-orders', orders=orders)
+        if orders.count() == 0:
+            orders = "No orders"
+        return render_template('view-orders.html', orders=orders)
     else:
         return redirect('/login')
 
