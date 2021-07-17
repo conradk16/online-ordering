@@ -92,6 +92,10 @@ function registerElements(elements, exampleName) {
       triggerBrowserValidation();
       return;
     }
+    
+    // Hide title
+    var title = document.getElementsByClassName("title")[0];
+    title.style.display = "none";
 
     // Show a loading screen...
     example.classList.add('submitting');
@@ -116,20 +120,45 @@ function registerElements(elements, exampleName) {
     // Use Stripe.js to create a token. We only need to pass in one Element
     // from the Element group in order to create a token. We can also pass
     // in the additional customer data we collected in our form.
+    
+
     stripe.createToken(elements[0], additionalData).then(function(result) {
+      var success = false;
+
       // Stop loading!
       example.classList.remove('submitting');
 
       if (result.token) {
-        // If we received a token, show the token ID.
-        example.querySelector('.token').innerText = result.token.id;
-        example.classList.add('submitted');
-      } else {
-        // Otherwise, un-disable inputs.
-        enableInputs();
-      }
+        
+        // use the token
+        var client_secret = {{stripe_client_secret|tojson}};
+        stripe.confirmCardPayment(client_secret, {
+          payment_method: {
+            card: result.token.card
+          }
+        }).then(function(submission_result) {
+          if (submission_result.error) {
+            console.log(submission_result.error.message);
+          } else {
+            // The payment has been processed!
+            if (submission_result.paymentIntent.status == 'succeeded') {
+              alert("success!");
+              success = true;
+            }
+          }
+        }
+
+        if (success == false) {
+          alert("failed");
+        } else {
+          example.querySelector('.token').innerText = result.token.id;
+          example.classList.add('submitted');
+        }
+
+      });
+
+
     });
-  });
 
   resetButton.addEventListener('click', function(e) {
     e.preventDefault();
