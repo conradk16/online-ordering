@@ -1,8 +1,9 @@
 from flask import Blueprint, request, render_template, redirect, jsonify, session, url_for
 from flask_login import login_user, logout_user, current_user
+from flask_mail import Message
 
 from webapp.models.db_models import User
-from webapp import db, bcrypt
+from webapp import db, bcrypt, mail
 
 import stripe
 
@@ -48,6 +49,56 @@ def login_page():
         else:
             session['invalid_credentials'] = "true"
             return redirect(url_for('home.login_page'))
+
+# page to request a password reset, also a POST endpoint for requesting a password reset
+@home.route('/request-reset-password', methods=['GET', 'POST'])
+def request_reset_password():
+    if request.method == 'GET':
+        return render_template('request-reset-password.html', reset_link_sent="false")
+    elif request.method == 'POST':
+        email = request.form['email_address']
+        user = User.query.filter_by(email_address=email).first()
+        send_reset_email(user)
+        return render_template('request-reset-password.html', reset_link_sent="true")
+
+# page to submit a new password, also a POST endpoint for resetting a password
+@home.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if request.method == 'GET':
+        user = User.verify_reset_token(token)
+        if not user:
+            return redirect('/request-reset-password')
+        else:
+            return render_template('reset-password.html')
+
+    elif request.method == 'POST':
+        password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
+        user = User.verify_reset_token(token)
+        if not user:
+            return redirect('/request-reset-password')
+        else:
+            user.password = password
+            db.session.commit()
+            return redirect('/login')
+
+def send_reset_email(user):
+    if not user:
+        return
+
+    token = user.get_reset_token()
+
+    msg = Message('M3 Orders Password Reset', sender="stefankuklinsky@gmail.com", recipients=[user.email_address])
+    link = url_for('home.reset_password', token=token, _external=True)
+    msg.body = f'''To reset your password, visit the following link:
+
+{link}
+
+This link will expire in 10 minutes.
+'''
+
+    mail.send(msg)
+
+
 
 # logout POST endpoint
 @home.route('/logout')

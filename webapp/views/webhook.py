@@ -91,7 +91,6 @@ def webhook_connect_received():
         order = Order.query.filter_by(client_secret=payment_intent.client_secret).first()
         order.paid = True
         db.session.commit()
-        handle_successful_payment_intent(connected_account_id, payment_intent)
     else:
       print('Unhandled event type {}'.format(event_type))
 
