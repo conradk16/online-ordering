@@ -60,8 +60,8 @@ def manage_billing():
 @account.route('/account/orders')
 def view_orders():
     if current_user.is_authenticated:
-        orders = Order.query.filter_by(order_url=current_user.order_url, paid=True)
-        if orders.count() == 0:
+        orders = [[order.json_order, order.customer_name, order.datetime] for order in Order.query.filter_by(order_url=current_user.order_url, paid=True)]
+        if len(orders) == 0:
             orders = "No orders"
         return render_template('view-orders.html', orders=orders)
     else:

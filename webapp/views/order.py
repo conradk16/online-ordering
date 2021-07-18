@@ -69,10 +69,12 @@ def super_cucas_micheltorena_payment():
 @order.route('/update-order-details', methods=['POST'])
 def update_order_details():
     customer_name = request.form['customer_name']
+    customer_email = request.form['customer_email']
     client_secret = request.form['client_secret']
 
     order = Order.query.filter_by(client_secret=client_secret).first()
     order.customer_name = customer_name[:50]
+    order.customer_email = customer_email[:100]
     order.datetime = datetime.utcnow()
     db.session.commit()
     
