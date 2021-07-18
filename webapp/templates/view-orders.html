@@ -100,7 +100,7 @@ function createOrderElement(order) {
   var br = document.createElement("br");
   var metadataCustomerName = document.createElement("div");
   metadataCustomerName.classList.add("customer-name");
-  metadataCustomerName.innerHTML = "Customer: Stefan";
+  metadataCustomerName.innerHTML = order.customer_name;
 
   metadataElement.appendChild(metadataDateTime);
   metadataElement.appendChild(br);
