@@ -121,7 +121,7 @@ function registerElements(elements, exampleName) {
     
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/update-order-details");
+    xhr.open("POST", "/order/update-order-details");
     xhr.onload = function(event) {
         
         var checkmark = document.getElementsByClassName("checkmark")[0];

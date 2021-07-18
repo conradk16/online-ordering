@@ -50,6 +50,17 @@
         return;
     }
 
+    // validate phone
+
+    var phone_format = /\d\d\d-\d\d\d-\d\d\d\d/;
+    var phone_text = document.getElementById("phone").value;
+    var valid_phone = (phone_text.match(phone_format) != null);
+    if (!valid_phone) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form 000-000-0000";       
+        return;
+    }
+
     // validate restaurant name
     var restaurant_text = document.getElementById("restaurant_name").value;
     if (restaurant_text.length == 0) {
@@ -310,6 +321,20 @@ input[type=submit] {
   font-size: 18px;
 }
 
+.upload-holder {
+    margin-left: 30px;
+    display: block !important;
+}
+
+.upload-instructions {
+    font-size: 15px !important;
+    min-width: 100%;
+}
+
+.custom-file-upload {
+    box-shadow: 0 8px 12px 0 rgba(0,0,0,1)
+}
+
 @media only screen and (max-width: 600px) {
   .columns {
     width: 100%;
@@ -339,13 +364,17 @@ input[type=submit] {
 
         <form id="form">
           <fieldset>
-              <div class="row">
+            <div class="row">
               <label for="example1-name" data-tid="elements_examples.form.name_label">Name</label>
               <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe">
             </div>
-              <div class="row">
+            <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Contact email</label>
               <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact phone</label>
+              <input id="phone" data-tid="elements_examples.form.email_placeholder"  placeholder="888-888-8888">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant name</label>
@@ -353,13 +382,21 @@ input[type=submit] {
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant address</label>
-              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Mothafucka Ave">
+              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Example St">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Menu URL</label>
               <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com/menu">
             </div>
           </fieldset>
+
+          <div class="upload-holder">
+              <span class="upload-instructions">Upload Menu (not necessary if link is provided above)</span>
+              <br>
+              <label for="file_upload" class="custom-file-upload">Choose File
+              </label>
+              <input type="file" id="file_upload" hidden>
+          </div>
           
           <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
         </form>
