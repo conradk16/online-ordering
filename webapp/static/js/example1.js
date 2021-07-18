@@ -17,23 +17,23 @@
     iconStyle: 'solid',
     style: {
       base: {
-        iconColor: '#c4f0ff',
-        color: '#fff',
+        iconColor: '#000000',
+        color: '#000000',
         fontWeight: 500,
         fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
         fontSize: '16px',
         fontSmoothing: 'antialiased',
 
         ':-webkit-autofill': {
-          color: '#fce883',
+          color: '#787878',
         },
         '::placeholder': {
-          color: '#87BBFD',
+          color: '#787878',
         },
       },
       invalid: {
-        iconColor: '#FFC7EE',
-        color: '#FFC7EE',
+        iconColor: '#d14343',
+        color: '#d14343',
       },
     },
   });
