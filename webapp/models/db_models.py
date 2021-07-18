@@ -44,6 +44,8 @@ class Order(db.Model):
     json_order = db.Column(db.String)
     paid = db.Column(db.Boolean, default=False)
     order_url = db.Column(db.String)
+    customer_name = db.Column(db.String)
+    datetime = db.Column(db.DateTime)
 
     def __repr__(self):
         return f"Order('{self.json_order}')"
