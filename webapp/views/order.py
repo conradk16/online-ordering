@@ -32,10 +32,15 @@ super_cucas_menu = Menu(menu_items, order_url)
 
 @order.route('/super-cucas-micheltorena', methods=['GET', 'POST'])
 def super_cucas_micheltorena():
+    currently_accepting_orders = User.query.filter_by(order_url=super_cucas_menu.order_url).first().currently_accepting_orders
+    
     if request.method == 'GET':
-        return render_template('super-cucas-micheltorena.html', menu=json.dumps(super_cucas_menu, default=lambda x:x.__dict__))
+        return render_template('super-cucas-micheltorena.html', menu=json.dumps(super_cucas_menu, default=lambda x:x.__dict__), accepting_orders=currently_accepting_orders)
     elif request.method == 'POST':
         order = ConvertJsonToOrder(json.loads(request.form['order']), super_cucas_menu.order_url).order()
+        
+        if not currently_accepting_orders:
+            return redirect('/super-cucas-micheltorena')
 
         if not order.is_valid_order(super_cucas_menu):
             return jsonify({'error': {'message': "Order invalid"}}), 400
@@ -66,7 +71,7 @@ def super_cucas_micheltorena_payment():
         return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
 
 # POST endpoint for receiving the customer's name and setting the timestamp for the order
-@order.route('/update-order-details', methods=['POST'])
+@order.route('/order/update-order-details', methods=['POST'])
 def update_order_details():
     customer_name = request.form['customer_name']
     customer_email = request.form['customer_email']
@@ -77,8 +82,8 @@ def update_order_details():
     order.customer_email = customer_email[:100]
     order.datetime = datetime.utcnow()
     db.session.commit()
-    
-    accepting_orders = True
+
+    accepting_orders = User.query.filter_by(order_url=order.order_url).first().currently_accepting_orders
     if accepting_orders:
         return 'accepting orders'
     else:

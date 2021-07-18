@@ -63,7 +63,24 @@ def view_orders():
         orders = [[order.json_order, order.customer_name, order.datetime] for order in Order.query.filter_by(order_url=current_user.order_url, paid=True)]
         if len(orders) == 0:
             orders = "No orders"
-        return render_template('view-orders.html', orders=orders)
+
+        currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+        return render_template('view-orders.html', orders=orders, currently_accepting_orders=currently_accepting_orders)
+    else:
+        return redirect('/login')
+
+# POST endpoint for toggling currently_accepting_orders
+@account.route('/account/update-accepting-orders-status', methods=['POST'])
+def update_accepting_orders_status():
+    if current_user.is_authenticated:
+        if request.form['currently_accepting_orders'] == 'true':
+            current_user.currently_accepting_orders = True
+            db.session.commit()
+            return "accepting"
+        else:
+            current_user.currently_accepting_orders = False
+            db.session.commit()
+            return "not accepting"
     else:
         return redirect('/login')
 

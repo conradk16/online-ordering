@@ -81,14 +81,39 @@ class cartItem {
 }
 
 function toggleAcceptingOrdersStatus(toggleElement) {
+  var currently_accepting_orders_input = document.getElementById("currently_accepting_orders");
   if (toggleElement.checked) {
-    alert("Accepting orders hurr durr");
+    currently_accepting_orders_input.value = true;
   } else {
-    alert("Git out we closed");
+    currently_accepting_orders_input.value = false;
   }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/account/update-accepting-orders-status");
+  xhr.onload = function(event) {
+
+      if (event.target.response == "accepting orders") {
+
+      }
+  };
+  var formData = new FormData(document.getElementById("accepting_orders_form"));
+  xhr.send(formData);
 }
 
-function createOrderElement(order) {
+function createOrderElement(json_order) {
+
+  var order = JSON.parse(json_order[0]);
+  var order_name = json_order[1];
+  var order_timestamp = json_order[2];
+
+  var date = new Date(order_timestamp);
+  var am_or_pm = (date.getHours() >= 12) ? " PM" : " AM"
+  var hours = date.getHours() % 12;
+  if (hours == 0) {
+    hours = 12;
+  }
+  var date_string = hours + ":" + date.getMinutes() + am_or_pm + "\n" + date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+
   var orderElement = document.createElement("div");
   orderElement.classList.add("order");
 
@@ -96,11 +121,11 @@ function createOrderElement(order) {
   metadataElement.classList.add("order-metadata");
 
   var metadataDateTime = document.createElement("div");
-  metadataDateTime.innerHTML = "12/17/21 11:26 AM";
+  metadataDateTime.innerHTML = date_string;
   var br = document.createElement("br");
   var metadataCustomerName = document.createElement("div");
   metadataCustomerName.classList.add("customer-name");
-  metadataCustomerName.innerHTML = order.customer_name;
+  metadataCustomerName.innerHTML = "Customer: " + order_name;
 
   metadataElement.appendChild(metadataDateTime);
   metadataElement.appendChild(br);
@@ -199,7 +224,7 @@ function createOrderElement(order) {
 
   var completeButton = document.createElement("div");
   completeButton.classList.add("mark-as-complete-button");
-  completeButton.innerHTML = "Mark as\ncomplete";
+  completeButton.innerHTML = "Archive\norder";
 
   var rejectButton = document.createElement("div");
   rejectButton.classList.add("reject-order-button");
@@ -225,12 +250,19 @@ function populateOrders() {
     noOrdersElement.innerHTML = "No new orders";
     bottomHalfElement.appendChild(noOrdersElement);
   } else {
-    for (const json_order of json_orders) {
-      var orderElement = createOrderElement(JSON.parse(json_order));
+    for (const json_order of orders) {
+      var orderElement = createOrderElement(json_order);
       bottomHalfElement.appendChild(orderElement);
     }
   }
+}
 
+function setAcceptingOrdersToggleStatus() {
+  if ({{currently_accepting_orders|tojson}} == "true") {
+    document.getElementById("switch-button-checkbox").checked = true;
+  } else {
+    document.getElementById("switch-button-checkbox").checked = false;
+  }
 }
 
 </script>
@@ -399,9 +431,9 @@ body, html {
 	color:#4bb543;
 	font-family:Verdana;
 	font-size:16px;
-	padding:10px 20px;
+	padding:4px 20px;
 	text-decoration:none;
-  margin: 4px 4px 12px 4px;
+  margin: 4px 4px 8px 4px;
 }
 
 .mark-as-complete-button:hover {
@@ -416,9 +448,9 @@ body, html {
 	color:#b92d2b;
 	font-family:Verdana;
 	font-size:16px;
-	padding:10px 20px;
+	padding:4px 20px;
 	text-decoration:none;
-  margin: 12px 4px 4px 4px;
+  margin: 8px 4px 4px 4px;
 }
 
 .reject-order-button:hover {
@@ -533,7 +565,7 @@ tr:nth-child(even) {
 
 <div class="meta-buttons">
 <div class="switch-button">
-  <input class="switch-button-checkbox" type="checkbox" onchange="toggleAcceptingOrdersStatus(this)"></input>
+  <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onchange="toggleAcceptingOrdersStatus(this)"></input>
   <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
 </div>
 
@@ -551,6 +583,11 @@ tr:nth-child(even) {
 
 <script>
 populateOrders();
+setAcceptingOrdersToggleStatus();
 </script>
+
+<form id="accepting_orders_form">
+    <input type="hidden" id="currently_accepting_orders" name="currently_accepting_orders">
+</form>
 
 </html>

@@ -16,6 +16,7 @@ class User(db.Model, UserMixin):
     stripe_connected_account_details_submitted = db.Column(db.Boolean, default=False)
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
     order_url = db.Column(db.String)
+    currently_accepting_orders = db.Column(db.Boolean, nullable=False, default=False)
 
     def get_reset_token(self, expires_sec=600):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
@@ -43,6 +44,8 @@ class Order(db.Model):
     client_secret = db.Column(db.String)
     json_order = db.Column(db.String)
     paid = db.Column(db.Boolean, default=False)
+    rejected_by_restaurant = db.Column(db.Boolean, default=False)
+    marked_as_complete_by_restaurant = db.Column(db.Boolean, default=False)
     order_url = db.Column(db.String)
     customer_name = db.Column(db.String)
     datetime = db.Column(db.DateTime)
