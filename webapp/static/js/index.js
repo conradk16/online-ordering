@@ -120,6 +120,19 @@ function registerElements(elements, exampleName) {
       address_zip: zip ? zip.value : undefined,
     };
 
+    // set order_info form data
+    var input = document.getElementById("inp");
+    input.value = "Conrad!";
+    
+    // send post request with order_info form
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/update-order-details");
+    xhr.onload = function(event) {
+        alert("success, server responded with: " + event.target.response);
+    };
+    var formData = new FormData(document.getElementById("order_info"));
+    xhr.send(formData);
+
 
     var card = elements[0];
     var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
