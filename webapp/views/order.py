@@ -76,4 +76,9 @@ def update_order_details():
     order.datetime = datetime.utcnow()
     db.session.commit()
     
+    accepting_orders = True
+    if accepting_orders:
+        return jsonify({'accepting orders'})
+    else:
+        return jsonify({'not accepting orders'})
 
