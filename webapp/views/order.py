@@ -78,7 +78,7 @@ def update_order_details():
     
     accepting_orders = True
     if accepting_orders:
-        return jsonify({'accepting orders'})
+        return 'accepting orders'
     else:
-        return jsonify({'not accepting orders'})
+        return 'not accepting orders'
 
