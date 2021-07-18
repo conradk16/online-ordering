@@ -122,7 +122,8 @@ function registerElements(elements, exampleName) {
 
     // set order_info form data
     var input = document.getElementById("inp");
-    input.value = "Conrad!";
+    var name_element = document.getElementById("example1-name");
+    input.value = name_element.value;
     
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
