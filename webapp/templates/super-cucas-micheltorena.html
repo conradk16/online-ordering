@@ -192,7 +192,7 @@ function add_to_order(item) {
             }
         }
         if (!at_least_one_selected) {
-            display_error("Please Select " + required_choice_set.title, "red");
+            display_error("Please Select " + required_choice_set.title, "#ff8f8f");
             window.setTimeout("hide_error();", 1500);
             return;
         }
@@ -217,7 +217,7 @@ function add_to_order(item) {
     close_popup();
 
     // display "added to order"
-    display_error("Added To Order", "green");
+    display_error("Added To Order", "#4693e0", "#fff", false, "20px");
     window.setTimeout("hide_error();", 750);
 
     // add to cart_items
@@ -240,7 +240,7 @@ function add_to_order(item) {
     }
 }
 
-function display_error(message, color) {
+function display_error(message, background_color, text_color, bold=true, font_size="17px") {
     var error_box = document.getElementsByClassName('error-alert')[0];
     error_box.style.display = "flex";
 
@@ -251,15 +251,17 @@ function display_error(message, color) {
     // create message
     var message_element = document.createElement('a');
     message_element.innerHTML = message;
-    if (color == "green") {
-        /*error_box.style.border = "3px solid #0e8f0e";*/
-        /*error_box.style.background = "#48db48";*/
-        error_box.style.background = "#75ff75";
+    message_element.style.color = text_color;
+    if (bold) {
+        message_element.style.fontWeight = "700";
+    } else {
+        message_element.style.fontWeight = "300";
     }
-    else {
-        /*error_box.style.border = "3px solid #b00000";*/
-        error_box.style.background = "#ff8f8f";
-    }
+    message_element.style.fontSize = font_size;
+
+
+    error_box.style.background = background_color;
+
     error_box.appendChild(message_element);
 }
 
