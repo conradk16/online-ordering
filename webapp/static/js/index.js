@@ -106,72 +106,72 @@ function registerElements(elements, exampleName) {
     // Disable all inputs.
     disableInputs();
 
-    // Gather additional customer data we may have collected in our form.
-    var name = form.querySelector('#' + exampleName + '-name');
-    var address1 = form.querySelector('#' + exampleName + '-address');
-    var city = form.querySelector('#' + exampleName + '-city');
-    var state = form.querySelector('#' + exampleName + '-state');
-    var zip = form.querySelector('#' + exampleName + '-zip');
-    var additionalData = {
-      name: name ? name.value : undefined,
-      address_line1: address1 ? address1.value : undefined,
-      address_city: city ? city.value : undefined,
-      address_state: state ? state.value : undefined,
-      address_zip: zip ? zip.value : undefined,
-    };
-
     // set order_info form data
-    var input = document.getElementById("inp");
+    var name_input = document.getElementById("name_inp");
     var name_element = document.getElementById("example1-name");
-    input.value = name_element.value;
+    name_input.value = name_element.value;
+
+    var email_input = document.getElementById("email_inp");
+    var email_element = document.getElementById("example1-email");
+    email_input.value = email_element.value;
+
+    var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
+    var client_secret_input = document.getElementById("client_secret_inp");
+    client_secret_input.value = client_secret;
     
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/update-order-details");
     xhr.onload = function(event) {
-        alert("success, server responded with: " + event.target.response);
+        
+        var checkmark = document.getElementsByClassName("checkmark")[0];
+        var border = document.getElementsByClassName("border")[0];
+        var result_title = document.getElementsByClassName("result-title")[0];
+
+        if (event.target.response != "accepting orders") {
+            // Stop loading!
+            example.classList.remove('submitting');
+            example.classList.add('submitted');
+            
+            console.log(event.target.response);
+            checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
+            border.style.stroke = "#de0909";
+            result_title.innerHTML = "Sorry, orders are no longer being accepted.";
+            resetButton.style.display = "none";
+
+        } else {
+            var card = elements[0];
+            stripe.confirmCardPayment(client_secret, {
+                payment_method: {
+                    card: card,
+                }
+            }).then(function(result) {
+                // Stop loading!
+                example.classList.remove('submitting');
+                example.classList.add('submitted');
+
+                if (result.error) {
+                    console.log(result.error.message);
+                    checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
+                    border.style.stroke = "#de0909";
+                    result_title.innerHTML = "Payment failed";
+                } 
+                else {
+                    // The payment has been processed!
+                    if (result.paymentIntent.status == 'succeeded') {
+                        console.log("success");
+                        checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
+                        result_title.innerHTML = "Thank you, your order has been placed.";
+                        resetButton.style.display = "none";
+                    }
+                }
+            });
+        }
     };
+    
     var formData = new FormData(document.getElementById("order_info"));
     xhr.send(formData);
-
-
-    var card = elements[0];
-    var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
-    stripe.confirmCardPayment(client_secret, {
-      payment_method: {
-        card: card,
-        billing_details: {
-          address: {
-            postal_code: 93434
-          }
-        }
-      }
-    }).then(function(result) {
-      // Stop loading!
-      example.classList.remove('submitting');
-      example.classList.add('submitted');
-        
-
-      var checkmark = document.getElementsByClassName("checkmark")[0];
-      var border = document.getElementsByClassName("border")[0];
-      var result_title = document.getElementsByClassName("result-title")[0];
-
-      if (result.error) {
-        console.log(result.error.message);
-        checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
-        border.style.stroke = "#de0909";
-        result_title.innerHTML = "Payment failed";
-      } 
-      else {
-        // The payment has been processed!
-        if (result.paymentIntent.status == 'succeeded') {
-          console.log("success");
-          checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
-          result_title.innerHTML = "Payment successful";
-          resetButton.style.display = "none";
-        }
-      }
-    });    
+    
 
   resetButton.addEventListener('click', function(e) {
     e.preventDefault();
