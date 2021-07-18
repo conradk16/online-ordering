@@ -217,12 +217,20 @@ function createOrderElement(order) {
 
 function populateOrders() {
   var bottomHalfElement = document.getElementById("bottom-half");
-  var json_orders = {{orders|tojson}}
+  var orders = {{orders|tojson}}
 
-  for (const json_order of json_orders) {
-    var orderElement = createOrderElement(JSON.parse(json_order));
-    bottomHalfElement.appendChild(orderElement);
+  if (orders == "No orders") {
+    var noOrdersElement = document.createElement("div");
+    noOrdersElement.classList.add("no-orders-text");
+    noOrdersElement.innerHTML = "No new orders";
+    bottomHalfElement.appendChild(noOrdersElement);
+  } else {
+    for (const json_order of json_orders) {
+      var orderElement = createOrderElement(JSON.parse(json_order));
+      bottomHalfElement.appendChild(orderElement);
+    }
   }
+
 }
 
 </script>
@@ -461,6 +469,13 @@ body, html {
 .customer-name {
   overflow:hidden;
   text-overflow:ellipsis;
+}
+
+.no-orders-text {
+  font-family: verdana;
+  font-size: 20px;
+  margin: 70px;
+  text-align: center;
 }
 
 table {
