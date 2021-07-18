@@ -1,9 +1,349 @@
 <!DOCTYPE html>
 <html>
-<body>
 
-<p> Orders:</p>
-<p>{{orders}}</p>
+<script>
+function toggleAcceptingOrdersStatus(toggleElement) {
+  if (toggleElement.checked) {
+    alert("Accepting orders hurr durr");
+  } else {
+    alert("Git out we closed");
+  }
+}
+</script>
 
-</body>
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Add a background color to the top navigation */
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-style:solid;
+  border-width: 0px 0px 1px 0px;
+  border-bottom-color: rgba(230, 230, 230, 1);
+  overflow: hidden;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the links inside the navigation bar */
+.topnav-right {
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  opacity: 1;
+  font-size: 17px;
+  cursor: pointer;
+  font-family:verdana;
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* Change the color of links on hover */
+.topnav-right:hover {
+  background-color: rgba(240, 240, 240, 0.75);
+}
+
+.overall-div {
+  height:100%;
+  display:flex;
+  flex-direction: column;
+}
+.top-half {
+  min-height: 204px;
+}
+
+.meta-buttons {
+  margin:auto;
+  max-width: 400px;
+  padding: 10px;
+  text-align: center;
+}
+
+
+
+* {
+  box-sizing: border-box;
+}
+
+.switch-button {
+  background: rgba(21, 95, 255, 0.6);
+  margin:auto;
+  border-radius: 30px;
+  overflow: hidden;
+  width: 360px;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: white;
+  position: relative;
+  padding-right: 180px;
+  position: relative;
+  font-size: 16px;
+  font-family:verdana;
+  margin-bottom: 10px;
+}
+.switch-button:before {
+  content: "Accepting orders";
+  font-size: 16px;
+  font-family:verdana;
+  color: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+.switch-button-checkbox {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 2;
+}
+.switch-button-checkbox:checked + .switch-button-label:before {
+  transform: translateX(180px);
+  transition: transform 300ms linear;
+}
+.switch-button-checkbox + .switch-button-label {
+  position: relative;
+  padding: 15px 0;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+.switch-button-checkbox + .switch-button-label:before {
+  content: "";
+  background: #155FFF;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 30px;
+  transform: translateX(0);
+  transition: transform 300ms;
+}
+.switch-button-checkbox + .switch-button-label .switch-button-label-span {
+  position: relative;
+}
+
+.edit-menu-availability-button {
+	background-color:#ffffff;
+	border-radius:28px;
+	border:1px solid #000000;
+	cursor:pointer;
+	color:#000000;
+	font-family:Verdana;
+	font-size:16px;
+	padding:16px 31px;
+	text-decoration:none;
+}
+
+.complete-reject-buttons {
+  margin: 4px;
+  text-align: center;
+}
+
+.mark-as-complete-button {
+	background-color:#ffffff;
+	border-radius:28px;
+	border:1px solid #4bb543;
+	cursor:pointer;
+	color:#4bb543;
+	font-family:Verdana;
+	font-size:16px;
+	padding:12px 25px;
+	text-decoration:none;
+  margin: 4px 4px 12px 4px;
+}
+
+.mark-as-complete-button:hover {
+	background-color:#f0f0f0;
+}
+
+.reject-order-button {
+	background-color:#ffffff;
+	border-radius:28px;
+	border:1px solid #b92d2b;
+	cursor:pointer;
+	color:#b92d2b;
+	font-family:Verdana;
+	font-size:16px;
+	padding:12px 25px;
+	text-decoration:none;
+  margin: 12px 4px 4px 4px;
+}
+
+.reject-order-button:hover {
+	background-color:#f0f0f0;
+}
+
+.edit-menu-availability-button:hover {
+	background-color:#f0f0f0;
+}
+
+.bottom-half {
+  min-height:300px;
+  overflow-y:auto;
+  background-color: #f3f3f3;
+  margin: 0px 10px 10px 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.order {
+  height:150px;
+  display: flex;
+  background-color: white;
+  margin: 12px 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.order-metadata {
+  background-color: white;
+  margin: 8px 4px 8px 8px;
+  font-family: verdana;
+  font-size: 14px;
+  width: 100px;
+  text-align: center;
+}
+
+.table-holder {
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: 130px;
+  margin: 8px;
+  flex: 1;
+}
+
+table {
+  font-family: verdana;
+  font-size: 14px;
+  border-collapse: collapse;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid black;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+
+</style>
+
+<div class="overall-div">
+<div class="top-half">
+  <div class="topnav">
+    <a href="/">
+    <div class="topnav-left">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+    </div>
+    </a>
+    <div class="topnav-right">
+    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    </div>
+  </div>
+
+<div class="meta-buttons">
+<div class="switch-button">
+  <input class="switch-button-checkbox" type="checkbox" onchange="toggleAcceptingOrdersStatus(this)"></input>
+  <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
+</div>
+
+<br>
+<a href="#" class="edit-menu-availability-button">Edit menu availability</a>
+<br>
+<br>
+</div>
+
+</div>
+<div class="bottom-half">
+  <div class="order">
+    <div class="order-metadata">
+      <div>
+        12/17/21 11:26 AM
+      </div>
+      <br>
+      <div style="overflow:hidden;text-overflow:ellipsis">
+        Customer: Stefan
+      </div>
+    </div>
+    <div class="table-holder">
+      <table>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Options</th>
+          <th>Extras</th>
+          <th>Notes</th>
+        </tr>
+        <tr>
+          <td>Breakfast burrito</td>
+          <td>1</td>
+          <td>Meat: pork; egg style: hard-boiled</td>
+          <td>Avocado</td>
+          <td>Please boil the egg for 69 seconds</td>
+        </tr>
+        <tr>
+          <td>Breakfast burrito</td>
+          <td>1</td>
+          <td>Meat: pork; egg style: hard-boiled</td>
+          <td>Avocado</td>
+          <td>Please boil the egg for 69 seconds</td>
+        </tr>
+      </table>
+    </div>
+    <div class="complete-reject-buttons">
+      <div class="mark-as-complete-button">Complete</div>
+      <div class="reject-order-button">Reject</div>
+    </div>
+  </div>
+  <div class="order">
+  </div>
+  <div class="order">
+  </div>
+  <div class="order">
+  </div>
+  <div class="order">
+  </div>
+  <div class="order">
+  </div>
+
+</div>
+</div>
+
+
 </html>

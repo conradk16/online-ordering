@@ -12,7 +12,10 @@ home = Blueprint('home', __name__)
 # landing page
 @home.route('/')
 def homepage():
-    return render_template('homepage.html')
+    if current_user.is_authenticated:
+        return redirect('/account')
+    else:
+        return render_template('homepage.html')
 
 # privacy policy
 @home.route('/privacy-policy')
