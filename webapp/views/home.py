@@ -176,7 +176,7 @@ def signup_select_plan():
             except Exception as e:
                 return jsonify({'error': {'message': str(e)}}), 400
 
-@home.route('account/setup')
+@home.route('/account/setup')
 def signup_test():
     return render_template('signup-enter-account-details.html')
 
