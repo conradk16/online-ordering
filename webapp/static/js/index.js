@@ -181,6 +181,17 @@ function registerElements(elements, exampleName) {
     // Resetting the form does not un-disable inputs, so we need to do it separately:
     enableInputs();
     example.classList.remove('submitted');
+
+    // remove title if necessary
+    var title = document.getElementsByClassName("title")[0];
+    if (title) { title.remove(); }
+
+    // add back the title
+    var example1 = document.getElementsByClassName("cell example example1")[0];
+    var title = document.createElement("h1");
+    title.classList.add("title");
+    title.innerHTML = "Enter Payment Details";
+    example1.prepend(title);
   });
 });
   var price = document.getElementById("helper").getAttribute('data-price');
