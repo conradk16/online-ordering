@@ -4,6 +4,7 @@ from webapp.models.db_models import User, Order
 from webapp import db
 import stripe
 import json
+from datetime import datetime
 
 order = Blueprint('order', __name__)
 
@@ -34,11 +35,9 @@ def super_cucas_micheltorena():
     if request.method == 'GET':
         return render_template('super-cucas-micheltorena.html', menu=json.dumps(super_cucas_menu, default=lambda x:x.__dict__))
     elif request.method == 'POST':
-        print(request.form)
         order = ConvertJsonToOrder(json.loads(request.form['order']), super_cucas_menu.order_url).order()
 
         if not order.is_valid_order(super_cucas_menu):
-            print("Order invalid")
             return jsonify({'error': {'message': "Order invalid"}}), 400
 
         # price in cents
@@ -65,3 +64,16 @@ def super_cucas_micheltorena_payment():
 
     if request.method == 'GET':
         return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+
+# POST endpoint for receiving the customer's name and setting the timestamp for the order
+@order.route('/update-order-details', methods=['POST'])
+def update_order_details():
+    customer_name = request.form['customer_name']
+    client_secret = request.form['client_secret']
+
+    order = Order.query.filter_by(client_secret=client_secret).first()
+    order.customer_name = customer_name[:50]
+    order.datetime = datetime.utcnow()
+    db.session.commit()
+    
+

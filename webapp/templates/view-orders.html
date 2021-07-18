@@ -1,7 +1,85 @@
 <!DOCTYPE html>
 <html>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <script>
+
+class menuItem {
+    constructor(item_name, item_description, price, required_choice_sets, optional_choice_sets, category) {
+        this.item_name = item_name;
+        this.item_description = item_description;
+        this.price = price;
+        this.required_choice_sets = required_choice_sets;
+        this.optional_choice_sets = optional_choice_sets;
+        this.category = category;
+    }
+}
+
+class choiceSet {
+    constructor(title, choices) {
+        this.title = title;
+        this.choices = choices;
+    }
+}
+
+class choice {
+    constructor(name, price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    is_equal(other) {
+        return this.name == other.name && this.price == other.price;
+    }
+}
+
+// selections is a list of choices
+class cartItem {
+    constructor(item, required_selections, optional_selections, quantity, special_instructions) {
+        this.item = item;
+        this.required_selections = required_selections;
+        this.optional_selections = optional_selections;
+        this.quantity = quantity;
+        this.special_instructions = special_instructions;
+    }
+
+    is_equal(other) {
+        if (this.item != other.item || this.special_instructions != other.special_instructions) {
+                return false;
+        }
+        for (let i = 0; i < this.required_selections.length; i++) {
+            var this_choice = this.required_selections[i];
+            var other_choice = other.required_selections[i];
+            if (!this_choice.is_equal(other_choice)) {
+                return false;
+            }
+        }
+        if (this.optional_selections.length != other.optional_selections.length) {
+            return false;
+        }
+        for (let i = 0; i < this.optional_selections.length; i++) {
+            var this_choice = this.optional_selections[i];
+            var other_choice = other.optional_selections[i];
+            if (!this_choice.is_equal(other_choice)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    get_price() {
+        var total = this.item.price;
+        for (const required_selection of this.required_selections) {
+            total += required_selection.price;
+        }
+        for (const optional_selection of this.optional_selections) {
+            total += optional_selection.price;
+        }
+        return (total * this.quantity).toFixed(2);
+    }
+}
+
 function toggleAcceptingOrdersStatus(toggleElement) {
   if (toggleElement.checked) {
     alert("Accepting orders hurr durr");
@@ -9,6 +87,144 @@ function toggleAcceptingOrdersStatus(toggleElement) {
     alert("Git out we closed");
   }
 }
+
+function createOrderElement(order) {
+  var orderElement = document.createElement("div");
+  orderElement.classList.add("order");
+
+  var metadataElement = document.createElement("div");
+  metadataElement.classList.add("order-metadata");
+
+  var metadataDateTime = document.createElement("div");
+  metadataDateTime.innerHTML = "12/17/21 11:26 AM";
+  var br = document.createElement("br");
+  var metadataCustomerName = document.createElement("div");
+  metadataCustomerName.classList.add("customer-name");
+  metadataCustomerName.innerHTML = "Customer: Stefan";
+
+  metadataElement.appendChild(metadataDateTime);
+  metadataElement.appendChild(br);
+  metadataElement.appendChild(metadataCustomerName);
+
+  var tableHolderElement = document.createElement("div");
+  tableHolderElement.classList.add("table-holder");
+
+  var tableElement = document.createElement("table");
+
+  var tableHeaderRowElement = document.createElement("tr");
+  var tableHeaderCol1 = document.createElement("th");
+  tableHeaderCol1.innerHTML = "Item";
+  tableHeaderCol1.classList.add("item-col");
+  var tableHeaderCol2 = document.createElement("th");
+  tableHeaderCol2.innerHTML = "Qty";
+  tableHeaderCol2.classList.add("qty-col");
+  var tableHeaderCol3 = document.createElement("th");
+  tableHeaderCol3.innerHTML = "Options";
+  tableHeaderCol3.classList.add("options-col");
+  var tableHeaderCol4 = document.createElement("th");
+  tableHeaderCol4.innerHTML = "Extras";
+  tableHeaderCol4.classList.add("extras-col");
+  var tableHeaderCol5 = document.createElement("th");
+  tableHeaderCol5.innerHTML = "Notes";
+  tableHeaderCol5.classList.add("notes-col");
+
+  tableHeaderRowElement.appendChild(tableHeaderCol1);
+  tableHeaderRowElement.appendChild(tableHeaderCol2);
+  tableHeaderRowElement.appendChild(tableHeaderCol3);
+  tableHeaderRowElement.appendChild(tableHeaderCol4);
+  tableHeaderRowElement.appendChild(tableHeaderCol5);
+
+  tableElement.appendChild(tableHeaderRowElement);
+
+  for (const orderItem of order) {
+    var tableRowElement = document.createElement("tr");
+
+    var tableRowItemNameElement = document.createElement("td");
+    tableRowItemNameElement.innerHTML = orderItem.item.item_name;
+    tableRowItemNameElement.classList.add("item-col");
+
+    var tableRowQtyElement = document.createElement("td");
+    tableRowQtyElement.innerHTML = orderItem.quantity;
+    tableRowQtyElement.classList.add("qty-col");
+
+    var tableRowOptionsElement = document.createElement("td");
+    var options = "";
+    var i = 0;
+    for (const required_selection of orderItem.required_selections) {
+      options += (orderItem.item.required_choice_sets[i].title + ": " + required_selection.name);
+      if (i < orderItem.required_selections.length) {
+        options += "\n";
+      }
+      i += 1;
+    }
+    if (options == "") {
+      options = "N/A"
+    }
+    tableRowOptionsElement.innerHTML = options;
+    tableRowOptionsElement.classList.add("options-col");
+
+    var tableRowExtrasElement = document.createElement("td");
+    var extras = "";
+    var j = 0
+    for (const optional_selection of orderItem.optional_selections) {
+      extras += optional_selection.name;
+      if (j < orderItem.optional_selections.length) {
+        extras += "\n";
+      }
+      j += 1;
+    }
+    if (extras == "") {
+      extras = "None"
+    }
+    tableRowExtrasElement.innerHTML = extras;
+    tableRowExtrasElement.classList.add("extras-col");
+
+    var tableRowNotesElement = document.createElement("td");
+    tableRowNotesElement.innerHTML = orderItem.special_instructions;
+    tableRowNotesElement.classList.add("notes-col");
+
+    tableRowElement.appendChild(tableRowItemNameElement);
+    tableRowElement.appendChild(tableRowQtyElement);
+    tableRowElement.appendChild(tableRowOptionsElement);
+    tableRowElement.appendChild(tableRowExtrasElement);
+    tableRowElement.appendChild(tableRowNotesElement);
+
+    tableElement.appendChild(tableRowElement);
+  }
+
+  tableHolderElement.appendChild(tableElement);
+
+  var completeRejectButtonsElement = document.createElement("div");
+  completeRejectButtonsElement.classList.add("complete-reject-buttons");
+
+  var completeButton = document.createElement("div");
+  completeButton.classList.add("mark-as-complete-button");
+  completeButton.innerHTML = "Mark as\ncomplete";
+
+  var rejectButton = document.createElement("div");
+  rejectButton.classList.add("reject-order-button");
+  rejectButton.innerHTML = "Reject\norder";
+
+  completeRejectButtonsElement.appendChild(completeButton);
+  completeRejectButtonsElement.appendChild(rejectButton);
+
+  orderElement.appendChild(metadataElement);
+  orderElement.appendChild(tableHolderElement);
+  orderElement.appendChild(completeRejectButtonsElement);
+
+  return orderElement;
+}
+
+function populateOrders() {
+  var bottomHalfElement = document.getElementById("bottom-half");
+  var json_orders = {{orders|tojson}}
+
+  for (const json_order of json_orders) {
+    var orderElement = createOrderElement(JSON.parse(json_order));
+    bottomHalfElement.appendChild(orderElement);
+  }
+}
+
 </script>
 
 <style>
@@ -62,13 +278,12 @@ body, html {
   flex-direction: column;
 }
 .top-half {
-  min-height: 204px;
 }
 
 .meta-buttons {
   margin:auto;
   max-width: 400px;
-  padding: 10px;
+  padding: 10px 10px 4px 10px;
   text-align: center;
 }
 
@@ -93,7 +308,7 @@ body, html {
   position: relative;
   font-size: 16px;
   font-family:verdana;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 .switch-button:before {
   content: "Accepting orders";
@@ -128,7 +343,7 @@ body, html {
 }
 .switch-button-checkbox + .switch-button-label {
   position: relative;
-  padding: 15px 0;
+  padding: 10px 0;
   display: block;
   user-select: none;
   pointer-events: none;
@@ -157,13 +372,15 @@ body, html {
 	color:#000000;
 	font-family:Verdana;
 	font-size:16px;
-	padding:16px 31px;
+	padding:10px 25px;
 	text-decoration:none;
 }
 
 .complete-reject-buttons {
   margin: 4px;
   text-align: center;
+  white-space:pre-wrap;
+  word-wrap:break-word;
 }
 
 .mark-as-complete-button {
@@ -174,7 +391,7 @@ body, html {
 	color:#4bb543;
 	font-family:Verdana;
 	font-size:16px;
-	padding:12px 25px;
+	padding:10px 20px;
 	text-decoration:none;
   margin: 4px 4px 12px 4px;
 }
@@ -191,7 +408,7 @@ body, html {
 	color:#b92d2b;
 	font-family:Verdana;
 	font-size:16px;
-	padding:12px 25px;
+	padding:10px 20px;
 	text-decoration:none;
   margin: 12px 4px 4px 4px;
 }
@@ -216,7 +433,6 @@ body, html {
 }
 
 .order {
-  height:150px;
   display: flex;
   background-color: white;
   margin: 12px 12px;
@@ -238,9 +454,13 @@ body, html {
 .table-holder {
   overflow-y: auto;
   overflow-x: auto;
-  max-height: 130px;
   margin: 8px;
   flex: 1;
+}
+
+.customer-name {
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 table {
@@ -249,12 +469,31 @@ table {
   border-collapse: collapse;
   word-wrap: break-word;
   width: 100%;
+  height: 100%;
 }
 
 td, th {
   border: 1px solid black;
-  text-align: left;
+  text-align: center;
   padding: 8px;
+  white-space:pre-wrap;
+  word-wrap:break-word
+}
+
+.item-col {
+  width: 30%
+}
+.qty-col {
+  width: 5%
+}
+.options-col {
+  width: 30%
+}
+.extras-col {
+  width: 15%
+}
+.notes-col {
+  width: 20%
 }
 
 tr:nth-child(even) {
@@ -290,60 +529,13 @@ tr:nth-child(even) {
 </div>
 
 </div>
-<div class="bottom-half">
-  <div class="order">
-    <div class="order-metadata">
-      <div>
-        12/17/21 11:26 AM
-      </div>
-      <br>
-      <div style="overflow:hidden;text-overflow:ellipsis">
-        Customer: Stefan
-      </div>
-    </div>
-    <div class="table-holder">
-      <table>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Options</th>
-          <th>Extras</th>
-          <th>Notes</th>
-        </tr>
-        <tr>
-          <td>Breakfast burrito</td>
-          <td>1</td>
-          <td>Meat: pork; egg style: hard-boiled</td>
-          <td>Avocado</td>
-          <td>Please boil the egg for 69 seconds</td>
-        </tr>
-        <tr>
-          <td>Breakfast burrito</td>
-          <td>1</td>
-          <td>Meat: pork; egg style: hard-boiled</td>
-          <td>Avocado</td>
-          <td>Please boil the egg for 69 seconds</td>
-        </tr>
-      </table>
-    </div>
-    <div class="complete-reject-buttons">
-      <div class="mark-as-complete-button">Complete</div>
-      <div class="reject-order-button">Reject</div>
-    </div>
-  </div>
-  <div class="order">
-  </div>
-  <div class="order">
-  </div>
-  <div class="order">
-  </div>
-  <div class="order">
-  </div>
-  <div class="order">
-  </div>
+<div class="bottom-half" id="bottom-half">
 
 </div>
 </div>
 
+<script>
+populateOrders();
+</script>
 
 </html>
