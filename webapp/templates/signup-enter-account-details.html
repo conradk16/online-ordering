@@ -3,73 +3,78 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="/static/css/account-details.css" data-rel-css="">
+
 
 <head>
   <script>
-  function validateEmailAndPassword(emailInput, passwordInput) {
 
-    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
-
-    var validEmail = (emailInput.match(mailFormat) != null) && (emailInput.length <= 100);
-    var validPassword = (passwordInput.length >= 8) && (passwordInput.length <= 100);
-
-    var emailBox = document.getElementsByClassName("input-box")[0];
-    var passwordBox = document.getElementsByClassName("input-box")[1];
-
-    var potential_user_already_exists_message = document.getElementById("user-already-exists-message");
-    if (potential_user_already_exists_message) {
-      potential_user_already_exists_message.remove();
-    }
-
-    if (validEmail) {
-      var potential_error_message = document.getElementById("invalid-email-message");
-      if (potential_error_message) {
-        potential_error_message.remove();
-      }
-      emailBox.style.border = "1px solid #ccc";
+  // creates the element if it doesn't exist
+  function getErrorElement() {
+    if (document.getElementsByClassName("invalid-input-text").length == 0) {
+        var invalid_input_text = document.createElement("span");
+        invalid_input_text.classList.add("invalid-input-text");
+        var form = document.getElementById("form");
+        form.appendChild(invalid_input_text);
+        return invalid_input_text;
     } else {
-        if (!document.getElementById("invalid-email-message")) {
-          var invalidEmailMessage = document.createElement("span");
-          var passwordLabel = document.getElementById("password-label");
-          var form = document.getElementById("form");
-
-          invalidEmailMessage.id = "invalid-email-message";
-          invalidEmailMessage.classList.add("invalid-input-text");
-          invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
-
-          form.insertBefore(invalidEmailMessage, passwordLabel);
-          emailBox.style.border = "1px solid #b92d2b";
-        }
+        return document.getElementsByClassName("invalid-input-text")[0];
     }
-    if (validPassword) {
-      var potential_password_error_message = document.getElementById("invalid-password-message");
-      if (potential_password_error_message) {
-        potential_password_error_message.remove();
-      }
-      passwordBox.style.border = "1px solid #ccc";
-    } else {
-        if (!document.getElementById("invalid-password-message")) {
-          var invalidPasswordMessage = document.createElement("span");
-          var nextButton = document.getElementById("next-button");
-          var form = document.getElementById("form");
-
-
-          invalidPasswordMessage.id = "invalid-password-message";
-          invalidPasswordMessage.classList.add("invalid-input-text");
-          invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
-
-          form.insertBefore(invalidPasswordMessage, nextButton);
-          passwordBox.style.border = "1px solid #b92d2b";
-        }
-    }
-    return (validEmail && validPassword);
   }
 
-  function submit_form(plan_type) {
-    form = document.getElementById('select-form');
-    input = document.getElementById('inp');
-    input.value = plan_type;
-    form.submit();
+
+  function validate_form() {
+    // validate name
+
+    var name_text = document.getElementById("name").value;
+    if (name_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter your name";       
+        return;
+    }
+
+    // validate email
+    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+    
+    var email_text = document.getElementById("email").value;
+    
+    var valid_email = (email_text.match(mailFormat) != null) && (email_text.length <= 100);
+
+    if (!valid_email) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid email address";       
+        return;
+    }
+
+    // validate restaurant name
+    var restaurant_text = document.getElementById("restaurant_name").value;
+    if (restaurant_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant name";       
+        return;
+    }
+ 
+    // validate restaurant address
+    var restaurant_address_text = document.getElementById("restaurant_address").value;
+    if (restaurant_address_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant address";       
+        return;
+    }
+
+    // validate menu input
+
+
+    submit_form();
+    
+  }
+
+  function submit_form() {
+    
   }
 
   function run_on_load() {
@@ -181,8 +186,8 @@ body, html {
 
 .invalid-input-text {
   font-size: 12px;
-  margin: 0;
-  font-family:verdana;
+  margin-left: 15px;
+  margin-top: 40px;
   font-weight: 400;
   text-align: left;
   color: #b92d2b;
@@ -328,32 +333,38 @@ input[type=submit] {
 
 <br>
 <div class="center">
-        <div class="step-one-of-three">Step 3 of 4</div>
-        <div class="create-your-account">Select a signup fee</div>
+        <div class="create-your-account">Enter Account Details</div>
         <br>
-        <form>
+        <div class="cell example example1" id="example-1">
+
+        <form id="form">
           <fieldset>
-            <div class="row">
+              <div class="row">
               <label for="example1-name" data-tid="elements_examples.form.name_label">Name</label>
-              <input id="example1-name" data-tid="elements_examples.form.name_placeholder" type="text" placeholder="Jane Doe" required="" autocomplete="name">
+              <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe">
+            </div>
+              <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact email</label>
+              <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com">
             </div>
             <div class="row">
-              <label for="example1-email" data-tid="elements_examples.form.email_label">Email</label>
-              <input id="example1-email" data-tid="elements_examples.form.email_placeholder" type="email" placeholder="janedoe@gmail.com" required="" autocomplete="email">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant name</label>
+              <input id="restaurant_name" data-tid="elements_examples.form.email_placeholder" placeholder="Taco Joe's">
             </div>
-          </fieldset>
-          <fieldset>
             <div class="row">
-              <div id="example1-card" class="StripeElement StripeElement--empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe name="__privateStripeFrame0295" frameborder="0" allowtransparency="true" scrolling="no" allow="payment *" src="https://js.stripe.com/v3/elements-inner-card-dd495df4db6100dd6e3b5f6b504a2b1b.html#locale=super-cucas-micheltorena&amp;wait=true&amp;style[base][iconColor]=%23000000&amp;style[base][color]=%23000000&amp;style[base][fontWeight]=500&amp;style[base][fontFamily]=Roboto%2C+Open+Sans%2C+Segoe+UI%2C+sans-serif&amp;style[base][fontSize]=16px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][:-webkit-autofill][color]=%23787878&amp;style[base][::placeholder][color]=%23787878&amp;style[invalid][iconColor]=%23d14343&amp;style[invalid][color]=%23d14343&amp;iconStyle=solid&amp;rtl=false&amp;componentName=card&amp;keyMode=test&amp;apiKey=pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj&amp;referrer=http%3A%2F%2F127.0.0.1%3A5000%2Fsuper-cucas-micheltorena%2Fpayment&amp;controllerId=__privateStripeController0291" title="Secure card payment input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; will-change: transform !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant address</label>
+              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Mothafucka Ave">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Website URL</label>
+              <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com">
             </div>
           </fieldset>
-          <button id="submit-button" type="submit" data-tid="elements_examples.form.pay_button">Pay $7.99</button>
-          <div class="error" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
-              <path class="base" fill="#000" d="M8.5,17 C3.80557963,17 0,13.1944204 0,8.5 C0,3.80557963 3.80557963,0 8.5,0 C13.1944204,0 17,3.80557963 17,8.5 C17,13.1944204 13.1944204,17 8.5,17 Z"></path>
-              <path class="glyph" fill="#FFF" d="M8.5,7.29791847 L6.12604076,4.92395924 C5.79409512,4.59201359 5.25590488,4.59201359 4.92395924,4.92395924 C4.59201359,5.25590488 4.59201359,5.79409512 4.92395924,6.12604076 L7.29791847,8.5 L4.92395924,10.8739592 C4.59201359,11.2059049 4.59201359,11.7440951 4.92395924,12.0760408 C5.25590488,12.4079864 5.79409512,12.4079864 6.12604076,12.0760408 L8.5,9.70208153 L10.8739592,12.0760408 C11.2059049,12.4079864 11.7440951,12.4079864 12.0760408,12.0760408 C12.4079864,11.7440951 12.4079864,11.2059049 12.0760408,10.8739592 L9.70208153,8.5 L12.0760408,6.12604076 C12.4079864,5.79409512 12.4079864,5.25590488 12.0760408,4.92395924 C11.7440951,4.59201359 11.2059049,4.59201359 10.8739592,4.92395924 L8.5,7.29791847 L8.5,7.29791847 Z"></path>
-            </svg>
-            <span class="message"></span></div>
+          
+          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
         </form>
+
+      </div>
 </div>
 
 </div>
@@ -363,9 +374,5 @@ input[type=submit] {
   <a href="/privacy-policy" class="privacy">Privacy</a>
 </div>
 </div>
-
-<form id="select-form" action="/signup/select-plan", method="POST">
-    <input type="hidden" id="inp" name="price_id">
-</form>
 
 </html>
