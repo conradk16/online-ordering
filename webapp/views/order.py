@@ -52,32 +52,42 @@ def super_cucas_micheltorena():
             currency='usd',
             application_fee_amount=0,
             stripe_account=order.connected_account().stripe_connected_account_id,
+            description="Online order",
         )
 
-        db_order = Order(client_secret=payment_intent.client_secret, json_order=request.form['order'], paid=False, order_url=super_cucas_menu.order_url)
+        db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=super_cucas_menu.order_url)
         db_order.add_to_db()
 
         session['stripe_client_secret'] = payment_intent.client_secret
+        session['payment_intent_id'] = payment_intent.id
         session['order_price'] = payment_intent.amount
         session['stripe_connected_account_id'] = payment_intent.stripe_account
 
         return redirect('/super-cucas-micheltorena/payment')
 
 
-@order.route('/super-cucas-micheltorena/payment', methods=['GET', 'POST'])
+@order.route('/super-cucas-micheltorena/payment')
 def super_cucas_micheltorena_payment():
 
-    if request.method == 'GET':
-        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+    if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
+        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+    else:
+        return redirect('/super-cucas-micheltorena')
 
 # POST endpoint for receiving the customer's name and setting the timestamp for the order
 @order.route('/order/update-order-details', methods=['POST'])
 def update_order_details():
     customer_name = request.form['customer_name']
     customer_email = request.form['customer_email']
-    client_secret = request.form['client_secret']
+    payment_intent_id = request.form['payment_intent_id']
 
-    order = Order.query.filter_by(client_secret=client_secret).first()
+    # update payment intent to include an email for receipts
+    stripe.PaymentIntent.modify(
+        payment_intent_id,
+        receipt_email=customer_email,
+    )
+
+    order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
     order.customer_name = customer_name[:50]
     order.customer_email = customer_email[:100]
     order.datetime = datetime.utcnow()
@@ -88,4 +98,3 @@ def update_order_details():
         return 'accepting orders'
     else:
         return 'not accepting orders'
-

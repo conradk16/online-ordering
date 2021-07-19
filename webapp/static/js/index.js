@@ -1,6 +1,6 @@
 'use strict';
- 
-var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id'); 
+
+var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
 var stripe = Stripe('pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj', {
     stripeAccount: stripe_account_id
   });
@@ -95,7 +95,7 @@ function registerElements(elements, exampleName) {
       triggerBrowserValidation();
       return;
     }
-    
+
     // Hide title
     var title = document.getElementsByClassName("title")[0];
     title.style.display = "none";
@@ -116,14 +116,16 @@ function registerElements(elements, exampleName) {
     email_input.value = email_element.value;
 
     var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
-    var client_secret_input = document.getElementById("client_secret_inp");
-    client_secret_input.value = client_secret;
-    
+
+    var payment_intent_id = document.getElementById("helper").getAttribute('data-payment_intent_id');
+    var payment_intent_id_input = document.getElementById("payment_intent_id_inp");
+    payment_intent_id_input.value = payment_intent_id;
+
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/order/update-order-details");
     xhr.onload = function(event) {
-        
+
         var checkmark = document.getElementsByClassName("checkmark")[0];
         var border = document.getElementsByClassName("border")[0];
         var result_title = document.getElementsByClassName("result-title")[0];
@@ -132,7 +134,7 @@ function registerElements(elements, exampleName) {
             // Stop loading!
             example.classList.remove('submitting');
             example.classList.add('submitted');
-            
+
             console.log(event.target.response);
             checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
             border.style.stroke = "#de0909";
@@ -155,7 +157,7 @@ function registerElements(elements, exampleName) {
                     checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
                     border.style.stroke = "#de0909";
                     result_title.innerHTML = "Payment failed";
-                } 
+                }
                 else {
                     // The payment has been processed!
                     if (result.paymentIntent.status == 'succeeded') {
@@ -168,10 +170,10 @@ function registerElements(elements, exampleName) {
             });
         }
     };
-    
+
     var formData = new FormData(document.getElementById("order_info"));
     xhr.send(formData);
-    
+
 
   resetButton.addEventListener('click', function(e) {
     e.preventDefault();
@@ -190,7 +192,7 @@ function registerElements(elements, exampleName) {
     // reset border
     var border = document.getElementsByClassName("border")[0];
     border.style.stroke = "#87bbfd";
-    
+
 
     // Resetting the form does not un-disable inputs, so we need to do it separately:
     enableInputs();

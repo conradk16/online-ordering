@@ -6,7 +6,7 @@
   <meta data-tid="elements_examples.meta.description" name="description" content="Build beautiful, smart checkout flows.">
 
   <script src="https://js.stripe.com/v3/"></script>
-  <script id="helper" src="/static/js/index.js" data-rel-js="" data-stripe_client_secret={{stripe_client_secret|tojson}} data-stripe_account_id={{stripe_connected_account_id}} data-price={{price}}></script>
+  <script id="helper" src="/static/js/index.js" data-rel-js="" data-stripe_client_secret={{stripe_client_secret|tojson}} data-stripe_account_id={{stripe_connected_account_id}} data-price={{price}} data-payment_intent_id={{stripe_payment_intent_id}}></script>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
@@ -79,7 +79,7 @@
         </div>
 
       </div>
-      
+
     </section>
     <style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
     </main>
@@ -97,7 +97,7 @@
 <form id="order_info">
     <input type="hidden" id="name_inp" name="customer_name">
     <input type="hidden" id="email_inp" name="customer_email">
-    <input type="hidden" id="client_secret_inp" name="client_secret">
+    <input type="hidden" id="payment_intent_id_inp" name="payment_intent_id">
 </form>
 
 </html>
