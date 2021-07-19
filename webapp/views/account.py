@@ -62,7 +62,7 @@ def manage_billing():
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,
         return_url="https://m3orders.com/account")
-    
+
     return redirect(session.url)
 
 # GET endpoint for viewing orders
@@ -71,37 +71,75 @@ def view_orders():
     if current_user.is_authenticated:
         pending_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False):
             d = {}
             d['json_order'] = order.json_order
-            d['rejected_status'] = order.rejected_by_restaurant
+            d['refunded_status'] = order.refunded
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
-            d['client_secret'] = order.client_secret
+            d['payment_intent_id'] = order.payment_intent_id
             d['customer_name'] = order.customer_name.split()[0][:20] # just get first name, take 20 characters max
             pending_orders.append(d)
-        
+
         if len(pending_orders) == 0:
             pending_orders = "No orders"
 
         archived_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=True):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((marked_as_complete_by_restaurant == True) | (refunded == True)):
             d = {}
             d['json_order'] = order.json_order
-            d['rejected_status'] = order.rejected_by_restaurant
+            d['refunded_status'] = order.refunded
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
-            d['client_secret'] = order.client_secret
+            d['payment_intent_id'] = order.payment_intent_id
             d['customer_name'] = order.customer_name.split()[0][:20]
             archived_orders.append(d)
-        
+
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
         return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders)
+    else:
+        return redirect('/login')
+
+# POST endpoint for getting an updated order list without refreshing the page
+@account.route('/account/get-updated-orders', methods=['POST'])
+def get_updated_orders():
+    if current_user.is_authenticated:
+        pending_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False):
+            d = {}
+            d['json_order'] = order.json_order
+            d['refunded_status'] = order.refunded
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['payment_intent_id'] = order.payment_intent_id
+            d['customer_name'] = order.customer_name.split()[0][:20]
+            pending_orders.append(d)
+
+        if len(pending_orders) == 0:
+            pending_orders = "No orders"
+
+        archived_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((marked_as_complete_by_restaurant == True) | (refunded == True)):
+            d = {}
+            d['json_order'] = order.json_order
+            d['refunded_status'] = order.refunded
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['payment_intent_id'] = order.payment_intent_id
+            d['customer_name'] = order.customer_name.split()[0][:20]
+            archived_orders.append(d)
+
+        if len(archived_orders) == 0:
+            archived_orders = "No orders"
+
+        return jsonify([pending_orders, archived_orders])
     else:
         return redirect('/login')
 
@@ -124,7 +162,7 @@ def update_accepting_orders_status():
 @account.route('/account/update-order-marked-as-complete-status', methods=['POST'])
 def update_order_marked_as_complete_status():
     if current_user.is_authenticated:
-        order = Order.query.filter_by(client_secret=request.form['client_secret']).first()
+        order = Order.query.filter_by(payment_intent_id=request.form['payment_intent_id']).first()
         if request.form['order_completed_status'] == 'true':
             order.marked_as_complete_by_restaurant = True
         else:
@@ -134,43 +172,30 @@ def update_order_marked_as_complete_status():
     else:
         return redirect('/login')
 
-# POST endpoint for getting an updated order list without refreshing the page
-@account.route('/account/get-updated-orders', methods=['POST'])
-def get_updated_orders():
+# POST endpoint for refunding orders
+@account.route('/account/refund-order', methods=['POST'])
+def refund_order():
     if current_user.is_authenticated:
-        pending_orders = []
+        payment_intent_id = request.form['payment_intent_id']
+        rejection_description = request.form['reject_order_description']
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False):
-            d = {}
-            d['json_order'] = order.json_order
-            d['rejected_status'] = order.rejected_by_restaurant
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0][:20]
-            pending_orders.append(d)
-        
-        if len(pending_orders) == 0:
-            pending_orders = "No orders"
+        # ensure the ordering being refunded has an order url that current_user owns
+        order = Order.query.filter_by(payment_intent_id=payment_intent_id, order_url=current_user.order_url).first()
+        if not order:
+            return "failure"
 
-        archived_orders = []
+        refund = stripe.Refund.create(
+            payment_intent=payment_intent_id,
+            description=rejection_description,
+        )
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=True):
-            d = {}
-            d['json_order'] = order.json_order
-            d['rejected_status'] = order.rejected_by_restaurant
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0][:20]
-            archived_orders.append(d)
-        
-        if len(archived_orders) == 0:
-            archived_orders = "No orders"
+        order.refunded = True
+        db.session.commit()
 
-        return jsonify([pending_orders, archived_orders])
+        return "success"
     else:
-        return redirect('/login')
+        return "failure"
+
 
 def get_admin_page():
     users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)

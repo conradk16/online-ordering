@@ -1,11 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 import json
 import stripe
 from webapp.models.db_models import User, Order
 from webapp import db
-
-import smtplib
-from email.mime.text import MIMEText
 
 webhook = Blueprint('webhook', __name__)
 
@@ -50,7 +47,6 @@ def webhook_account_received():
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
         user.active_subscription = False
         db.session.commit()
-        send_payment_failure_email(user.email_address)
     elif event_type == 'customer.subscription.deleted':
         # The customer cancelled the subscription and it has now ended
         stripe_customer_id = data_object.customer
@@ -87,28 +83,18 @@ def webhook_connect_received():
         db.session.commit()
     elif event_type == "payment_intent.succeeded":
         payment_intent = data_object
-        connected_account_id = event["account"]
-        order = Order.query.filter_by(client_secret=payment_intent.client_secret).first()
+        order = Order.query.filter_by(payment_intent_id=payment_intent.id).first()
         order.paid = True
         db.session.commit()
+
+        # clear session data so reloading payment page takes them back to menu page
+        session['stripe_client_secret'] = None
+        session['payment_intent_id'] = None
+        session['order_price'] = None
+        session['stripe_connected_account_id'] = None
     else:
       print('Unhandled event type {}'.format(event_type))
 
     return jsonify({'status': 'success'})
 
-def send_payment_failure_email(recipient_email_address):
-    with open("../static/payment_failure_email_contents.txt", 'rb') as fp:
-        # Create a text/plain message
-        msg = MIMEText(fp.read())
 
-    me = stefankuklinsky@gmail.com
-    you = recipient_email_address
-    
-    msg['Subject'] = 'Payment Failure - M3 Orders'
-    msg['From'] = me
-    msg['To'] = you
-    
-    # Send the message via our own SMTP server, but don't include the envelope header.
-    s = smtplib.SMTP('localhost')
-    s.sendmail(me, [you], msg.as_string())
-    s.quit()

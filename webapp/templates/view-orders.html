@@ -109,8 +109,8 @@ function createOrderElement(metaOrder, isPendingTab) {
   completeButton.onclick = function() {
     var order_completed_status_input = document.getElementById("order-completed-status");
     order_completed_status_input.value = isPendingTab;
-    var client_secret_input = document.getElementById("change-order-completed-client-secret");
-    client_secret_input.value = metaOrder['client_secret'];
+    var payment_intent_id_input = document.getElementById("change-order-completed-payment_intent_id");
+    payment_intent_id_input.value = metaOrder['payment_intent_id'];
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/account/update-order-marked-as-complete-status");
     xhr.onload = function(event) {
@@ -123,6 +123,22 @@ function createOrderElement(metaOrder, isPendingTab) {
   }
 
   var rejectButton = document.createElement("div");
+  rejectButton.onclick = function() {
+    var reject_order_payment_intent_id_input = document.getElementById("reject-order-payment-intent-id");
+    reject_order_payment_intent_id_input.value = metaOrder['payment_intent_id'];
+    var reject_order_description_input = document.getElementById("reject-order-description");
+    reject_order_description_input.value = "test reason for refunding";
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/account/refund-order");
+    xhr.onload = function(event) {
+        if (event.target.response == "success") {
+          reloadOrderData();
+        }
+    };
+    var formData = new FormData(document.getElementById("reject-order-form"));
+    xhr.send(formData);
+  }
 
   if (isPendingTab) {
     completeButton.classList.add("mark-as-complete-button");
@@ -149,7 +165,7 @@ function createOrderElement(metaOrder, isPendingTab) {
   metadataCustomerName.classList.add("customer-name");
   metadataCustomerName.innerHTML = "Customer: " + order_name;
   var metadataPaymentStatus = document.createElement("div");
-  var paid = metaOrder['rejected_status'] ? "Refunded" : "Paid";
+  var paid = metaOrder['refunded_status'] ? "Refunded" : "Paid";
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
 
@@ -779,7 +795,12 @@ setAcceptingOrdersToggleStatus();
 
 <form id="change-order-completed-status">
     <input type="hidden" id="order-completed-status" name="order_completed_status">
-    <input type="hidden" id="change-order-completed-client-secret" name="client_secret">
+    <input type="hidden" id="change-order-completed-payment_intent_id" name="payment_intent_id">
+</form>
+
+<form id="reject-order-form">
+    <input type="hidden" id="reject-order-payment-intent-id" name="payment_intent_id">
+    <input type="hidden" id="reject-order-description" name="reject_order_description">
 </form>
 
 <form id="reload-orders-form">
