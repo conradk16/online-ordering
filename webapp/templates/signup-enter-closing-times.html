@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="/static/css/closing-times.css" data-rel-css="">
+
+
+<head>
+  <script>    
+
+  // creates the element if it doesn't exist
+  function getErrorElement() {
+    if (document.getElementsByClassName("invalid-input-text").length == 0) {
+        var invalid_input_text = document.createElement("span");
+        invalid_input_text.classList.add("invalid-input-text");
+        var form = document.getElementById("form");
+        form.appendChild(invalid_input_text);
+        return invalid_input_text;
+    } else {
+        return document.getElementsByClassName("invalid-input-text")[0];
+    }
+  }
+
+
+  function validate_form() {
+    // validate name
+
+    var name_text = document.getElementById("name").value;
+    if (name_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter your name";       
+        return;
+    }
+
+    // validate email
+    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+    
+    var email_text = document.getElementById("email").value;
+    
+    var valid_email = (email_text.match(mailFormat) != null) && (email_text.length <= 100);
+
+    if (!valid_email) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid email address";       
+        return;
+    }
+
+    // validate phone
+
+    var phone_format = /\d\d\d-\d\d\d-\d\d\d\d/;
+    var phone_text = document.getElementById("phone").value;
+    var valid_phone = (phone_text.match(phone_format) != null);
+    if (!valid_phone) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form *** - *** - ****";       
+        return;
+    }
+
+    // validate restaurant name
+    var restaurant_text = document.getElementById("restaurant_name").value;
+    if (restaurant_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant name";       
+        return;
+    }
+ 
+    // validate restaurant address
+    var restaurant_address_text = document.getElementById("restaurant_address").value;
+    if (restaurant_address_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant address";       
+        return;
+    }
+
+    // validate menu input
+    var menu_url_text = document.getElementById("menu_url").value;
+    var file_input = document.getElementById('file_upload');
+    if (menu_url_text.length == 0 && file_input.files.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please either enter a menu URL or upload a menu file";       
+        return;
+    }
+
+    submit_form();
+    
+  }
+
+  function submit_form() {
+    var form = document.getElementById("form");
+    form.submit();
+  }
+
+  function run_on_load() {
+    run_on_resize();
+  }
+
+  function run_on_resize() {
+    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
+    center = document.getElementsByClassName("center")[0];
+    for (const elem of bullet_text_elements) {
+        if (window.innerWidth < 500) {
+            elem.style.fontSize = "12px";
+            center.style.padding = "30px 15px";
+
+        } else {
+            elem.style.fontSize = "15px";
+            center.style.padding = "30px 30px";
+        }
+    }
+  }
+
+  window.onload = run_on_load;
+  window.onresize = run_on_resize;
+
+  </script>
+</head>
+
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+  font-family: Arial, verdana, helvetica, sans-serif;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+
+/* Add a background color to the top navigation */
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-style:solid;
+  border-width: 0px 0px 1px 0px;
+  border-bottom-color: rgba(230, 230, 230, 1);
+  overflow: hidden;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the links inside the navigation bar */
+.topnav-right {
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  opacity: 1;
+  font-size: 17px;
+  cursor: pointer;
+  font-family:verdana;
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* Change the color of links on hover */
+.topnav-right:hover {
+  background-color: rgba(240, 240, 240, 0.75);
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 575px;
+  padding: 0px;
+  background-color: white;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.step-one-of-three {
+  text-align: center;
+  font-size: 17px;
+  font-family:verdana;
+  padding: 0px 8px 0px 8px;
+}
+
+.create-your-account {
+  font-size: 30px;
+  font-family:verdana;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+  padding: 8px 8px 10px 8px;
+  min-width: 482px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  margin: 8px 8px 0px 0px;
+  height:10;
+}
+
+.invalid-input-text {
+  font-size: 12px;
+  margin-left: 15px;
+  margin-top: 40px;
+  font-weight: 400;
+  text-align: left;
+  color: #b92d2b;
+  height: 10;
+}
+
+.input-box {
+  width: 100%;
+  padding: 12px 8px;
+  margin: 4px 0px 4px 0px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family:verdana;
+  outline: none;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 12px 8px;
+  margin: 12px 0px 12px 0px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family:verdana;
+}
+
+.inputText {
+  font-size: 14px;
+  width: 200px;
+  height: 35px;
+}
+
+.overall-div {
+  height:100%;
+  min-width: 100%;
+  display:flex;
+  flex-direction: column;
+}
+.top-half {
+  min-height: 580px;
+  flex:2;
+}
+.bottom-half {
+  min-height:150px;
+  background-color: #f3f3f3;
+}
+
+.questions {
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:18px;
+}
+
+.terms-of-use {
+  margin: 30px 60px 30px 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+  text-align: center;
+}
+
+.privacy {
+  text-align: center;
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+}
+
+.columns {
+    float: left;
+    width: 50%;
+    box-sizing: border-box;}
+
+.button {
+  background-color: #04AA6D;
+  border: none;
+  color: white;
+  padding: 0px 0px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.main-form {
+    min-width: 482px;
+    overflow-x: scroll;
+}
+
+@media only screen and (max-width: 600px) {
+  .columns {
+    width: 100%;
+  }
+}
+
+</style>
+
+<div class="overall-div">
+<div class="top-half">
+  <div class="topnav">
+    <a href="/">
+    <div class="topnav-left">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+    </div>
+    </a>
+    <div class="topnav-right">
+    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    </div>
+  </div>
+
+<br>
+<div class="center">
+        <div class="step-one-of-three">Step 4 of 5</div>
+        <div class="create-your-account">Enter Account Details</div>
+        <div class="cell example example1" id="example-1">
+
+        <form id="form" class="main-form">
+          <fieldset>
+            <div class="row">
+              <label for="example1-name" data-tid="elements_examples.form.name_label">Name</label>
+              <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe" name="name">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact email</label>
+              <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com" name="email">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact phone</label>
+              <input id="phone" data-tid="elements_examples.form.email_placeholder"  placeholder="888-888-8888" name="phone">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant name</label>
+              <input id="restaurant_name" data-tid="elements_examples.form.email_placeholder" placeholder="Taco Joe's" name="restaurant_name">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant address</label>
+              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Example St" name="restaurant_address">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Menu URL</label>
+              <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com/menu" name="menu_url">
+            </div>
+          </fieldset>
+          
+          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
+        </form>
+
+      </div>
+</div>
+
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-284-7912&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+</div>
+
+</html>
