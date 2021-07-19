@@ -20,6 +20,14 @@ def account_homepage():
     else:
         return redirect('/login')
 
+@account.route('/account/setup')
+def signup_test():
+    return render_template('signup-enter-account-details.html')
+
+@account.route('/account/setup-hours')
+def hours_temp():
+    return render_template('signup-setup-hours.html')
+
 
 # GET endpoint for Connect With Stripe button, redirects to Stripe onboarding link
 @account.route('/account/connect-with-stripe')
@@ -70,7 +78,7 @@ def view_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0]
+            d['customer_name'] = order.customer_name.split()[0][:20] # just get first name, take 20 characters max
             pending_orders.append(d)
         
         if len(pending_orders) == 0:
@@ -85,7 +93,7 @@ def view_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0]
+            d['customer_name'] = order.customer_name.split()[0][:20]
             archived_orders.append(d)
         
         if len(archived_orders) == 0:
@@ -139,7 +147,7 @@ def get_updated_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0]
+            d['customer_name'] = order.customer_name.split()[0][:20]
             pending_orders.append(d)
         
         if len(pending_orders) == 0:
@@ -154,7 +162,7 @@ def get_updated_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name.split()[0] # just get first name
+            d['customer_name'] = order.customer_name.split()[0][:20]
             archived_orders.append(d)
         
         if len(archived_orders) == 0:

@@ -176,10 +176,6 @@ def signup_select_plan():
             except Exception as e:
                 return jsonify({'error': {'message': str(e)}}), 400
 
-@home.route('/account/setup')
-def signup_test():
-    return render_template('signup-enter-account-details.html')
-
 def is_valid_login_post_request(request):
     if request.form:
         if ('email_address' in request.form) and ('password' in request.form):
