@@ -80,30 +80,7 @@ class cartItem {
     }
 }
 
-function toggleAcceptingOrdersStatus(toggleElement) {
-  var currently_accepting_orders_input = document.getElementById("currently_accepting_orders");
-  if (toggleElement.checked) {
-    // checked means 'not accepting orders' is selected, now want to switch it to true
-    currently_accepting_orders_input.value = true;
-  } else {
-    currently_accepting_orders_input.value = false;
-  }
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/account/update-accepting-orders-status");
-  xhr.onload = function(event) {
-      if (event.target.response == "accepting orders") {
-        toggleElement.checked = true;
-      } else {
-        toggleElement.checked = false;
-      }
-  };
-  var formData = new FormData(document.getElementById("accepting_orders_form"));
-  xhr.send(formData);
-}
-
-function createOrderElement(metaOrder) {
-
+function createOrderElement(metaOrder, isPendingTab) {
   var order = JSON.parse(metaOrder['json_order']);
   var order_name = metaOrder['customer_name'];
   var order_timestamp = metaOrder['datetime'];
@@ -119,27 +96,66 @@ function createOrderElement(metaOrder) {
   var orderElement = document.createElement("div");
   orderElement.classList.add("order");
 
-  var metadataElement = document.createElement("div");
-  metadataElement.classList.add("order-metadata");
+
+
+
+  var nonTableElement = document.createElement("div");
+  nonTableElement.classList.add("nonTableElement");
+
+  var completeRejectButtonsElement = document.createElement("div");
+  completeRejectButtonsElement.classList.add("complete-reject-buttons");
+
+  var completeButton = document.createElement("div");
+  completeButton.onclick = function() {
+    var order_completed_status_input = document.getElementById("order-completed-status");
+    order_completed_status_input.value = isPendingTab;
+    var client_secret_input = document.getElementById("change-order-completed-client-secret");
+    client_secret_input.value = metaOrder['client_secret'];
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/account/update-order-marked-as-complete-status");
+    xhr.onload = function(event) {
+        if (event.target.response == "success") {
+          reloadOrderData();
+        }
+    };
+    var formData = new FormData(document.getElementById("change-order-completed-status"));
+    xhr.send(formData);
+  }
+
+  var rejectButton = document.createElement("div");
+
+  if (isPendingTab) {
+    completeButton.classList.add("mark-as-complete-button");
+    completeButton.innerHTML = "Mark as\ncomplete";
+    rejectButton.classList.add("reject-order-button");
+  } else {
+    completeButton.classList.add("reject-order-button-archived");
+    completeButton.innerHTML = "Mark as\nincomplete";
+    rejectButton.classList.add("reject-order-button-archived");
+  }
+
+  rejectButton.innerHTML = "Reject\norder";
+
+  completeRejectButtonsElement.appendChild(completeButton);
+  completeRejectButtonsElement.appendChild(rejectButton);
+
+  nonTableElement.appendChild(completeRejectButtonsElement);
+
 
   var metadataDateTime = document.createElement("div");
   metadataDateTime.classList.add("datetime");
   metadataDateTime.innerHTML = date_string;
-  var br = document.createElement("br");
   var metadataCustomerName = document.createElement("div");
   metadataCustomerName.classList.add("customer-name");
   metadataCustomerName.innerHTML = "Customer: " + order_name;
-  var br2 = document.createElement("br");
   var metadataPaymentStatus = document.createElement("div");
   var paid = metaOrder['rejected_status'] ? "Refunded" : "Paid";
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
 
-  metadataElement.appendChild(metadataPaymentStatus);
-  metadataElement.appendChild(br);
-  metadataElement.appendChild(metadataDateTime);
-  metadataElement.appendChild(br2);
-  metadataElement.appendChild(metadataCustomerName);
+  nonTableElement.appendChild(metadataPaymentStatus);
+  nonTableElement.appendChild(metadataDateTime);
+  nonTableElement.appendChild(metadataCustomerName);
 
   var tableHolderElement = document.createElement("div");
   tableHolderElement.classList.add("table-holder");
@@ -229,59 +245,30 @@ function createOrderElement(metaOrder) {
 
   tableHolderElement.appendChild(tableElement);
 
-  var completeRejectButtonsElement = document.createElement("div");
-  completeRejectButtonsElement.classList.add("complete-reject-buttons");
-
-  var completeButton = document.createElement("div");
-  completeButton.onclick = function() {
-    //TODO: make work
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/account/update-accepting-orders-status");
-    xhr.onload = function(event) {
-        if (event.target.response == "accepting orders") {
-          toggleElement.checked = true;
-        } else {
-          toggleElement.checked = false;
-        }
-    };
-    var formData = new FormData(document.getElementById("accepting_orders_form"));
-    xhr.send(formData);
-  }
-  completeButton.classList.add("mark-as-complete-button");
-  completeButton.innerHTML = "Mark as\ncomplete";
-
-  var rejectButton = document.createElement("div");
-  rejectButton.classList.add("reject-order-button");
-  rejectButton.innerHTML = "Reject\norder";
-
-  completeRejectButtonsElement.appendChild(completeButton);
-  completeRejectButtonsElement.appendChild(rejectButton);
-
-  orderElement.appendChild(metadataElement);
+  orderElement.appendChild(nonTableElement);
   orderElement.appendChild(tableHolderElement);
-  orderElement.appendChild(completeRejectButtonsElement);
 
   return orderElement;
 }
 
-function populateOrders() {
+function populateOrders(pendingOrders, archivedOrders) {
   var bottomHalfPending = document.getElementById("bottom-half-pending");
-  var pendingOrders = {{pending_orders|tojson}};
+  bottomHalfPending.innerHTML = ''; // clear any existing orders
 
   if (pendingOrders == "No orders") {
     var noPendingOrdersElement = document.createElement("div");
     noPendingOrdersElement.classList.add("no-orders-text");
     noPendingOrdersElement.innerHTML = "No new orders";
-    bottomHalfPending.appendChild(noOrdersElement);
+    bottomHalfPending.appendChild(noPendingOrdersElement);
   } else {
     for (const pendingOrder of pendingOrders) {
-      var orderElement = createOrderElement(pendingOrder);
+      var orderElement = createOrderElement(pendingOrder, true);
       bottomHalfPending.appendChild(orderElement);
     }
   }
 
   var bottomHalfArchived = document.getElementById("bottom-half-archived");
-  var archivedOrders = {{archived_orders|tojson}};
+  bottomHalfArchived.innerHTML = ''; // clear any existing orders
 
   if (archivedOrders == "No orders") {
     var noArchivedOrdersElement = document.createElement("div");
@@ -290,7 +277,7 @@ function populateOrders() {
     bottomHalfArchived.appendChild(noArchivedOrdersElement);
   } else {
     for (const archivedOrder of archivedOrders) {
-      var orderElement = createOrderElement(archivedOrder);
+      var orderElement = createOrderElement(archivedOrder, false);
       bottomHalfArchived.appendChild(orderElement);
     }
   }
@@ -302,6 +289,29 @@ function setAcceptingOrdersToggleStatus() {
   } else {
     document.getElementById("switch-button-checkbox").checked = false;
   }
+}
+
+function toggleAcceptingOrdersStatus(toggleElement) {
+  toggleElement.checked = !toggleElement.checked; // revert checked status so net effect is zero
+  var currently_accepting_orders_input = document.getElementById("currently-accepting-orders");
+  if (toggleElement.checked) {
+    // If currently checked now want to switch it to false on the server
+    currently_accepting_orders_input.value = false;
+  } else {
+    currently_accepting_orders_input.value = true;
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/account/update-accepting-orders-status");
+  xhr.onload = function(event) {
+      if (event.target.response == "accepting orders") {
+        toggleElement.checked = true;
+      } else {
+        toggleElement.checked = false;
+      }
+  };
+  var formData = new FormData(document.getElementById("accepting-orders-form"));
+  xhr.send(formData);
 }
 
 function showTab(tab_id) {
@@ -327,6 +337,21 @@ function showTab(tab_id) {
 
   other_tab.style.backgroundColor="#dddddd";
   other_tab_contents.style.display="none";
+
+  reloadOrderData();
+}
+
+function reloadOrderData() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/account/get-updated-orders");
+  xhr.onload = function(event) {
+    var parsed = JSON.parse(event.target.response);
+    var pendingOrders = parsed[0];
+    var archivedOrders = parsed[1];
+    populateOrders(pendingOrders, archivedOrders);
+  };
+  var formData = new FormData(document.getElementById("reload-orders-form"));
+  xhr.send(formData);
 }
 
 </script>
@@ -389,12 +414,7 @@ body, html {
   max-width: 400px;
   padding: 10px 10px 4px 10px;
   text-align: center;
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
 }
-
-
 
 * {
   box-sizing: border-box;
@@ -486,11 +506,13 @@ body, html {
 .complete-reject-buttons {
   margin: 4px;
   text-align: center;
+  display:flex;
   white-space:pre-wrap;
   word-wrap:break-word;
 }
 
 .mark-as-complete-button {
+  margin: 4px 4px 0px 4px;
 	background-color:#ffffff;
 	border-radius:12px;
 	border:1px solid #4bb543;
@@ -498,9 +520,9 @@ body, html {
 	color:#4bb543;
 	font-family:Verdana;
 	font-size:16px;
-	padding:4px 20px;
+	padding:4px 12px;
 	text-decoration:none;
-  margin: 4px 4px 8px 4px;
+  flex-basis: 50%;
 }
 
 .mark-as-complete-button:hover {
@@ -508,6 +530,7 @@ body, html {
 }
 
 .reject-order-button {
+  margin: 4px 4px 0px 4px;
 	background-color:#ffffff;
 	border-radius:12px;
 	border:1px solid #b92d2b;
@@ -515,14 +538,35 @@ body, html {
 	color:#b92d2b;
 	font-family:Verdana;
 	font-size:16px;
-	padding:4px 20px;
+	padding:4px 12px;
 	text-decoration:none;
-  margin: 8px 4px 4px 4px;
+  flex-basis: 50%;
+  width: 99px;
+}
+
+.reject-order-button-archived {
+  margin: 4px 4px 0px 4px;
+	background-color:#ffffff;
+	border-radius:12px;
+	border:1px solid #b92d2b;
+	cursor:pointer;
+	color:#b92d2b;
+	font-family:Verdana;
+	font-size:16px;
+	padding:4px 12px;
+	text-decoration:none;
+  flex-basis: 50%;
+  width: 120px;
 }
 
 .reject-order-button:hover {
 	background-color:#f0f0f0;
 }
+
+.reject-order-button-archived:hover {
+	background-color:#f0f0f0;
+}
+
 
 .edit-menu-availability-button:hover {
 	background-color:#f0f0f0;
@@ -558,40 +602,44 @@ body, html {
   border-width: 1px;
   border-style: solid;
   border-radius: 10px;
-  align-items: center;
-}
-
-.order-metadata {
-  background-color: white;
-  margin: 8px 4px 8px 4px;
-  font-family: verdana;
-  font-size: 14px;
-  width: 100px;
-  text-align: center;
+  align-items: flex-start;
 }
 
 .table-holder {
   overflow-y: auto;
   overflow-x: auto;
-  margin: 8px;
+  margin: 8px 8px 8px 4px;
+  align-self: center;
   flex: 1;
 }
 
+.non-table-holder {
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .customer-name {
+  margin: 8px 4px 8px 4px;
+  font-family: verdana;
+  font-size: 14px;
+  text-align: center;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .payment-status {
-  margin: auto;
-  flex:1;
-  flex-basis:0;
+  margin: 8px 4px 8px 4px;
+  font-family: verdana;
+  font-size: 14px;
+  text-align: center;
 }
 
 .datetime {
-  margin: auto;
-  flex:1;
-  flex-basis:0;
+  margin: 8px 4px 8px 4px;
+  font-family: verdana;
+  font-size: 14px;
+  text-align: center;
 }
 
 .no-orders-text {
@@ -602,7 +650,8 @@ body, html {
 }
 
 .tab-holder {
-  margin: 8px 0px 0px 20px;
+  margin: 0px 0px 0px 20px;
+  flex: 0;
   display:flex;
   width:320px;
   border-width: 1px 1px 0px 1px;
@@ -617,20 +666,12 @@ body, html {
   cursor:pointer;
 }
 
-.pending-tab:hover {
-	background-color:#cfcfcf;
-}
-
 .archived-tab {
   width:160px;
   text-align: center;
   background-color: #dddddd;
   margin: 0px;
   cursor:pointer;
-}
-
-.archived-tab:hover {
-	background-color:#cfcfcf;
 }
 
 
@@ -696,8 +737,8 @@ tr:nth-child(even) {
 
 <div class="meta-buttons">
 <div class="switch-button">
-  <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onclick="toggleAcceptingOrdersStatus(this); return false;"></input>
-  <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
+    <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onclick="toggleAcceptingOrdersStatus(this);"></input>
+    <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
 </div>
 
 <br>
@@ -728,12 +769,20 @@ tr:nth-child(even) {
 </div>
 
 <script>
-populateOrders();
+populateOrders({{pending_orders|tojson}}, {{archived_orders|tojson}});
 setAcceptingOrdersToggleStatus();
 </script>
 
-<form id="accepting_orders_form">
-    <input type="hidden" id="currently_accepting_orders" name="currently_accepting_orders">
+<form id="accepting-orders-form">
+    <input type="hidden" id="currently-accepting-orders" name="currently_accepting_orders">
+</form>
+
+<form id="change-order-completed-status">
+    <input type="hidden" id="order-completed-status" name="order_completed_status">
+    <input type="hidden" id="change-order-completed-client-secret" name="client_secret">
+</form>
+
+<form id="reload-orders-form">
 </form>
 
 </html>

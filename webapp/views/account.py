@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, abort, send_file, request
+from flask import Blueprint, render_template, redirect, abort, send_file, request, jsonify
 import stripe
 from webapp import db
 from webapp.models.db_models import User, Order
@@ -70,7 +70,7 @@ def view_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name
+            d['customer_name'] = order.customer_name.split()[0]
             pending_orders.append(d)
         
         if len(pending_orders) == 0:
@@ -85,7 +85,7 @@ def view_orders():
             d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
             d['datetime'] = order.datetime
             d['client_secret'] = order.client_secret
-            d['customer_name'] = order.customer_name
+            d['customer_name'] = order.customer_name.split()[0]
             archived_orders.append(d)
         
         if len(archived_orders) == 0:
@@ -109,6 +109,58 @@ def update_accepting_orders_status():
             current_user.currently_accepting_orders = False
             db.session.commit()
             return "not accepting orders"
+    else:
+        return redirect('/login')
+
+# POST endpoint for updating order completed status
+@account.route('/account/update-order-marked-as-complete-status', methods=['POST'])
+def update_order_marked_as_complete_status():
+    if current_user.is_authenticated:
+        order = Order.query.filter_by(client_secret=request.form['client_secret']).first()
+        if request.form['order_completed_status'] == 'true':
+            order.marked_as_complete_by_restaurant = True
+        else:
+            order.marked_as_complete_by_restaurant = False
+        db.session.commit()
+        return "success"
+    else:
+        return redirect('/login')
+
+# POST endpoint for getting an updated order list without refreshing the page
+@account.route('/account/get-updated-orders', methods=['POST'])
+def get_updated_orders():
+    if current_user.is_authenticated:
+        pending_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False):
+            d = {}
+            d['json_order'] = order.json_order
+            d['rejected_status'] = order.rejected_by_restaurant
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['client_secret'] = order.client_secret
+            d['customer_name'] = order.customer_name.split()[0]
+            pending_orders.append(d)
+        
+        if len(pending_orders) == 0:
+            pending_orders = "No orders"
+
+        archived_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=True):
+            d = {}
+            d['json_order'] = order.json_order
+            d['rejected_status'] = order.rejected_by_restaurant
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['client_secret'] = order.client_secret
+            d['customer_name'] = order.customer_name.split()[0] # just get first name
+            archived_orders.append(d)
+        
+        if len(archived_orders) == 0:
+            archived_orders = "No orders"
+
+        return jsonify([pending_orders, archived_orders])
     else:
         return redirect('/login')
 
