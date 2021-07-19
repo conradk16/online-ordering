@@ -6,7 +6,26 @@
 
 <head>
   <script>
-  
+
+  function run_on_load() {
+    run_on_resize();
+  }
+
+  function run_on_resize() {
+    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
+    center = document.getElementsByClassName("center")[0];
+    for (const elem of bullet_text_elements) {
+        if (window.innerWidth < 500) {
+            elem.style.fontSize = "12px";
+            center.style.padding = "30px 15px";
+
+        } else {
+            elem.style.fontSize = "15px";
+            center.style.padding = "30px 30px";
+        }
+    }
+  }
+
   window.onload = run_on_load;
   window.onresize = run_on_resize;
 
@@ -70,74 +89,6 @@ body, html {
   box-sizing: border-box;
 }
 
-.plans {
-    display: flex;
-    justify-content: space-between;
-    max-width: 100%;
-    margin: 0;
-}
-
-.plan {
-    height: 310px;
-    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
-    border-radius: 20px;
-    padding: 15px;
-    max-width: 40%;
-    text-decoration: none;
-}
-
-.plan:hover {
-    cursor: pointer;
-}
-
-.plan-title {
-    font-family: inherit;
-    font-size: 26px;
-}
-
-.plan-caption {
-    color: #8f8f8f;
-    font-size: 15px;
-}
-
-.plan-img {
-    margin: auto;
-    margin-bottom: 70px;
-    margin-top: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    object-fit: contain;
-    width: 30%;
-}
-
-.img-orange {
-    filter: invert(61%) sepia(34%) saturate(751%) hue-rotate(335deg) brightness(90%) contrast(97%);
-}
-
-.img-red {
-    filter: invert(35%) sepia(56%) saturate(1222%) hue-rotate(280deg) brightness(84%) contrast(89%);
-}
-
-.plan-bullet-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.plan-bullet {
-    max-width: 10px;
-}
-
-.plan-bullet-text {
-    flex: 2;
-    padding-left: 10px;
-    font-size: 15px;
-    color: black;
-}
-
-
 .step-one-of-three {
   text-align: center;
   font-size: 17px;
@@ -153,6 +104,7 @@ body, html {
   text-align: center;
   padding: 8px 8px 35px 8px;
 }
+
 
 .input-label {
   font-size: 14px;
@@ -279,14 +231,38 @@ input[type=submit] {
   font-size: 20px;
 }
 
+.content-holder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .button {
-  background-color: #04AA6D;
-  border: none;
-  color: white;
-  padding: 0px 0px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 18px;
+    align-items: center;
+    font-size: 25px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 70px;
+    width: 70%;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    border-radius: 20px;
+    border: 0;
+    margin-top: 20px;
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0px 6px 0 rgba(0,0,0,0.2);
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #2d5f91;
+}
+
+.stripe-description {
+    text-align: center;
+    color: gray;
 }
 
 @media only screen and (max-width: 600px) {
@@ -312,41 +288,12 @@ input[type=submit] {
 
 <br>
 <div class="center">
-        <div class="step-one-of-three">Step 2 of 5</div>
-        <div class="create-your-account">Select a plan</div>
-        <div class="plans">
-            <div class="plan" name="plan1" onclick="submit_form('price_1J8t5yLGQW192ovf4Tkd70Ta')">
-                <div class="plan-title" style="color: #e38552">Monthly</div>
-                <div class="plan-caption">$49 / month</div>
-                <img src="../static/month.jpg" class="img-orange plan-img"></img>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">Affordable monthly rate</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">No long-term commitment</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
-                    <div class="plan-bullet-text">Personalized Customer Service</div>
-                </div>
-            </div>
-            <div class="plan" name="plan2" onclick="submit_form('price_1J8t6xLGQW192ovfioaRFBEB')">
-                <div class="plan-title" style="color: #b53e89">Annual</div>
-                <div class="plan-caption">$449 / year</div>
-                <img src="../static/year.png" class="img-red plan-img"></img>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">25% discount over monthly plan</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">Personalized Customer Service</div>
-                </div>
-            </div>
-        </div>
-        <br>
+    <div class="step-one-of-three">Step 5 of 5</div>
+    <div class="create-your-account">Enable Payments</div>
+    <div class="content-holder">
+        <a class="stripe-description">Our platform uses Stripe for payment processing. Signing up for Stripe will allow you to receive payments from your customers.</a>
+        <button class="button">Connect with Stripe</button>
+    </div>
 </div>
 
 </div>
