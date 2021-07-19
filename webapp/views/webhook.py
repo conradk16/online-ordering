@@ -85,13 +85,7 @@ def webhook_connect_received():
         payment_intent = data_object
         order = Order.query.filter_by(payment_intent_id=payment_intent.id).first()
         order.paid = True
-        db.session.commit()
-
-        # clear session data so reloading payment page takes them back to menu page
-        session['stripe_client_secret'] = None
-        session['payment_intent_id'] = None
-        session['order_price'] = None
-        session['stripe_connected_account_id'] = None
+        db.session.commit() 
     else:
       print('Unhandled event type {}'.format(event_type))
 
