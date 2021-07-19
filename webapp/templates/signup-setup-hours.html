@@ -35,7 +35,7 @@
 
   // returns null if invalid criteria
   
-  function get_times(day, times, time_zone) {
+  function get_times(day_of_week, times) {
     if (times.length == 0) {
         return null;
     }
@@ -67,16 +67,16 @@
 
         var year = 2021;
         var month_index = 6;
-        if (day == "Monday") { var day = 19; } 
-        else if (day == "Tuesday") { var day = 20; }
-        else if (day == "Wednesday") { var day = 21; }
-        else if (day == "Thursday") { var day = 22; }
-        else if (day == "Friday") { var day = 23; }
-        else if (day == "Saturday") { var day = 24; }
-        else if (day == "Sunday") { var day = 25; }
+        if (day_of_week == "Monday") { var day = 19; } 
+        else if (day_of_week == "Tuesday") { var day = 20; }
+        else if (day_of_week == "Wednesday") { var day = 21; }
+        else if (day_of_week == "Thursday") { var day = 22; }
+        else if (day_of_week == "Friday") { var day = 23; }
+        else if (day_of_week == "Saturday") { var day = 24; }
+        else if (day_of_week == "Sunday") { var day = 25; }
 
         // deal with late closings (after midnight)
-        if (ampm == "am" && hour < "6") {
+        if (ampm == "am" && hr < 6) {
             day += 1;
         }
 
@@ -87,11 +87,12 @@
             hr = 0;
         }
 
-        // adjust for time zone
-        
+        console.log(year + ", " + month_index + ", " + day + ", " + hr + ", " + minutes);
 
         // add to array
-        to_return.push(new Date(year, month_index, day, hr, minutes));
+        const datetime = new Date(year, month_index, day, hr, minutes);
+        console.log(datetime);
+        to_return.push(datetime);
 
     }
     return to_return;
@@ -134,7 +135,7 @@
             continue;
         }
 
-        var times = get_times(day, time, time_zone);
+        var times = get_times(day, time);
         if (times == null) {
             var invalid_input_text = getErrorElement();
             invalid_input_text.innerHTML = "*Invalid entry for " + day + ", please enter a valid time or times, for example, \"8:00pm\" or \"2:00pm, 6:00pm\".";       
@@ -144,15 +145,26 @@
         // add times to the form
         var form_to_send = document.getElementById("closing_times_to_send");
         for (const time of times) {
-            arr.push(JSON.stringify(time));
+            // create datetime-timezone pair
+            var pair = new Array();
+            pair.push(JSON.stringify(time));
+            pair.push(time_zone);
+            arr.push(JSON.stringify(pair));
         }
-        
     }
 
     var input = document.getElementById("inp");
     input.value = JSON.stringify(arr);
 
-    submit_form();
+    arr = JSON.parse(input.value);
+    for (const pair_str of arr) {
+        pair = JSON.parse(pair_str);
+        time = JSON.parse(pair[0]);
+        time_zone = pair[1];
+        //console.log(time + " " + time_zone + "\n");
+    }
+
+    //submit_form();
   }
 
   function submit_form() {
