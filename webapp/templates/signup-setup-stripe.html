@@ -6,6 +6,10 @@
 
 <head>
   <script>
+  function submit_form() {
+    var form = document.getElementById("form");
+    form.submit();
+  }
 
   function run_on_load() {
     run_on_resize();
@@ -292,7 +296,7 @@ input[type=submit] {
     <div class="create-your-account">Enable Payments</div>
     <div class="content-holder">
         <a class="stripe-description">Our platform uses Stripe for payment processing. Signing up for Stripe will allow you to receive payments from your customers.</a>
-        <button class="button">Connect with Stripe</button>
+        <button class="button" onclick="submit_form()">Connect with Stripe</button>
     </div>
 </div>
 
@@ -304,8 +308,7 @@ input[type=submit] {
 </div>
 </div>
 
-<form id="select-form" action="/signup/select-plan", method="POST">
-    <input type="hidden" id="inp" name="price_id">
+<form id="form" action="/hmmm", method="POST">
 </form>
 
 </html>
