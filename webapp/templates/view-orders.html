@@ -83,6 +83,7 @@ class cartItem {
 function toggleAcceptingOrdersStatus(toggleElement) {
   var currently_accepting_orders_input = document.getElementById("currently_accepting_orders");
   if (toggleElement.checked) {
+    // checked means 'not accepting orders' is selected, now want to switch it to true
     currently_accepting_orders_input.value = true;
   } else {
     currently_accepting_orders_input.value = false;
@@ -91,20 +92,21 @@ function toggleAcceptingOrdersStatus(toggleElement) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/account/update-accepting-orders-status");
   xhr.onload = function(event) {
-
       if (event.target.response == "accepting orders") {
-
+        toggleElement.checked = true;
+      } else {
+        toggleElement.checked = false;
       }
   };
   var formData = new FormData(document.getElementById("accepting_orders_form"));
   xhr.send(formData);
 }
 
-function createOrderElement(json_order) {
+function createOrderElement(metaOrder) {
 
-  var order = JSON.parse(json_order[0]);
-  var order_name = json_order[1];
-  var order_timestamp = json_order[2];
+  var order = JSON.parse(metaOrder['json_order']);
+  var order_name = metaOrder['customer_name'];
+  var order_timestamp = metaOrder['datetime'];
 
   var date = new Date(order_timestamp);
   var am_or_pm = (date.getHours() >= 12) ? " PM" : " AM"
@@ -121,14 +123,22 @@ function createOrderElement(json_order) {
   metadataElement.classList.add("order-metadata");
 
   var metadataDateTime = document.createElement("div");
+  metadataDateTime.classList.add("datetime");
   metadataDateTime.innerHTML = date_string;
   var br = document.createElement("br");
   var metadataCustomerName = document.createElement("div");
   metadataCustomerName.classList.add("customer-name");
   metadataCustomerName.innerHTML = "Customer: " + order_name;
+  var br2 = document.createElement("br");
+  var metadataPaymentStatus = document.createElement("div");
+  var paid = metaOrder['rejected_status'] ? "Refunded" : "Paid";
+  metadataPaymentStatus.classList.add("payment-status");
+  metadataPaymentStatus.innerHTML = "Status: " + paid;
 
-  metadataElement.appendChild(metadataDateTime);
+  metadataElement.appendChild(metadataPaymentStatus);
   metadataElement.appendChild(br);
+  metadataElement.appendChild(metadataDateTime);
+  metadataElement.appendChild(br2);
   metadataElement.appendChild(metadataCustomerName);
 
   var tableHolderElement = document.createElement("div");
@@ -223,8 +233,22 @@ function createOrderElement(json_order) {
   completeRejectButtonsElement.classList.add("complete-reject-buttons");
 
   var completeButton = document.createElement("div");
+  completeButton.onclick = function() {
+    //TODO: make work
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/account/update-accepting-orders-status");
+    xhr.onload = function(event) {
+        if (event.target.response == "accepting orders") {
+          toggleElement.checked = true;
+        } else {
+          toggleElement.checked = false;
+        }
+    };
+    var formData = new FormData(document.getElementById("accepting_orders_form"));
+    xhr.send(formData);
+  }
   completeButton.classList.add("mark-as-complete-button");
-  completeButton.innerHTML = "Archive\norder";
+  completeButton.innerHTML = "Mark as\ncomplete";
 
   var rejectButton = document.createElement("div");
   rejectButton.classList.add("reject-order-button");
@@ -241,18 +265,33 @@ function createOrderElement(json_order) {
 }
 
 function populateOrders() {
-  var bottomHalfElement = document.getElementById("bottom-half");
-  var orders = {{orders|tojson}}
+  var bottomHalfPending = document.getElementById("bottom-half-pending");
+  var pendingOrders = {{pending_orders|tojson}};
 
-  if (orders == "No orders") {
-    var noOrdersElement = document.createElement("div");
-    noOrdersElement.classList.add("no-orders-text");
-    noOrdersElement.innerHTML = "No new orders";
-    bottomHalfElement.appendChild(noOrdersElement);
+  if (pendingOrders == "No orders") {
+    var noPendingOrdersElement = document.createElement("div");
+    noPendingOrdersElement.classList.add("no-orders-text");
+    noPendingOrdersElement.innerHTML = "No new orders";
+    bottomHalfPending.appendChild(noOrdersElement);
   } else {
-    for (const json_order of orders) {
-      var orderElement = createOrderElement(json_order);
-      bottomHalfElement.appendChild(orderElement);
+    for (const pendingOrder of pendingOrders) {
+      var orderElement = createOrderElement(pendingOrder);
+      bottomHalfPending.appendChild(orderElement);
+    }
+  }
+
+  var bottomHalfArchived = document.getElementById("bottom-half-archived");
+  var archivedOrders = {{archived_orders|tojson}};
+
+  if (archivedOrders == "No orders") {
+    var noArchivedOrdersElement = document.createElement("div");
+    noArchivedOrdersElement.classList.add("no-orders-text");
+    noArchivedOrdersElement.innerHTML = "No archived orders";
+    bottomHalfArchived.appendChild(noArchivedOrdersElement);
+  } else {
+    for (const archivedOrder of archivedOrders) {
+      var orderElement = createOrderElement(archivedOrder);
+      bottomHalfArchived.appendChild(orderElement);
     }
   }
 }
@@ -263,6 +302,31 @@ function setAcceptingOrdersToggleStatus() {
   } else {
     document.getElementById("switch-button-checkbox").checked = false;
   }
+}
+
+function showTab(tab_id) {
+  var selected_tab;
+  var selected_tab_contents;
+  var other_tab;
+  var other_tab_contents;
+
+  if (tab_id == "bottom-half-pending") {
+    selected_tab = document.getElementById("pending-tab");
+    selected_tab_contents = document.getElementById("bottom-half-pending");
+    other_tab = document.getElementById("archived-tab");
+    other_tab_contents = document.getElementById("bottom-half-archived");
+  } else {
+    selected_tab = document.getElementById("archived-tab");
+    selected_tab_contents = document.getElementById("bottom-half-archived");
+    other_tab = document.getElementById("pending-tab");
+    other_tab_contents = document.getElementById("bottom-half-pending");
+  }
+
+  selected_tab.style.backgroundColor="#bababa";
+  selected_tab_contents.style.display="block";
+
+  other_tab.style.backgroundColor="#dddddd";
+  other_tab_contents.style.display="none";
 }
 
 </script>
@@ -325,6 +389,9 @@ body, html {
   max-width: 400px;
   padding: 10px 10px 4px 10px;
   text-align: center;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 
@@ -425,7 +492,7 @@ body, html {
 
 .mark-as-complete-button {
 	background-color:#ffffff;
-	border-radius:28px;
+	border-radius:12px;
 	border:1px solid #4bb543;
 	cursor:pointer;
 	color:#4bb543;
@@ -442,7 +509,7 @@ body, html {
 
 .reject-order-button {
 	background-color:#ffffff;
-	border-radius:28px;
+	border-radius:12px;
 	border:1px solid #b92d2b;
 	cursor:pointer;
 	color:#b92d2b;
@@ -461,7 +528,7 @@ body, html {
 	background-color:#f0f0f0;
 }
 
-.bottom-half {
+.bottom-half-pending {
   min-height:300px;
   overflow-y:auto;
   background-color: #f3f3f3;
@@ -470,6 +537,18 @@ body, html {
   border-style: solid;
   border-radius: 10px;
   flex: 1;
+}
+
+.bottom-half-archived {
+  min-height:300px;
+  overflow-y:auto;
+  background-color: #f3f3f3;
+  margin: 0px 10px 10px 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  flex: 1;
+  display:none;
 }
 
 .order {
@@ -484,7 +563,7 @@ body, html {
 
 .order-metadata {
   background-color: white;
-  margin: 8px 4px 8px 8px;
+  margin: 8px 4px 8px 4px;
   font-family: verdana;
   font-size: 14px;
   width: 100px;
@@ -503,10 +582,62 @@ body, html {
   text-overflow:ellipsis;
 }
 
+.payment-status {
+  margin: auto;
+  flex:1;
+  flex-basis:0;
+}
+
+.datetime {
+  margin: auto;
+  flex:1;
+  flex-basis:0;
+}
+
 .no-orders-text {
   font-family: verdana;
   font-size: 20px;
   margin: 70px;
+  text-align: center;
+}
+
+.tab-holder {
+  margin: 8px 0px 0px 20px;
+  display:flex;
+  width:320px;
+  border-width: 1px 1px 0px 1px;
+  border-style: solid;
+}
+
+.pending-tab {
+  width:160px;
+  text-align: center;
+  background-color: #bababa;
+  margin: 0px;
+  cursor:pointer;
+}
+
+.pending-tab:hover {
+	background-color:#cfcfcf;
+}
+
+.archived-tab {
+  width:160px;
+  text-align: center;
+  background-color: #dddddd;
+  margin: 0px;
+  cursor:pointer;
+}
+
+.archived-tab:hover {
+	background-color:#cfcfcf;
+}
+
+
+.tab-text {
+  font-family: verdana;
+  font-size: 16px;
+  margin:12px 8px;
   text-align: center;
 }
 
@@ -565,7 +696,7 @@ tr:nth-child(even) {
 
 <div class="meta-buttons">
 <div class="switch-button">
-  <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onchange="toggleAcceptingOrdersStatus(this)"></input>
+  <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onclick="toggleAcceptingOrdersStatus(this); return false;"></input>
   <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
 </div>
 
@@ -574,11 +705,26 @@ tr:nth-child(even) {
 <br>
 <br>
 </div>
-
 </div>
-<div class="bottom-half" id="bottom-half">
 
+<div class="tab-holder">
+  <div class="pending-tab" id="pending-tab" onclick="showTab('bottom-half-pending')">
+    <div class="tab-text">
+      Pending Orders
+    </div>
+  </div>
+  <div class="archived-tab" id="archived-tab" onclick="showTab('bottom-half-archived')">
+    <div class="tab-text">
+      Archived Orders
+    </div>
+  </div>
 </div>
+
+<div class="bottom-half-pending" id="bottom-half-pending">
+</div>
+<div class="bottom-half-archived" id="bottom-half-archived">
+</div>
+
 </div>
 
 <script>
