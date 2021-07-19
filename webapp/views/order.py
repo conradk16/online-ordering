@@ -65,7 +65,6 @@ def super_cucas_micheltorena():
 
         return redirect('/super-cucas-micheltorena/payment')
 
-
 @order.route('/super-cucas-micheltorena/payment')
 def super_cucas_micheltorena_payment():
 
@@ -80,10 +79,12 @@ def update_order_details():
     customer_name = request.form['customer_name']
     customer_email = request.form['customer_email']
     payment_intent_id = request.form['payment_intent_id']
+    connected_account = request.form['connected_account']
 
     # update payment intent to include an email for receipts
     stripe.PaymentIntent.modify(
         payment_intent_id,
+        stripe_account=connected_account,
         receipt_email=customer_email,
     )
 

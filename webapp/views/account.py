@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, abort, send_file, request, jsonify
+from flask_mail import Message
 import stripe
-from webapp import db
+from webapp import db, mail
 from webapp.models.db_models import User, Order
 from flask_login import login_user, logout_user, current_user
 import json
@@ -86,7 +87,7 @@ def view_orders():
 
         archived_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((marked_as_complete_by_restaurant == True) | (refunded == True)):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -126,7 +127,7 @@ def get_updated_orders():
 
         archived_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((marked_as_complete_by_restaurant == True) | (refunded == True)):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -179,23 +180,26 @@ def refund_order():
         payment_intent_id = request.form['payment_intent_id']
         rejection_description = request.form['reject_order_description']
 
-        # ensure the ordering being refunded has an order url that current_user owns
-        order = Order.query.filter_by(payment_intent_id=payment_intent_id, order_url=current_user.order_url).first()
-        if not order:
-            return "failure"
-
         refund = stripe.Refund.create(
             payment_intent=payment_intent_id,
-            description=rejection_description,
+            stripe_account=current_user.stripe_connected_account_id,
         )
 
+        order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
         order.refunded = True
         db.session.commit()
+
+        send_order_refunded_email(order.customer_email, rejection_description)
 
         return "success"
     else:
         return "failure"
 
+def send_order_refunded_email(customer_email, rejection_description):
+
+    msg = Message(subject='Order Could Not be Fulfilled', sender="no-reply@m3orders.com", recipients=[customer_email])
+    msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description)
+    mail.send(msg)
 
 def get_admin_page():
     users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)

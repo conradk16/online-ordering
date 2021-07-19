@@ -121,6 +121,10 @@ function registerElements(elements, exampleName) {
     var payment_intent_id_input = document.getElementById("payment_intent_id_inp");
     payment_intent_id_input.value = payment_intent_id;
 
+    var connected_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
+    var connected_account_id_input = document.getElementById("connected_account_id_inp");
+    connected_account_id_input.value = connected_account_id;
+
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/order/update-order-details");

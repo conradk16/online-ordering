@@ -49,6 +49,7 @@ class Order(db.Model):
     marked_as_complete_by_restaurant = db.Column(db.Boolean, default=False)
     order_url = db.Column(db.String)
     customer_name = db.Column(db.String)
+    customer_email = db.Column(db.String)
     datetime = db.Column(db.DateTime)
 
     def __repr__(self):

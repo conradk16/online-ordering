@@ -100,7 +100,7 @@ function createOrderElement(metaOrder, isPendingTab) {
 
 
   var nonTableElement = document.createElement("div");
-  nonTableElement.classList.add("nonTableElement");
+  nonTableElement.classList.add("non-table-holder");
 
   var completeRejectButtonsElement = document.createElement("div");
   completeRejectButtonsElement.classList.add("complete-reject-buttons");
@@ -157,6 +157,8 @@ function createOrderElement(metaOrder, isPendingTab) {
 
   nonTableElement.appendChild(completeRejectButtonsElement);
 
+  var metadataElements = document.createElement("div");
+  metadataElements.classList.add("metadata-elements");
 
   var metadataDateTime = document.createElement("div");
   metadataDateTime.classList.add("datetime");
@@ -169,9 +171,11 @@ function createOrderElement(metaOrder, isPendingTab) {
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
 
-  nonTableElement.appendChild(metadataPaymentStatus);
-  nonTableElement.appendChild(metadataDateTime);
-  nonTableElement.appendChild(metadataCustomerName);
+  metadataElements.appendChild(metadataPaymentStatus);
+  metadataElements.appendChild(metadataDateTime);
+  metadataElements.appendChild(metadataCustomerName);
+
+  nonTableElement.appendChild(metadataElements);
 
   var tableHolderElement = document.createElement("div");
   tableHolderElement.classList.add("table-holder");
@@ -182,6 +186,7 @@ function createOrderElement(metaOrder, isPendingTab) {
   var tableHeaderCol1 = document.createElement("th");
   tableHeaderCol1.innerHTML = "Item";
   tableHeaderCol1.classList.add("item-col");
+
   var tableHeaderCol2 = document.createElement("th");
   tableHeaderCol2.innerHTML = "Qty";
   tableHeaderCol2.classList.add("qty-col");
@@ -536,9 +541,10 @@ body, html {
 	color:#4bb543;
 	font-family:Verdana;
 	font-size:16px;
-	padding:4px 12px;
+	padding:4px 0px;
 	text-decoration:none;
   flex-basis: 50%;
+  width: 102px;
 }
 
 .mark-as-complete-button:hover {
@@ -554,10 +560,10 @@ body, html {
 	color:#b92d2b;
 	font-family:Verdana;
 	font-size:16px;
-	padding:4px 12px;
+	padding:4px 0px;
 	text-decoration:none;
   flex-basis: 50%;
-  width: 99px;
+  width: 102px;
 }
 
 .reject-order-button-archived {
@@ -569,10 +575,10 @@ body, html {
 	color:#b92d2b;
 	font-family:Verdana;
 	font-size:16px;
-	padding:4px 12px;
+	padding:4px 0px;
 	text-decoration:none;
   flex-basis: 50%;
-  width: 120px;
+  width: 102px;
 }
 
 .reject-order-button:hover {
@@ -618,14 +624,14 @@ body, html {
   border-width: 1px;
   border-style: solid;
   border-radius: 10px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .table-holder {
   overflow-y: auto;
   overflow-x: auto;
   margin: 8px 8px 8px 4px;
-  align-self: center;
+  align-self: stretch;
   flex: 1;
 }
 
@@ -633,10 +639,18 @@ body, html {
   display:flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: stretch;
+}
+
+.metadata-elements {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 2;
 }
 
 .customer-name {
-  margin: 8px 4px 8px 4px;
+  margin: 4px;
   font-family: verdana;
   font-size: 14px;
   text-align: center;
@@ -645,14 +659,14 @@ body, html {
 }
 
 .payment-status {
-  margin: 8px 4px 8px 4px;
+  margin: 4px;
   font-family: verdana;
   font-size: 14px;
   text-align: center;
 }
 
 .datetime {
-  margin: 8px 4px 8px 4px;
+  margin: 4px;
   font-family: verdana;
   font-size: 14px;
   text-align: center;
@@ -712,7 +726,7 @@ td, th {
   text-align: center;
   padding: 8px;
   white-space:pre-wrap;
-  word-wrap:break-word
+  word-wrap:break-word;
 }
 
 .item-col {
