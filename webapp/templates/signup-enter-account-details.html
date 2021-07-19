@@ -13,6 +13,19 @@
 <head>
   <script>
 
+  function update_file_name() {
+    var fullPath = document.getElementById('file_upload').value;
+    var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+    var filename = fullPath.substring(startIndex);
+    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+        filename = filename.substring(1);
+    }
+    
+
+    var file_name_element = document.getElementById("file_name");
+    file_name.innerHTML = filename;
+  }    
+
   // creates the element if it doesn't exist
   function getErrorElement() {
     if (document.getElementsByClassName("invalid-input-text").length == 0) {
@@ -57,7 +70,7 @@
     var valid_phone = (phone_text.match(phone_format) != null);
     if (!valid_phone) {
         var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form 000-000-0000";       
+        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form *** - *** - ****";       
         return;
     }
 
@@ -78,14 +91,21 @@
     }
 
     // validate menu input
-
+    var menu_url_text = document.getElementById("menu_url").value;
+    var file_input = document.getElementById('file_upload');
+    if (menu_url_text.length == 0 && file_input.files.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please either enter a menu URL or upload a menu file";       
+        return;
+    }
 
     submit_form();
     
   }
 
   function submit_form() {
-    
+    var form = document.getElementById("form");
+    form.submit();
   }
 
   function run_on_load() {
@@ -183,7 +203,7 @@ body, html {
   font-weight: 400;
   margin: auto;
   text-align: center;
-  padding: 8px 8px 35px 8px;
+  padding: 8px 8px 20px 8px;
 }
 
 .input-label {
@@ -322,18 +342,47 @@ input[type=submit] {
 }
 
 .upload-holder {
-    margin-left: 30px;
-    display: block !important;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 7px 15px;
+    padding-bottom: 5px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
 }
 
-.upload-instructions {
-    font-size: 15px !important;
-    min-width: 100%;
+.horizontal-holder {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
-.custom-file-upload {
-    box-shadow: 0 8px 12px 0 rgba(0,0,0,1)
+.custom-file-button {
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0 6px 0 rgba(0,0,0,0.2);
+    padding: 4px 3px !important;
+    font-size: 14px !important;
+    border-radius: 10px;
+    width: auto !important;
+    margin-left: 10px;
 }
+
+.custom-file-button:hover {
+    cursor: pointer;
+}
+
+.uploaded-file-name {
+    margin-left: 10px;
+    font-size: 14px !important;
+    padding: 0px !important;
+}
+
+.asterisk {
+    font-size: 13px !important;
+    margin-top: 5px;
+}
+
+
 
 @media only screen and (max-width: 600px) {
   .columns {
@@ -359,43 +408,44 @@ input[type=submit] {
 <br>
 <div class="center">
         <div class="create-your-account">Enter Account Details</div>
-        <br>
         <div class="cell example example1" id="example-1">
 
         <form id="form">
           <fieldset>
             <div class="row">
               <label for="example1-name" data-tid="elements_examples.form.name_label">Name</label>
-              <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe">
+              <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe" name="name">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Contact email</label>
-              <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com">
+              <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com" name="email">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Contact phone</label>
-              <input id="phone" data-tid="elements_examples.form.email_placeholder"  placeholder="888-888-8888">
+              <input id="phone" data-tid="elements_examples.form.email_placeholder"  placeholder="888-888-8888" name="phone">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant name</label>
-              <input id="restaurant_name" data-tid="elements_examples.form.email_placeholder" placeholder="Taco Joe's">
+              <input id="restaurant_name" data-tid="elements_examples.form.email_placeholder" placeholder="Taco Joe's" name="restaurant_name">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant address</label>
-              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Example St">
+              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Example St" name="restaurant_address">
             </div>
             <div class="row">
               <label for="example1-email" data-tid="elements_examples.form.email_label">Menu URL</label>
-              <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com/menu">
+              <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com/menu" name="menu_url">
             </div>
           </fieldset>
 
           <div class="upload-holder">
-              <span class="upload-instructions">Upload Menu (not necessary if link is provided above)</span>
-              <br>
-              <label for="file_upload" class="custom-file-upload">Choose File
-              </label>
-              <input type="file" id="file_upload" hidden>
+              <div class="horizontal-holder">
+                <a class="upload-instructions">Upload Menu</a>
+                <label for="file_upload" class="custom-file-button">Choose File</label>
+                <input type="file" id="file_upload" hidden onchange="update_file_name()" name="menu_file">
+                <a class="uploaded-file-name" id="file_name"></a>
+              </div>
+              <span class="asterisk">*not necessary if menu URL is provided</span>
           </div>
           
           <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
