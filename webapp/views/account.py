@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, redirect, abort, send_file, reques
 import stripe
 from webapp import db
 from webapp.models.db_models import User, Order
-from flask_login import login_user, logout_user, current_user 
+from flask_login import login_user, logout_user, current_user
+import json
 
 account = Blueprint('account', __name__)
 
@@ -60,12 +61,39 @@ def manage_billing():
 @account.route('/account/orders')
 def view_orders():
     if current_user.is_authenticated:
-        orders = [[order.json_order, order.customer_name, order.datetime] for order in Order.query.filter_by(order_url=current_user.order_url, paid=True)]
-        if len(orders) == 0:
-            orders = "No orders"
+        pending_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False):
+            d = {}
+            d['json_order'] = order.json_order
+            d['rejected_status'] = order.rejected_by_restaurant
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['client_secret'] = order.client_secret
+            d['customer_name'] = order.customer_name
+            pending_orders.append(d)
+        
+        if len(pending_orders) == 0:
+            pending_orders = "No orders"
+
+        archived_orders = []
+
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=True):
+            d = {}
+            d['json_order'] = order.json_order
+            d['rejected_status'] = order.rejected_by_restaurant
+            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
+            d['datetime'] = order.datetime
+            d['client_secret'] = order.client_secret
+            d['customer_name'] = order.customer_name
+            archived_orders.append(d)
+        
+        if len(archived_orders) == 0:
+            archived_orders = "No orders"
+
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
-        return render_template('view-orders.html', orders=orders, currently_accepting_orders=currently_accepting_orders)
+        return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders)
     else:
         return redirect('/login')
 
@@ -76,11 +104,11 @@ def update_accepting_orders_status():
         if request.form['currently_accepting_orders'] == 'true':
             current_user.currently_accepting_orders = True
             db.session.commit()
-            return "accepting"
+            return "accepting orders"
         else:
             current_user.currently_accepting_orders = False
             db.session.commit()
-            return "not accepting"
+            return "not accepting orders"
     else:
         return redirect('/login')
 
