@@ -90,12 +90,15 @@ def setup_closing_hours():
         else:
             return render_template('setup-closing-hours.html')
     elif request.method == 'POST':
-        print(request.form['closing_times'])
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
         current_user.closing_times = request.form['closing_times']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
+
+        print(request.form['closing_times'])
+        print(current_user.next_closing_time)
+        
         return redirect('/account/setup-stripe')
 
 @account.route('/account/setup-stripe', methods=['GET', 'POST'])
