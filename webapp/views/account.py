@@ -90,7 +90,15 @@ def setup_closing_hours():
         else:
             return render_template('setup-closing-hours.html')
     elif request.method == 'POST':
-        #TODO: parse closing hours, refer to notes app on mac
+        if not is_valid_closing_times_post_request(request):
+            return redirect('/account')
+        current_user.closing_times = request.form['closing_times']
+        current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
+        db.session.commit()
+
+        print(request.form['closing_times'])
+        print(current_user.next_closing_time)
+        
         return redirect('/account/setup-stripe')
 
 @account.route('/account/setup-stripe', methods=['GET', 'POST'])
@@ -322,15 +330,34 @@ def is_valid_menu_notes_post_request(request):
             return True
     return False
 
+def is_valid_closing_times_post_request(request):
+    if request.form:
+        if 'closing_times' in request.form:
+            for closing_time in json.loads(request.form['closing_times']):
+                if ('minute' not in closing_time) or ('hour' not in closing_time) or ('day' not in closing_time) or ('timezone' not in closing_time):
+                    return False
+                if (type(closing_time['minute']) != int) or (type(closing_time['hour']) != int) or (type(closing_time['day']) != int):
+                    return False
+                if (closing_time['minute'] < 0) or (closing_time['minute'] > 60) or (closing_time['hour'] < 0) or (closing_time['hour'] > 23) or (closing_time['day'] < 0) or (closing_time['day'] > 6):
+                    return False
+
+                tz_options = ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
+                if closing_time['timezone'] not in tz_options:
+                    return False
+                
+                return True
+    return False
+
 
 def calculate_next_closing_time(closing_times):
     current_time = datetime.datetime.now()
 
     next_closing_times = []
 
-    # ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
-    # closing_time is a dict: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
-    for closing_time in closing_times:
+    # Timezone options: ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
+    # closing_time is a json string containing a list of dicts: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
+    for closing_time in json.loads(closing_times):
+
         current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
         next_closing_time = current_time_in_new_tz
 
