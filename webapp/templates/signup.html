@@ -252,7 +252,7 @@ input[type=submit] {
       <div class="create-your-account">Create an account</div>
 
       <div>
-      <form name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value);"; action="/signup" method="POST">
+      <form name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value);" method="POST">
         <div class="input-label" id="email-label" for="email_address">Email</div>
         <input class="input-box" id="email_address" name="email_address" placeholder="Email">
         <div class="input-label" id="password-label" for="password">Password</div>
