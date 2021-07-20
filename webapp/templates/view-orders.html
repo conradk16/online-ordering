@@ -106,51 +106,63 @@ function createOrderElement(metaOrder, isPendingTab) {
   completeRejectButtonsElement.classList.add("complete-reject-buttons");
 
   var completeButton = document.createElement("div");
-  completeButton.onclick = function() {
-    var order_completed_status_input = document.getElementById("order-completed-status");
-    order_completed_status_input.value = isPendingTab;
-    var payment_intent_id_input = document.getElementById("change-order-completed-payment_intent_id");
-    payment_intent_id_input.value = metaOrder['payment_intent_id'];
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/account/update-order-marked-as-complete-status");
-    xhr.onload = function(event) {
-        if (event.target.response == "success") {
-          reloadOrderData();
-        }
-    };
-    var formData = new FormData(document.getElementById("change-order-completed-status"));
-    xhr.send(formData);
-  }
-
   var rejectButton = document.createElement("div");
-  rejectButton.onclick = function() {
-    var reject_order_payment_intent_id_input = document.getElementById("reject-order-payment-intent-id");
-    reject_order_payment_intent_id_input.value = metaOrder['payment_intent_id'];
-    var reject_order_description_input = document.getElementById("reject-order-description");
-    reject_order_description_input.value = "test reason for refunding";
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/account/refund-order");
-    xhr.onload = function(event) {
-        if (event.target.response == "success") {
-          reloadOrderData();
-        }
-    };
-    var formData = new FormData(document.getElementById("reject-order-form"));
-    xhr.send(formData);
-  }
-
+  // set class and inner html
   if (isPendingTab) {
-    completeButton.classList.add("mark-as-complete-button");
+    if (metaOrder['refunded_status']) {
+      completeButton.classList.add("mark-as-complete-button-disabled");
+      rejectButton.classList.add("reject-order-button-disabled");
+    } else {
+      completeButton.classList.add("mark-as-complete-button");
+      rejectButton.classList.add("reject-order-button");
+    }
+
     completeButton.innerHTML = "Mark as\ncomplete";
-    rejectButton.classList.add("reject-order-button");
+    rejectButton.innerHTML = "Reject\norder";
+
   } else {
-    completeButton.classList.add("reject-order-button-archived");
+    if (metaOrder['refunded_status']) {
+      completeButton.classList.add("reject-order-button-disabled");
+      rejectButton.classList.add("reject-order-button-disabled");
+    } else {
+      completeButton.classList.add("reject-order-button");
+      rejectButton.classList.add("reject-order-button");
+    }
+
     completeButton.innerHTML = "Mark as\nincomplete";
-    rejectButton.classList.add("reject-order-button-archived");
+    rejectButton.innerHTML = "Refund\norder";
+
   }
 
-  rejectButton.innerHTML = "Reject\norder";
+  // set button actions
+  if (!metaOrder['refunded_status']) {
+    completeButton.onclick = function() {
+      var order_completed_status_input = document.getElementById("order-completed-status");
+      order_completed_status_input.value = isPendingTab;
+      var payment_intent_id_input = document.getElementById("change-order-completed-payment_intent_id");
+      payment_intent_id_input.value = metaOrder['payment_intent_id'];
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/account/update-order-marked-as-complete-status");
+      xhr.onload = function(event) {
+          if (event.target.response == "success") {
+            reloadOrderData();
+          }
+      };
+      var formData = new FormData(document.getElementById("change-order-completed-status"));
+      xhr.send(formData);
+    }
+
+    rejectButton.onclick = function() {
+      var popup = document.getElementById("reject-order-popup");
+      popup.setAttribute("data-payment_intent_id", metaOrder['payment_intent_id']);
+      popup.style.visibility = "visible";
+    }
+
+    completeButton.style.backgroundColor;
+    completeButton
+    rejectButton.style.backgroundColor;
+  }
 
   completeRejectButtonsElement.appendChild(completeButton);
   completeRejectButtonsElement.appendChild(rejectButton);
@@ -184,6 +196,7 @@ function createOrderElement(metaOrder, isPendingTab) {
 
   var tableHeaderRowElement = document.createElement("tr");
   var tableHeaderCol1 = document.createElement("th");
+  tableHeaderCol1.style.height = "34px";
   tableHeaderCol1.innerHTML = "Item";
   tableHeaderCol1.classList.add("item-col");
 
@@ -372,6 +385,53 @@ function reloadOrderData() {
     populateOrders(pendingOrders, archivedOrders);
   };
   var formData = new FormData(document.getElementById("reload-orders-form"));
+  xhr.send(formData);
+}
+
+function closeRejectOrderPopup() {
+  var popup = document.getElementById("reject-order-popup");
+  popup.style.visibility = "hidden"
+
+  var potential_description_too_short_message = document.getElementById("description-too-short-message");
+  if (potential_description_too_short_message) {
+    potential_description_too_short_message.remove();
+  }
+  document.getElementById("popup-reason-text-area").value = "";
+}
+
+function rejectOrderClicked() {
+
+  var potential_description_too_short_message = document.getElementById("description-too-short-message");
+  if (potential_description_too_short_message) {
+    potential_description_too_short_message.remove();
+  }
+
+  var rejectionReason = document.getElementById("popup-reason-text-area").value
+  if (rejectionReason.length < 5) {
+    var description_too_short_message = document.createElement("div");
+    description_too_short_message.id = "description-too-short-message";
+    description_too_short_message.innerHTML = "Please enter at least 5 characters"
+    description_too_short_message.classList.add("description-too-short-message");
+    var popup_body = document.getElementById("popup-body");
+    var text_field = document.getElementById("popup-reason-text-area");
+    popup_body.insertBefore(description_too_short_message, text_field);
+    return;
+  }
+
+  var reject_order_payment_intent_id_input = document.getElementById("reject-order-payment-intent-id");
+  reject_order_payment_intent_id_input.value = document.getElementById("reject-order-popup").getAttribute("data-payment_intent_id");
+  var reject_order_description_input = document.getElementById("reject-order-description");
+  reject_order_description_input.value = rejectionReason;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/account/refund-order");
+  xhr.onload = function(event) {
+      if (event.target.response == "success") {
+        closeRejectOrderPopup();
+        reloadOrderData();
+      }
+  };
+  var formData = new FormData(document.getElementById("reject-order-form"));
   xhr.send(formData);
 }
 
@@ -566,13 +626,19 @@ body, html {
   width: 102px;
 }
 
-.reject-order-button-archived {
+.reject-order-button:hover {
+	background-color:#f0f0f0;
+}
+
+
+.mark-as-complete-button-disabled {
   margin: 4px 4px 0px 4px;
-	background-color:#ffffff;
+	background-color:#dddddd;
+  opacity: 0.4;
 	border-radius:12px;
-	border:1px solid #b92d2b;
-	cursor:pointer;
-	color:#b92d2b;
+  cursor: default;
+	border:1px solid #4bb543;
+	color:#4bb543;
 	font-family:Verdana;
 	font-size:16px;
 	padding:4px 0px;
@@ -581,14 +647,21 @@ body, html {
   width: 102px;
 }
 
-.reject-order-button:hover {
-	background-color:#f0f0f0;
+.reject-order-button-disabled {
+  margin: 4px 4px 0px 4px;
+	background-color:#dddddd;
+  opacity: 0.4;
+  cursor: default;
+	border-radius:12px;
+	border:1px solid #b92d2b;
+	color:#b92d2b;
+	font-family:Verdana;
+	font-size:16px;
+	padding:4px 0px;
+	text-decoration:none;
+  flex-basis: 50%;
+  width: 102px;
 }
-
-.reject-order-button-archived:hover {
-	background-color:#f0f0f0;
-}
-
 
 .edit-menu-availability-button:hover {
 	background-color:#f0f0f0;
@@ -643,6 +716,7 @@ body, html {
 }
 
 .metadata-elements {
+  margin: 0px 4px 4px 4px;
   display:flex;
   flex-direction: column;
   justify-content: center;
@@ -749,8 +823,126 @@ tr:nth-child(even) {
   background-color: #dddddd;
 }
 
+.reject-order-popup {
+  visibility: hidden;
+  position: fixed;
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+  /* show in front of everything else, take up entire screen */
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+}
+
+.reject-order-popup-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  background-color: #fefefe;
+  margin: 30px auto 30px auto;
+  border: 1px solid #888;
+  width: 460px;
+  border-radius: 4px;
+  border: 0;
+}
+
+.popup-header {
+  margin: 8px 12px 0px 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.popup-title {
+  font-family: verdana;
+  font-size: 20px;
+  color: rgba(0,0,0,0.87);
+  margin: 8px 0px 8px 4px;
+}
+
+.close-button {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.popup-body {
+  overflow-y: auto;
+  margin: 8px 12px 0px 8px;
+}
+
+.popup-description {
+  font-family: verdana;
+  font-size: 14px;
+  margin:0px 0px 0px 4px;
+}
+
+.popup-description-subtitle {
+  margin: 16px 0px 4px 4px;
+  font-family: verdana;
+  font-size: 13px;
+}
+
+.popup-reason-text-area {
+  margin: 4px 0px 0px 4px;
+  height: 50px;
+  min-width: calc(100% - 10px);
+  max-width: calc(100% - 10px);
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+  font-family: verdana;
+  font-size: 14px;
+}
+
+.popup-button {
+  margin: 8px auto 12px auto;
+	background-color:#ffffff;
+	border-radius:12px;
+	border:1px solid #b92d2b;
+	cursor:pointer;
+	color:#b92d2b;
+	font-family:Verdana;
+	font-size:16px;
+	padding:8px 0px;
+	text-decoration:none;
+  flex-basis: 50%;
+  width: 204px;
+}
+
+.description-too-short-message {
+  font-size: 12px;
+  margin: 0px 0px 4px 4px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  color: #b92d2b;
+  height: 10;
+}
+
 
 </style>
+
+<div id="reject-order-popup" class="reject-order-popup">
+  <div id="reject-order-popup-content" class="reject-order-popup-content">
+    <div class="popup-header">
+      <div class="popup-title">Reject and refund order?</div>
+      <div class="close-button" onclick="closeRejectOrderPopup();">&times;</div>
+    </div>
+    <div id="popup-body" class="popup-body">
+      <p class="popup-description">To reject and refund this order, please provide a short explanation for why this order couldn't be fulfilled. Your message will be sent to the customer.</p>
+      <p class="popup-description-subtitle">Reason for rejecting order:</p>
+      <textarea id="popup-reason-text-area" class="popup-reason-text-area" rows="4" maxlength="120" spellcheck="False" content="width=device-width, initial-scale=1, maximum-scale=1"></textarea>
+    </div>
+    <button class="popup-button" onclick="rejectOrderClicked();">Reject order</button>
+  </div>
+</div>
 
 <div class="overall-div">
 <div class="top-half">
