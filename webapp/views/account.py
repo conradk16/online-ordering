@@ -6,36 +6,108 @@ from webapp.models.db_models import User, Order
 from flask_login import login_user, logout_user, current_user
 import json
 import datetime, pytz
+import io
 
 account = Blueprint('account', __name__)
 
 # account homepage
 @account.route('/account/')
 def account_homepage():
-    if current_user.is_authenticated:
-        if current_user.email_address == "kuklinskywork@gmail.com":
-            return get_admin_page()
-        elif current_user.stripe_customer_id:
-            return render_template('account.html', connected_with_stripe=current_user.stripe_connected_account_details_submitted)
-        else:
-            return redirect('/signup/select-plan')
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    elif current_user.email_address == "kuklinskywork@gmail.com":
+        return get_admin_page()
+    elif not current_user.account_details:
+        return redirect('/account/setup-account-details')
+    elif not current_user.menu_notes:
+        return redirect('/account/setup-menu-notes')
+    elif not current_user.closing_times:
+        return redirect('/account/setup-closing-times')
+    elif not current_user.stripe_connected_account_details_submitted:
+        return redirect('/account/setup-stripe')
     else:
+        return render_template('account.html', orderl_url=current_user.order_url)
+
+@account.route('/account/setup-account-details', methods=['GET', 'POST'])
+def enter_account_details():
+    if not current_user.is_authenticated:
         return redirect('/login')
 
-@account.route('/account/setup')
-def signup_test():
-    return render_template('signup-enter-account-details.html')
+    if request.method == 'GET':
+        return render_template('setup-account-details.html')
+    elif request.method == 'POST':
+        if not  is_valid_account_details_post_request(request):
+            return redirect('/account')
+        
+        account_details = {}
+        account_details['name'] = request.form['name']
+        account_details['email'] = request.form['email']
+        account_details['phone'] = request.form['phone']
+        account_details['restaurant_name'] = request.form['restaurant_name']
+        account_details['restaurant_address'] = request.form['restaurant_address']
+        account_details['menu_url'] = request.form['menu_url'] if ('menu_url' in request.form) else ''
 
-@account.route('/account/setup-hours')
-def hours_temp():
-    return render_template('signup-setup-hours.html')
+        current_user.account_details = json.dumps(account_details)
+
+        if 'menu_file' in request.files:
+            current_user.menu_file = request.files['menu_file'].read()
+            current_user.menu_file_filename = request.files['menu_file'].filename
+
+        db.session.commit()
+
+        return redirect('/account/setup-menu-notes')
 
 
-# GET endpoint for Connect With Stripe button, redirects to Stripe onboarding link
-@account.route('/account/connect-with-stripe')
-def connect_with_stripe():
+@account.route('/account/setup-menu-notes', methods=['GET', 'POST'])
+def setup_menu_notes():
+    if not current_user.is_authenticated:
+        return redirect('/login')
 
-    if current_user.is_authenticated:
+    if request.method == 'GET':
+        if not current_user.account_details:
+            return redirect('/account/setup-account-details')
+        else:
+            return render_template('setup-menu-notes.html')
+    elif request.method == 'POST':
+        if not is_valid_menu_notes_post_request(request):
+            return redirect('/account')
+        
+        current_user.menu_notes = request.form['menu_notes']
+        db.session.commit()
+        return redirect('/account/setup-closing-times')
+
+
+@account.route('/account/setup-closing-times', methods=['GET', 'POST'])
+def setup_closing_hours():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'GET':
+        if not current_user.account_details:
+            return redirect('/account/setup-account-details')
+        elif not current_user.menu_notes:
+            return redirect('/account/setup-menu-notes')
+        else:
+            return render_template('setup-closing-hours.html')
+    elif request.method == 'POST':
+        #TODO: parse closing hours, refer to notes app on mac
+        return redirect('/account/setup-stripe')
+
+@account.route('/account/setup-stripe', methods=['GET', 'POST'])
+def setup_stripe():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'GET':
+        if not current_user.account_details:
+            return redirect('/account/setup-account-details')
+        elif not current_user.menu_notes:
+            return redirect('/account/setup-menu-notes')
+        elif not current_user.closing_times:
+            return redirect('/account/setup-closing-times')
+        else:
+            return render_template('setup-stripe.html')
+    elif request.method == 'POST':
         # Use existing connected account if they have one, otherwise create account and store account.id in the Users table
         account_id = current_user.stripe_connected_account_id
         if not account_id:
@@ -49,14 +121,13 @@ def connect_with_stripe():
         # create account link (a Stripe URL) where the user can onboard with Stripe
         account_link_object = stripe.AccountLink.create(
             account=account_id,
-            refresh_url='https://m3orders.com/account',
+            refresh_url='https://m3orders.com/account/setup-stripe',
             return_url='https://m3orders.com/account',
             type='account_onboarding',
         )
 
         return redirect(account_link_object.url)
-    else:
-        return redirect('/login')
+
 
 # POST endpoint for customers to manage their billing
 @account.route('/account/manage-billing', methods=['POST'])
@@ -198,48 +269,30 @@ def refund_order():
     else:
         return "failure"
 
-def calculate_next_closing_time(closing_times):
-    current_time = datetime.datetime.now()
-
-    next_closing_times = []
-
-    # ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
-    # closing_time is a dict: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
-    for closing_time in closing_times:
-        current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
-        next_closing_time = current_time_in_new_tz
-
-        while next_closing_time.weekday() != closing_time['day']:
-            next_closing_time += datetime.timedelate(1)
-        while next_closing_time.hour != closing_time['hour']:
-            next_closing_time += datetime.timedelta(hours=1)
-        while next_closing_time.minute != closing_time['minute']:
-            next_closing_time += datetime.timedelta(minutes=1)
-
-        next_closing_times.append(next_closing_time)
-
-    return min(next_closing_times)
-        
-def calculate_next_time
-
-def convertTimeToSpecificTimezone(time, timezone):
-    return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
-
-def send_order_refunded_email(customer_email, rejection_description):
-
-    msg = Message(subject='Order Could Not be Fulfilled', sender="no-reply@m3orders.com", recipients=[customer_email])
-    msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description)
-    mail.send(msg)
+# MARK: admin
 
 def get_admin_page():
-    users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)
-    account_emails_without_websites = [user_without_website.email_address for user_without_website in users_without_websites]
-    return render_template('admin.html', account_emails_without_websites=account_emails_without_websites)
+    #users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)
+    users_without_websites = User.query.filter_by(order_url=None)
+    account_details_without_websites = [(("Account email: " + user_without_website.email_address), ("Account details: " + str(user_without_website.account_details)), ("paid for hardware: " + str(user_without_website.paid_for_hardware)))  for user_without_website in users_without_websites]
+    return render_template('admin.html', accounts_without_websites=account_details_without_websites)
 
 @account.route('/account/admin-download-database')
 def admin_download_database():
     if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
         return send_file("database.db", as_attachment=True)
+    else:
+        abort(404)
+
+@account.route('/account/admin-download-menu-file', methods=['POST'])
+def admin_download_menu_file():
+    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+        user =  User.query.filter_by(email_address=request.form['email_address']).first()
+        menu_file = user.menu_file
+        menu_file_filename = user.menu_file_filename
+        if menu_file:
+            return send_file(io.BytesIO(menu_file), as_attachment=True, attachment_filename=menu_file_filename)
+        return ('', 204) # do nothing
     else:
         abort(404)
 
@@ -251,4 +304,52 @@ def admin_assign_url_to_account():
         user = User.query.filter_by(email_address=account_email).first()
         user.order_url = account_url
         db.session.commit()
-    return redirect('/account')
+        return redirect('/account')
+    else:
+        abort(404)
+
+# MARK: functions
+def is_valid_account_details_post_request(request):
+    if request.form:
+        if ('name' in request.form) and ('email' in request.form) and ('phone' in request.form) and ('restaurant_name' in request.form) and ('restaurant_address' in request.form):
+            if ('menu_url' in request.form) or ('menu_file' in request.files):
+                return True
+    return False
+
+def is_valid_menu_notes_post_request(request):
+    if request.form:
+        if 'menu_notes' in request.form:
+            return True
+    return False
+
+
+def calculate_next_closing_time(closing_times):
+    current_time = datetime.datetime.now()
+
+    next_closing_times = []
+
+    # ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
+    # closing_time is a dict: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
+    for closing_time in closing_times:
+        current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
+        next_closing_time = current_time_in_new_tz
+
+        while next_closing_time.minute != closing_time['minute']:
+            next_closing_time += datetime.timedelta(minutes=1)
+        while next_closing_time.hour != closing_time['hour']:
+            next_closing_time += datetime.timedelta(hours=1)
+        while next_closing_time.weekday() != closing_time['day']:
+            next_closing_time += datetime.timedelate(1)
+
+        next_closing_times.append(next_closing_time)
+
+    return min(next_closing_times)
+
+def convertTimeToSpecificTimezone(time, timezone):
+    return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
+
+def send_order_refunded_email(customer_email, rejection_description):
+
+    msg = Message(subject='Order Could Not be Fulfilled', sender="no-reply@m3orders.com", recipients=[customer_email])
+    msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description)
+    mail.send(msg)

@@ -26,16 +26,26 @@ def webhook_account_received():
     
     if event_type == 'checkout.session.completed':
         # Payment is successful and the subscription is created.
+
+        # Check if paid for hardware
+        paid_for_hardware = False
+        line_items = stripe.checkout.Session.list_line_items(data_object.id, limit=2).data
+        for line_item in line_items:
+            if line_item.price.id == "price_1JFMNILGQW192ovflSPEK3sp":
+                paid_for_hardware = True
+
         client_reference_id = data_object.client_reference_id
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(email_address=client_reference_id).first()
+        user.paid_for_hardware = paid_for_hardware
         user.stripe_customer_id = stripe_customer_id
         user.active_subscription = True
         db.session.commit()
     elif event_type == 'invoice.paid':
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
-        # If invoice.paid webhook sent right when checkout.session.completed, user might not exist
+
+        # If invoice.paid webhook sent right when checkout.session.completed, user might not have stripe_customer_id assigned to them yet
         if user:
             user.active_subscription = True
             db.session.commit()

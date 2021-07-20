@@ -152,26 +152,51 @@ def signup():
 def signup_select_plan():
     if request.method == 'GET':
         if not current_user.is_authenticated:
-            return redirect(url_for('home.login_page'))
+            return redirect('/login')
         else:
             return render_template('signup-select-plan.html')
     elif request.method == 'POST':
         if (not current_user.is_authenticated) or (not is_valid_signup_select_plan_post_request(request)):
-            return redirect(url_for('home.login_page'))
+            return redirect('/login')
+        else:
+            session['subscription_price_id'] = request.form['subscription_price_id']
+            return redirect('/signup/select-setup-fee')
+
+@home.route('/signup/select-setup-fee', methods=['GET', 'POST'])
+def signup_select_setup_fee():
+    if request.method == 'GET':
+        if not current_user.is_authenticated:
+            return redirect('/login')
+        else:
+            return render_template('signup-select-fee.html')
+    else:
+        if not is_valid_signup_select_fee_post_request(request):
+            return redirect('/login')
         else:
             try:
+
+                line_items=[
+                    {
+                    'price': session['subscription_price_id'],
+                    'quantity': 1
+                    }]
+
+                if request.form['setup_fee_price_id'] != '':
+                    line_items.append({
+                    'price': request.form['setup_fee_price_id'],
+                    'quantity': 1
+                    })
+
                 checkout_session = stripe.checkout.Session.create(
-                success_url='https://m3orders.com/login',
-                cancel_url='https://m3orders.com',
+                success_url='https://m3orders.com',
+                cancel_url='https://m3orders.com/signup-select-setup-fee',
                 customer_email=current_user.email_address,
                 client_reference_id=current_user.email_address,
                 payment_method_types=['card'],
                 mode='subscription',
-                line_items=[{
-                    'price': request.form['price_id'],
-                    'quantity': 1
-                }]
-            )
+                line_items=line_items
+                )
+                
                 return redirect(checkout_session.url, code=303);
             except Exception as e:
                 return jsonify({'error': {'message': str(e)}}), 400
@@ -192,8 +217,14 @@ def is_valid_signup_post_request(request):
 
 def is_valid_signup_select_plan_post_request(request):
     if request.form:
-        if 'price_id' in request.form:
+        if 'subscription_price_id' in request.form:
             return True
     return False
 
+def is_valid_signup_select_fee_post_request(request):
+    if request.form:
+        if 'setup_fee_price_id' in request.form:
+            if session.get('subscription_price_id'):
+                return True
+    return False
 

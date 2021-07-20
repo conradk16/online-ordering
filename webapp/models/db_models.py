@@ -18,6 +18,11 @@ class User(db.Model, UserMixin):
     order_url = db.Column(db.String)
     currently_accepting_orders = db.Column(db.Boolean, nullable=False, default=False)
     closing_times = db.Column(db.String)
+    paid_for_hardware = db.Column(db.Boolean, nullable=False, default=False)
+    account_details = db.Column(db.String)
+    menu_file = db.Column(db.LargeBinary)
+    menu_file_filename = db.Column(db.String) # the name of the file they uploaded
+    menu_notes = db.Column(db.String)
 
     def get_reset_token(self, expires_sec=600):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)

@@ -6,65 +6,6 @@
 
 <head>
   <script>
-  function validateEmailAndPassword(emailInput, passwordInput) {
-
-    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
-
-    var validEmail = (emailInput.match(mailFormat) != null) && (emailInput.length <= 100);
-    var validPassword = (passwordInput.length >= 8) && (passwordInput.length <= 100);
-
-    var emailBox = document.getElementsByClassName("input-box")[0];
-    var passwordBox = document.getElementsByClassName("input-box")[1];
-
-    var potential_user_already_exists_message = document.getElementById("user-already-exists-message");
-    if (potential_user_already_exists_message) {
-      potential_user_already_exists_message.remove();
-    }
-
-    if (validEmail) {
-      var potential_error_message = document.getElementById("invalid-email-message");
-      if (potential_error_message) {
-        potential_error_message.remove();
-      }
-      emailBox.style.border = "1px solid #ccc";
-    } else {
-        if (!document.getElementById("invalid-email-message")) {
-          var invalidEmailMessage = document.createElement("span");
-          var passwordLabel = document.getElementById("password-label");
-          var form = document.getElementById("form");
-
-          invalidEmailMessage.id = "invalid-email-message";
-          invalidEmailMessage.classList.add("invalid-input-text");
-          invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
-
-          form.insertBefore(invalidEmailMessage, passwordLabel);
-          emailBox.style.border = "1px solid #b92d2b";
-        }
-    }
-    if (validPassword) {
-      var potential_password_error_message = document.getElementById("invalid-password-message");
-      if (potential_password_error_message) {
-        potential_password_error_message.remove();
-      }
-      passwordBox.style.border = "1px solid #ccc";
-    } else {
-        if (!document.getElementById("invalid-password-message")) {
-          var invalidPasswordMessage = document.createElement("span");
-          var nextButton = document.getElementById("next-button");
-          var form = document.getElementById("form");
-
-
-          invalidPasswordMessage.id = "invalid-password-message";
-          invalidPasswordMessage.classList.add("invalid-input-text");
-          invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
-
-          form.insertBefore(invalidPasswordMessage, nextButton);
-          passwordBox.style.border = "1px solid #b92d2b";
-        }
-    }
-    return (validEmail && validPassword);
-  }
-
   function submit_form(plan_type) {
     form = document.getElementById('select-form');
     input = document.getElementById('inp');
@@ -413,9 +354,9 @@ input[type=submit] {
         <div class="step-one-of-three">Step 3 of 7</div>
         <div class="create-your-account">Select a signup fee</div>
         <div class="plans">
-            <div class="plan" name="plan2" onclick="submit_form('price_1J8t6xLGQW192ovfioaRFBEB')">
+            <div class="plan" name="plan2" onclick="submit_form('')">
                 <div class="plan-title img-teal">Basic Signup</div>
-                <div class="plan-caption">$99</div>
+                <div class="plan-caption">$0</div>
                 <img src="../static/basic_registration.svg" class="img-teal plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-teal"></img>
@@ -426,9 +367,9 @@ input[type=submit] {
                     <div class="plan-bullet-text">You will need a tablet or laptop in your restaurant to view your orders</div>
                 </div>
             </div>
-            <div class="plan" name="plan1" onclick="submit_form('price_1J8t5yLGQW192ovf4Tkd70Ta')">
+            <div class="plan" name="plan1" onclick="submit_form('price_1JFMNILGQW192ovflSPEK3sp')">
                 <div class="plan-title img-blue">Tablet Included</div>
-                <div class="plan-caption">$249</div>
+                <div class="plan-caption">$149</div>
                 <img src="../static/tablet.svg" class="img-blue plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-blue"></img>
@@ -455,8 +396,8 @@ input[type=submit] {
 </div>
 </div>
 
-<form id="select-form" action="/signup/select-plan", method="POST">
-    <input type="hidden" id="inp" name="price_id">
+<form id="select-form" action="/signup/select-setup-fee", method="POST">
+    <input type="hidden" id="inp" name="setup_fee_price_id">
 </form>
 
 </html>

@@ -4,10 +4,16 @@
     <input type="submit" value="Download database" /><br>
 </form>
 
-<p> Account emails without websites:</p>
-<p> {{ account_emails_without_websites }} </p>
+<form action="/account/admin-download-menu-file" method=POST>
+    <div id="email_address_label" for="email_address">Account email</div>
+    <input id="email_address" name="email_address">
+    <input type="submit" value="Download menu file" /><br>
+</form>
 
-<p> Associate email with website url:</p>
+<p> Account emails without websites:</p>
+{% for account in accounts_without_websites %}
+<p> {{account}} </p>
+{% endfor %}
 
 <form name="form" id="form" action="/account/admin-assign-url-to-account" method="POST">
   <div id="email_address_label" for="email_address">Account email</div>

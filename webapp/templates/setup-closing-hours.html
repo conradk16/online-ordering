@@ -11,7 +11,7 @@
 
 
 <head>
-  <script>  
+  <script>
 
   var count = 0;
 
@@ -26,7 +26,7 @@
   function clear_checkbox(checkbox_input_id) {
     var checkbox = document.getElementById(checkbox_input_id);
     checkbox.checked = false;
-  }    
+  }
 
   // returns an array of datetime objects matching given criteria
   // day is a string (lowercase day of week)
@@ -34,13 +34,13 @@
   // time_zone is a string with the time zone abbreviation (lowercase)
 
   // returns null if invalid criteria
-  
+
   function get_times(day_of_week, times) {
     if (times.length == 0) {
         return null;
     }
 
-    var to_return = new Array();        
+    var to_return = new Array();
     const time_strings = times.split(",")
     for (var time of time_strings) {
         time = time.trim();
@@ -67,7 +67,7 @@
 
         var year = 2021;
         var month_index = 6;
-        if (day_of_week == "Monday") { var day = 19; } 
+        if (day_of_week == "Monday") { var day = 19; }
         else if (day_of_week == "Tuesday") { var day = 20; }
         else if (day_of_week == "Wednesday") { var day = 21; }
         else if (day_of_week == "Thursday") { var day = 22; }
@@ -106,10 +106,10 @@
     var time_zone = document.getElementsByClassName("drop-down")[0].value;
     if (time_zone == "") {
         var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please select a time zone";       
+        invalid_input_text.innerHTML = "*Please select a time zone";
         return;
     }
-    
+
     // validate days of the week and add them to array
 
     var arr = new Array();
@@ -121,10 +121,10 @@
         const time = time_elements[i].value;
         const checked = checkboxes[i].checked;
         const day = day_labels[i].innerHTML;
-        
+
         if (!checked && time == "") {
             var invalid_input_text = getErrorElement();
-            invalid_input_text.innerHTML = "*Please enter a closing time for " + day + " or mark as closed for that day.";       
+            invalid_input_text.innerHTML = "*Please enter a closing time for " + day + " or mark as closed for that day.";
             return;
         }
 
@@ -135,7 +135,7 @@
         var times = get_times(day, time);
         if (times == null) {
             var invalid_input_text = getErrorElement();
-            invalid_input_text.innerHTML = "*Invalid entry for " + day + ", please enter a valid time or times, for example, \"8:00pm\" or \"2:00pm, 6:00pm\".";       
+            invalid_input_text.innerHTML = "*Invalid entry for " + day + ", please enter a valid time or times, for example, \"8:00pm\" or \"2:00pm, 6:00pm\".";
             return;
         }
 
@@ -564,7 +564,7 @@ input[type=submit] {
                 <option value="hst">Hawaii Standard Time (HST)</option>
             </select>
           </div>
-          
+
           <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
           <div class="invalid-input-text-holder">
               <a class="invalid-input-text"></a>
