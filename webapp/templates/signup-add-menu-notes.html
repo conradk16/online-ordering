@@ -22,6 +22,14 @@ body, html {
   background-color: rgba(255, 255, 255, 1);
 }
 
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: auto;
+}
+
 /* Add a background color to the top navigation */
 .topnav {
   display: flex;
@@ -34,6 +42,8 @@ body, html {
   align-items: center;
   padding: 0;
   margin: 0;
+  position: sticky;
+  top: 0;
 }
 
 /* Style the links inside the navigation bar */
@@ -139,7 +149,6 @@ input[type=submit] {
   flex-direction: column;
 }
 .top-half {
-  min-height: 550px;
   flex:2;
 }
 .bottom-half {
@@ -172,6 +181,8 @@ input[type=submit] {
 .page-explanation-holder {
     display: flex;
     justify-content: center;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .page-explanation {
@@ -194,8 +205,8 @@ input[type=submit] {
     border: 1px solid #d4d4d4;
     border-radius: 5px;
     font-family: Arial, verdana, helvetica, sans-serif;
-    width: 70%;
-    min-width: 305px;
+    width: 80%;
+    min-width: 290px;
     height: 180px;
     resize: none;
 }
@@ -217,7 +228,7 @@ input[type=submit] {
     border: none;
     border-radius: 20px;
     border: 0;
-    margin-top: 20px;
+    margin: 20px 0px;
     box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0px 6px 0 rgba(0,0,0,0.2);
 }
 
@@ -246,7 +257,7 @@ input[type=submit] {
       <div class="create-your-account">Enter Menu Notes</div>
       <div>
       <div class="page-explanation-holder">
-        <a class="page-explanation">Please enter here any necessary information that is not contained on your menu. For example, if your customers have a choice of bread, what options can they choose? Are there any items with a "market price" which should be excluded from online ordering? If customers can choose their style of eggs, which choices are available? Please look through your menu and clearly specify the relevant information.</a>
+        <a class="page-explanation">Please enter any necessary pricing or options information that your menu does not explicitly state. For example, if your customers have a choice of bread, and the bread options are not stated on your menu, please enter them here and note which menu items the options apply to.</a>
       </div>
       <div class="textarea-holder">
         <textarea id="textarea" class="textarea"></textarea>

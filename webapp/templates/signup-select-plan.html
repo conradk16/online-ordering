@@ -13,6 +13,27 @@
     input.value = plan_type;
     form.submit();
   }
+
+  function run_on_load() {
+    run_on_resize();
+  }
+
+
+  function run_on_resize() {
+    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
+    center = document.getElementsByClassName("center")[0];
+    for (const elem of bullet_text_elements) {
+        if (window.innerWidth < 500) {
+            elem.style.fontSize = "12px";
+            center.style.padding = "30px 15px";
+
+        } else {
+            elem.style.fontSize = "15px";
+            center.style.padding = "30px 30px";
+        }
+    }
+  }
+
   
   window.onload = run_on_load;
   window.onresize = run_on_resize;
@@ -30,6 +51,14 @@ body, html {
   -webkit-appearance: none;
 }
 
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: auto;
+}
+
 /* Add a background color to the top navigation */
 .topnav {
   display: flex;
@@ -42,6 +71,9 @@ body, html {
   align-items: center;
   padding: 0;
   margin: 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 /* Style the links inside the navigation bar */
@@ -72,7 +104,9 @@ body, html {
   margin-left: auto;
   margin-right: auto;
   max-width: 575px;
-  padding: 30px;
+  overflow-x: scroll;
+  width: 100%;
+  padding: 15px;
   background-color: white;
   box-sizing: border-box;
 }
@@ -80,17 +114,20 @@ body, html {
 .plans {
     display: flex;
     justify-content: space-between;
-    max-width: 100%;
+    width: inherit;
     margin: 0;
 }
 
 .plan {
-    height: 310px;
+    margin: 10px;
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
     border-radius: 20px;
     padding: 15px;
-    max-width: 40%;
+    width: 40%;
     text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .plan:hover {
@@ -218,7 +255,6 @@ input[type=submit] {
   flex-direction: column;
 }
 .top-half {
-  min-height: 550px;
   flex:2;
 }
 .bottom-half {
@@ -316,10 +352,9 @@ input[type=submit] {
     <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
     </div>
   </div>
-
-<br>
+  
 <div class="center">
-        <div class="step-one-of-three">Step 2 of 5</div>
+        <div class="step-one-of-three">Step 2 of 7</div>
         <div class="create-your-account">Select a plan</div>
         <div class="plans">
             <div class="plan" name="plan1" onclick="submit_form('price_1J8t5yLGQW192ovf4Tkd70Ta')">
