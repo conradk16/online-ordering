@@ -373,12 +373,13 @@ input[type=submit] {
 }
 
 .custom-file-button {
-    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0 6px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2), 0 0 4px 0 rgba(0,0,0,0.2);
     padding: 4px 3px !important;
     font-size: 14px !important;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
     width: auto !important;
     margin-left: 10px;
+    min-width: 0 !important;
 }
 
 .custom-file-button:hover {
@@ -458,7 +459,7 @@ input[type=submit] {
 
           <div class="upload-holder">
               <div class="horizontal-holder">
-                <a class="upload-instructions">Upload Menu</a>
+                <a class="upload-instructions">Upload Menu:</a>
                 <label for="file_upload" class="custom-file-button">Choose File</label>
                 <input type="file" id="file_upload" hidden onchange="update_file_name()" name="menu_file">
                 <a class="uploaded-file-name" id="file_name"></a>
