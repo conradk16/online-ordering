@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     order_url = db.Column(db.String)
     currently_accepting_orders = db.Column(db.Boolean, nullable=False, default=False)
     closing_times = db.Column(db.String)
+    next_closing_time = db.Column(db.DateTime)
     paid_for_hardware = db.Column(db.Boolean, nullable=False, default=False)
     account_details = db.Column(db.String)
     menu_file = db.Column(db.LargeBinary)
