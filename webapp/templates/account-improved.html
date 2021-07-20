@@ -3,9 +3,69 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" type="text/css" href="../static/css/account-home.css" data-rel-css="">
+
 <head>
   <script>
+    function check_if_menu() {
+        orders_link = "www.m3orders.com/super-cucas-micheltorena";
+        //orders_link = "";
+        var menu_view_orders = document.getElementById("menu_view_orders");
+        var button = document.getElementById("button");
+        if (orders_link == "") {  
+            menu_view_orders.style.cursor = "default";
+            menu_view_orders.style.color = "gray";
 
+            menu_view_orders_block = document.getElementById("menu_view_orders_block");
+            menu_view_orders_block.display = "block";
+            menu_view_orders_block.style.backgroundColor = "#fff";
+
+
+            button.style.backgroundColor = "gray";
+            button.style.display = "block";
+        } else {
+            menu_view_orders.style.cursor = "pointer";
+            menu_view_orders.style.color = "black";
+            button.style.cursor = "pointer";
+
+            var description = document.getElementsByClassName("description")[0];
+            description.innerHTML = "This is the link to your online ordering website. Add this link to your main website and make sure it is easily accessible to your customers.";
+
+            // add link title
+            var content_holder = document.getElementsByClassName("content-holder")[0];
+            var link_title = document.createElement("a");
+            link_title.classList.add("link-title");
+            link_title.innerHTML = "Your online ordering link:";
+            content_holder.insertBefore(link_title, description);
+
+            // add link text
+            var link_text = document.createElement("a");
+            link_text.classList.add("link-text");
+            link_text.innerHTML = orders_link;
+            content_holder.insertBefore(link_text, description);
+            
+        }
+    }
+
+    function run_on_resize() {
+        var logo = document.getElementById("logo");
+        if (window.innerWidth < 450) {
+            logo.width="100";
+            logo.height="14.2";
+        } else {
+            logo.width="200";
+            logo.height="28.4";
+        }
+    }
+
+    function run_on_load() {
+        check_if_menu();
+        run_on_resize();
+    }
+
+
+    window.onload = run_on_load;
+    window.onresize = run_on_resize;
   </script>
 </head>
 
@@ -14,6 +74,24 @@ body, html {
   margin: 0;
   height: 100%;
   background-color: rgba(255, 255, 255, 1);
+}
+
+.link-title {
+    text-align: center;
+    color: gray;
+    margin-bottom: 20px;
+}
+
+.link-text {
+    text-align: center;
+    color: black;
+    font-size: 30px;
+    margin-bottom: 20px;
+    max-width: inherit;
+}
+
+.logo {
+    margin: 10px 0px;
 }
 
 /* Add a background color to the top navigation */
@@ -26,18 +104,39 @@ body, html {
   margin: 0;
   position: sticky;
   top: 0;
+  box-shadow: 0 3px 6px 0 rgba(0,0,0,.2);
+  z-index: 2;
 }
 
 /* Style the links inside the navigation bar */
 .topnav-right {
   color: black;
   text-align: center;
-  padding: 14px 16px;
+  padding: 18px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
   cursor: pointer;
   font-family:verdana;
+}
+
+.topnav-right:hover {
+    background-color: #f0f0f0; 
+}
+
+.hidden-text {
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    opacity: 0;
+    font-size: 17px;
+    cursor: pointer;
+    font-family:verdana;
+}
+
+.hidden-text:hover {
+    cursor: default;
 }
 
 .topnav-left {
@@ -47,22 +146,18 @@ body, html {
   margin-left: 4px;
 }
 
-.page-title {
-    font-family:verdana;
-    font-size: 25px;
-}
-
 .overall-div {
   height:100%;
   display:flex;
   flex-direction: column;
-  background: #fafafa
+  background: #fff
 }
 .top-half {
   flex:2;
 }
 .bottom-half {
   min-height:150px;
+  background-color: #f3f3f3;
 }
 .questions {
   margin: 30px;
@@ -87,24 +182,92 @@ body, html {
   font-size:14px;
 }
 
+.button {
+    align-items: center;
+    font-size: 25px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 70px;
+    width: 70%;
+    min-width: 245px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    border-radius: 20px;
+    border: 0;
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0px 6px 0 rgba(0,0,0,0.2);
+}
+
+.button:hover {
+    /*cursor: pointer;*/
+    background-color: #2d5f91;
+}
+
+.description {
+    text-align: center;
+    color: gray;
+    margin-bottom: 30px;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 750px;
+  padding: 30px 25px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.content-holder {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    word-wrap: break-word;
+}
+  
 
 </style>
 
 <div class="overall-div">
 <div class="top-half">
+
   <div class="topnav">
-    <a href="/">
     <div class="topnav-left">
-      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+        <a class="hidden-text">Sign Out</a>
     </div>
-    </a>
-    <div class="topnav-center">
-        <a class="page-title">Account Home</a>
-    </div>
+    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
     <div class="topnav-right">
     <a style="text-decoration:inherit; color:black" href="/signout">Sign Out</a>
     </div>
   </div>
+
+  <input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+  <label for="openSidebarMenu" class="sidebarIconToggle">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+  </label>
+  <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li id="menu_view_orders_block"><a href="https://instagram.com/plavookac" style="display:block;" id="menu_view_orders" target="_blank">View Orders</a></li>
+      <li><a href="https://instagram.com/plavookac" style="display:block;" target="_blank">Account Details</a></li>
+      <li><a href="https://twitter.com/plavookac" style="display:block;" target="_blank">Closing Hours</a></li>
+      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Menu Notes</a></li>
+      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Stripe</a></li>
+      <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Manage Subscription</a></li>
+    </ul>
+  </div>
+
+  <div class="center">
+    <div class="content-holder">
+        <a class="description">We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.</a>
+        <button id="button" class="button" onclick="submit_form()">View Orders</button>
+    </div>
+  </div>
+
   </div>
 
 <div class="bottom-half">
