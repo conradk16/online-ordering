@@ -493,50 +493,50 @@ input[type=submit] {
             </div>
             <div class="row">
               <label class="day-label">Tuesday</label>
-              <input class="time" id="tuesday" placeholder="7:00pm" name="tuesday">
+              <input class="time" id="tuesday" placeholder="7:00pm" name="tuesday" onclick="clear_checkbox('tuesday_closed')">
               <div class="checkbox-elements">
                 <label for="tuesday_closed" class="checkbox-label">Closed?</label>
-                <input id="tuesday_closed" type="checkbox" name="tuesday_closed" class="checkbox">
+                <input id="tuesday_closed" type="checkbox" name="tuesday_closed" class="checkbox" onclick="update_input_text('tuesday', 'tuesday_closed')">
               </div>
             </div>
             <div class="row">
               <label class="day-label">Wednesday</label>
-              <input class="time" id="wednesday" placeholder="7:00pm" name="wednesday">
+              <input class="time" id="wednesday" placeholder="7:00pm" name="wednesday" onclick="clear_checkbox('wednesday_closed')">
               <div class="checkbox-elements">
                 <label for="wednesday_closed" class="checkbox-label">Closed?</label>
-                <input id="wednesday_closed" type="checkbox" name="wednesday_closed" class="checkbox">
+                <input id="wednesday_closed" type="checkbox" name="wednesday_closed" class="checkbox" onclick="update_input_text('wednesday', 'wednesday_closed')">
               </div>
             </div>
             <div class="row">
               <label class="day-label">Thursday</label>
-              <input class="time" id="thursday" placeholder="7:00pm" name="thursday">
+              <input class="time" id="thursday" placeholder="7:00pm" name="thursday" onclick="clear_checkbox('thursday_closed')">
               <div class="checkbox-elements">
                 <label for="thursday_closed" class="checkbox-label">Closed?</label>
-                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox">
+                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox" onclick="update_input_text('thurdsay', 'thursday_closed')">
               </div>
             </div>
             <div class="row">
               <label class="day-label">Friday</label>
-              <input class="time" id="friday" placeholder="7:00pm" name="friday">
+              <input class="time" id="friday" placeholder="7:00pm" name="friday" onclick="clear_checkbox('friday_closed')">
               <div class="checkbox-elements">
                 <label for="friday_closed" class="checkbox-label">Closed?</label>
-                <input id="friday_closed" type="checkbox" name="friday_closed" class="checkbox">
+                <input id="friday_closed" type="checkbox" name="friday_closed" class="checkbox" onclick="update_input_text('friday', 'friday_closed')">
               </div>
             </div>
             <div class="row">
               <label class="day-label">Saturday</label>
-              <input class="time" id="saturday" placeholder="8:30pm" name="saturday">
+              <input class="time" id="saturday" placeholder="8:30pm" name="saturday" onclick="clear_checkbox('saturday_closed')">
               <div class="checkbox-elements">
                 <label for="saturday_closed" class="checkbox-label">Closed?</label>
-                <input id="saturday_closed" type="checkbox" name="saturday_closed" class="checkbox">
+                <input id="saturday_closed" type="checkbox" name="saturday_closed" class="checkbox" onclick="update_input_text('saturday', 'saturday_closed')">
               </div>
             </div>
             <div class="row">
               <label class="day-label">Sunday</label>
-              <input class="time" id="sunday" placeholder="8:30pm" name="sunday">
+              <input class="time" id="sunday" placeholder="8:30pm" name="sunday" onclick="clear_checkbox('sunday_closed')">
               <div class="checkbox-elements">
                 <label for="sunday_closed" class="checkbox-label">Closed?</label>
-                <input id="sunday_closed" type="checkbox" name="sunday_closed" class="checkbox">
+                <input id="sunday_closed" type="checkbox" name="sunday_closed" class="checkbox" onclick="update_input_text('sunday', 'sunday_closed')">
               </div>
             </div>
           </fieldset>
