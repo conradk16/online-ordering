@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="/static/css/closing-times.css" data-rel-css="">
+<link rel="stylesheet" type="text/css" href="../static/css/closing-times.css" data-rel-css="">
 
 
 <head>
@@ -28,14 +28,14 @@
     checkbox.checked = false;
   }
 
-  // returns an array of datetime objects matching given criteria
+  // returns an array of dictionaries matching given criteria
   // day is a string (lowercase day of week)
   // time is a string (could be multiple comma-separated times)
-  // time_zone is a string with the time zone abbreviation (lowercase)
+  // time_zone is a string with the time zone
 
   // returns null if invalid criteria
 
-  function get_times(day_of_week, times) {
+  function get_times(day_of_week, times, time_zone) {
     if (times.length == 0) {
         return null;
     }
@@ -65,19 +65,18 @@
             return null;
         }
 
-        var year = 2021;
-        var month_index = 6;
-        if (day_of_week == "Monday") { var day = 19; }
-        else if (day_of_week == "Tuesday") { var day = 20; }
-        else if (day_of_week == "Wednesday") { var day = 21; }
-        else if (day_of_week == "Thursday") { var day = 22; }
-        else if (day_of_week == "Friday") { var day = 23; }
-        else if (day_of_week == "Saturday") { var day = 24; }
-        else if (day_of_week == "Sunday") { var day = 25; }
+        if (day_of_week == "Monday") { var day = 0; }
+        else if (day_of_week == "Tuesday") { var day = 1; }
+        else if (day_of_week == "Wednesday") { var day = 2; }
+        else if (day_of_week == "Thursday") { var day = 3; }
+        else if (day_of_week == "Friday") { var day = 4; }
+        else if (day_of_week == "Saturday") { var day = 5; }
+        else if (day_of_week == "Sunday") { var day = 6; }
 
         // deal with late closings (after midnight)
         if (ampm == "am" && hr < 6) {
             day += 1;
+            day %= 6;
         }
 
         // convert to 24-hr
@@ -88,8 +87,12 @@
         }
 
         // add to array
-        const datetime = new Date(Date.UTC(year, month_index, day, hr, minutes));
-        to_return.push(datetime);
+        var dict = {};
+        dict["day"] = day;
+        dict["hour"] = hr;
+        dict["minute"] = minutes;
+        dict["timezone"] = time_zone;
+        to_return.push(dict);
 
     }
     return to_return;
@@ -132,34 +135,25 @@
             continue;
         }
 
-        var times = get_times(day, time);
+        var times = get_times(day, time, time_zone);
         if (times == null) {
             var invalid_input_text = getErrorElement();
             invalid_input_text.innerHTML = "*Invalid entry for " + day + ", please enter a valid time or times, for example, \"8:00pm\" or \"2:00pm, 6:00pm\".";
             return;
         }
 
-        // add times to the form
-        var form_to_send = document.getElementById("closing_times_to_send");
+        // add times to the array
         for (const time of times) {
-            // create datetime-timezone pair
-            var pair = new Array();
-            pair.push(JSON.stringify(time));
-            pair.push(time_zone);
-            arr.push(JSON.stringify(pair));
+            arr.push(time);
         }
     }
 
     var input = document.getElementById("inp");
     input.value = JSON.stringify(arr);
 
-    /*
-    arr = JSON.parse(input.value);
-    for (const pair_str of arr) {
-        pair = JSON.parse(pair_str);
-        time = JSON.parse(pair[0]);
-        time_zone = pair[1];
-        console.log(time + " " + time_zone + "\n");
+    /*arr = JSON.parse(input.value);
+    for (const elem of arr) {
+        console.log(elem["day"] + ", " + elem["hour"] + ", " + elem["minute"] + ", " + elem["timezone"]);
     }*/
 
     submit_form();
@@ -517,7 +511,7 @@ input[type=submit] {
               <input class="time" id="thursday" placeholder="7:00pm" name="thursday" onclick="clear_checkbox('thursday_closed')">
               <div class="checkbox-elements">
                 <label for="thursday_closed" class="checkbox-label">Closed?</label>
-                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox" onclick="update_input_text('thurdsay', 'thursday_closed')">
+                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox" onclick="update_input_text('thursday', 'thursday_closed')">
               </div>
             </div>
             <div class="row">
@@ -554,14 +548,18 @@ input[type=submit] {
             <a class="upload-instructions">Select Time Zone</a>
             <select class="drop-down">
                 <option value="">No Time Zone Selected</option>
-                <option value="pdt">Pacific Daylight Time (PDT)</option>
-                <option value="mst">Mountain Daylight Time (MST)</option>
-                <option value="mdt">Mountain Standard Time (MDT)</option>
-                <option value="cdt">Central Daylight Time (CDT)</option>
-                <option value="edt">Eastern Daylight Time (EDT)</option>
-                <option value="akdt">Alaska Daylight Time (AKDT)</option>
-                <option value="hadt">Aleutian Daylight Time (HADT)</option>
-                <option value="hst">Hawaii Standard Time (HST)</option>
+                <option value="US/Alaska">Alaska</option>
+                <option value="US/Aleutian">Aleutian</option>
+                <option value="US/Arizona">Arizona</option>
+                <option value="US/Central">Central</option>
+                <option value="US/East-Indiana">East-Indiana</option>
+                <option value="US/Eastern">Eastern</option>
+                <option value="US/Hawaii">Hawaii</option>
+                <option value="US/Indiana-Starke">Indiana-Starke</option>
+                <option value="US/Michigan">Michigan</option>
+                <option value="US/Mountain">Mountain</option>
+                <option value="US/Pacific">Pacific</option>
+                <option value="US/Samoa">Samoa</option>
             </select>
           </div>
 
