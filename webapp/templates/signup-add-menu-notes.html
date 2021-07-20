@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+  <script>
+      function submit_form() {
+        var textarea_text = document.getElementById("textarea").value;
+        var input = document.getElementById("inp");
+        input.value = textarea_text;
+        var form = document.getElementById("form");
+        form.submit();
+      }
+  </script>
+</head>
+
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Add a background color to the top navigation */
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-style:solid;
+  border-width: 0px 0px 1px 0px;
+  border-bottom-color: rgba(230, 230, 230, 1);
+  overflow: hidden;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the links inside the navigation bar */
+.topnav-right {
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  opacity: 1;
+  font-size: 17px;
+  cursor: pointer;
+  font-family:verdana;
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* Change the color of links on hover */
+.topnav-right:hover {
+  background-color: rgba(240, 240, 240, 0.75);
+}
+
+.center {
+  margin: auto;
+  max-width: 650px;
+  padding: 10px;
+  background-color: white;
+}
+
+.step-one-of-three {
+  text-align: center;
+  font-size: 17px;
+  font-family:verdana;
+  margin-top: 15px;
+}
+
+.create-your-account {
+  font-size: 30px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: center;
+  padding: 12px 8px 8px 0px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  margin: 8px 8px 0px 0px;
+  height:10;
+}
+
+.invalid-input-text {
+  font-size: 12px;
+  margin: 0;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  color: #b92d2b;
+  height: 10;
+}
+
+.input-box {
+  width: 100%;
+  padding: 12px 8px;
+  margin: 4px 0px 4px 0px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family:verdana;
+  outline: none;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 12px 8px;
+  margin: 12px 0px 12px 0px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family:verdana;
+}
+
+.inputText {
+  font-size: 14px;
+  width: 200px;
+  height: 35px;
+}
+
+.overall-div {
+  height:100%;
+  display:flex;
+  flex-direction: column;
+}
+.top-half {
+  min-height: 550px;
+  flex:2;
+}
+.bottom-half {
+  min-height:150px;
+  background-color: #f3f3f3;
+}
+.questions {
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:18px;
+}
+
+.terms-of-use {
+  margin: 30px 60px 30px 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+  text-align: center;
+}
+
+.privacy {
+  text-align: center;
+  margin: 30px;
+  color:#757575;
+  font-family: helvetica neue;
+  font-size:14px;
+}
+
+.page-explanation-holder {
+    display: flex;
+    justify-content: center;
+}
+
+.page-explanation {
+    font-size: 15px;
+    text-align: center;
+    color: gray;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    margin-top: 10px;
+}
+
+.textarea-holder {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.textarea {
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    width: 70%;
+    min-width: 305px;
+    height: 180px;
+    resize: none;
+}
+
+.button-holder {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    align-items: center;
+    font-size: 20px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 40px;
+    width: 70%;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    border-radius: 20px;
+    border: 0;
+    margin-top: 20px;
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0px 6px 0 rgba(0,0,0,0.2);
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #2d5f91;
+}
+
+</style>
+
+<div class="overall-div">
+<div class="top-half">
+<div class="topnav">
+  <a href="/">
+  <div class="topnav-left">
+    <img src="../static/m3_logo.png" width="122.25px" height="41px">
+  </div>
+  </a>
+  <div class="topnav-right">
+  <a style="text-decoration:inherit; color:black" href="/login">Log in</a>
+  </div>
+</div>
+
+<div class="center">
+      <div class="step-one-of-three">Step 5 of 7</div>
+      <div class="create-your-account">Enter Menu Notes</div>
+      <div>
+      <div class="page-explanation-holder">
+        <a class="page-explanation">Please enter here any necessary information that is not contained on your menu. For example, if your customers have a choice of bread, what options can they choose? Are there any items with a "market price" which should be excluded from online ordering? If customers can choose their style of eggs, which choices are available? Please look through your menu and clearly specify the relevant information.</a>
+      </div>
+      <div class="textarea-holder">
+        <textarea id="textarea" class="textarea"></textarea>
+      </div>
+      <div class="button-holder">
+        <button class="button" onclick="submit_form()">Next</button>
+      </div>
+</div>
+</div>
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-284-7912&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+</div>
+
+<form id="form" action="/blah", method="POST">
+    <input type="hidden" id="inp" name="menu_notes">
+</form>
+
+</html>

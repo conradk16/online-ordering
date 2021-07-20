@@ -11,91 +11,158 @@
 
 
 <head>
-  <script>    
+  <script>  
+
+  var count = 0;
+
+  function update_input_text(text_input_id, checkbox_input_id) {
+    var checkbox = document.getElementById(checkbox_input_id);
+    var text_input = document.getElementById(text_input_id);
+    if (checkbox.checked) {
+        text_input.value = "";
+    }
+  }
+
+  function clear_checkbox(checkbox_input_id) {
+    var checkbox = document.getElementById(checkbox_input_id);
+    checkbox.checked = false;
+  }    
+
+  // returns an array of datetime objects matching given criteria
+  // day is a string (lowercase day of week)
+  // time is a string (could be multiple comma-separated times)
+  // time_zone is a string with the time zone abbreviation (lowercase)
+
+  // returns null if invalid criteria
+  
+  function get_times(day_of_week, times) {
+    if (times.length == 0) {
+        return null;
+    }
+
+    var to_return = new Array();        
+    const time_strings = times.split(",")
+    for (var time of time_strings) {
+        time = time.trim();
+        const halves = time.split(":"); // hour and minutes
+        if (halves.length != 2) {
+            return null;
+        }
+        var hr = parseInt(halves[0]);
+        if (isNaN(hr) || hr < 0 || hr > 12) {
+            return null;
+        }
+        const minutes_and_ampm = halves[1];
+        if (minutes_and_ampm.length < 3) {
+            return null;
+        }
+        const minutes = parseInt(minutes_and_ampm.substring(0, minutes_and_ampm.length-2));
+        const ampm = minutes_and_ampm.substring(minutes_and_ampm.length-2);
+        if (isNaN(minutes) || minutes < 0 || minutes > 59) {
+            return null;
+        }
+        if (ampm != "am" && ampm != "pm") {
+            return null;
+        }
+
+        var year = 2021;
+        var month_index = 6;
+        if (day_of_week == "Monday") { var day = 19; } 
+        else if (day_of_week == "Tuesday") { var day = 20; }
+        else if (day_of_week == "Wednesday") { var day = 21; }
+        else if (day_of_week == "Thursday") { var day = 22; }
+        else if (day_of_week == "Friday") { var day = 23; }
+        else if (day_of_week == "Saturday") { var day = 24; }
+        else if (day_of_week == "Sunday") { var day = 25; }
+
+        // deal with late closings (after midnight)
+        if (ampm == "am" && hr < 6) {
+            day += 1;
+        }
+
+        // convert to 24-hr
+        if (ampm == "pm" && hr != 12) {
+            hr += 12;
+        } else if (ampm == "am" && hr == 12) {
+            hr = 0;
+        }
+
+        // add to array
+        const datetime = new Date(Date.UTC(year, month_index, day, hr, minutes));
+        to_return.push(datetime);
+
+    }
+    return to_return;
+  }
 
   // creates the element if it doesn't exist
   function getErrorElement() {
-    if (document.getElementsByClassName("invalid-input-text").length == 0) {
-        var invalid_input_text = document.createElement("span");
-        invalid_input_text.classList.add("invalid-input-text");
-        var form = document.getElementById("form");
-        form.appendChild(invalid_input_text);
-        return invalid_input_text;
-    } else {
-        return document.getElementsByClassName("invalid-input-text")[0];
-    }
+    return document.getElementsByClassName("invalid-input-text")[0];
   }
 
 
   function validate_form() {
-    // validate days of the week
+    // validate time zone
+    var time_zone = document.getElementsByClassName("drop-down")[0].value;
+    if (time_zone == "") {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please select a time zone";       
+        return;
+    }
+    
+    // validate days of the week and add them to array
 
-    var times = document.getElementsByClassName("time");
+    var arr = new Array();
 
-    for (const time of times) {
+    var time_elements = document.getElementsByClassName("time");
+    var checkboxes = document.getElementsByClassName("checkbox");
+    var day_labels = document.getElementsByClassName("day-label");
+    for (let i = 0; i < time_elements.length; i++) {
+        const time = time_elements[i].value;
+        const checked = checkboxes[i].checked;
+        const day = day_labels[i].innerHTML;
         
+        if (!checked && time == "") {
+            var invalid_input_text = getErrorElement();
+            invalid_input_text.innerHTML = "*Please enter a closing time for " + day + " or mark as closed for that day.";       
+            return;
+        }
+
+        if (checked) {
+            continue;
+        }
+
+        var times = get_times(day, time);
+        if (times == null) {
+            var invalid_input_text = getErrorElement();
+            invalid_input_text.innerHTML = "*Invalid entry for " + day + ", please enter a valid time or times, for example, \"8:00pm\" or \"2:00pm, 6:00pm\".";       
+            return;
+        }
+
+        // add times to the form
+        var form_to_send = document.getElementById("closing_times_to_send");
+        for (const time of times) {
+            // create datetime-timezone pair
+            var pair = new Array();
+            pair.push(JSON.stringify(time));
+            pair.push(time_zone);
+            arr.push(JSON.stringify(pair));
+        }
     }
 
-    // validate name
+    var input = document.getElementById("inp");
+    input.value = JSON.stringify(arr);
 
-    var name_text = document.getElementById("name").value;
-    if (name_text.length == 0) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter your name";       
-        return;
-    }
-
-    // validate email
-    var mailFormat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
-    
-    var email_text = document.getElementById("email").value;
-    
-    var valid_email = (email_text.match(mailFormat) != null) && (email_text.length <= 100);
-
-    if (!valid_email) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter a valid email address";       
-        return;
-    }
-
-    // validate phone
-
-    var phone_format = /\d\d\d-\d\d\d-\d\d\d\d/;
-    var phone_text = document.getElementById("phone").value;
-    var valid_phone = (phone_text.match(phone_format) != null);
-    if (!valid_phone) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form *** - *** - ****";       
-        return;
-    }
-
-    // validate restaurant name
-    var restaurant_text = document.getElementById("restaurant_name").value;
-    if (restaurant_text.length == 0) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter restaurant name";       
-        return;
-    }
- 
-    // validate restaurant address
-    var restaurant_address_text = document.getElementById("restaurant_address").value;
-    if (restaurant_address_text.length == 0) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please enter restaurant address";       
-        return;
-    }
-
-    // validate menu input
-    var menu_url_text = document.getElementById("menu_url").value;
-    var file_input = document.getElementById('file_upload');
-    if (menu_url_text.length == 0 && file_input.files.length == 0) {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please either enter a menu URL or upload a menu file";       
-        return;
-    }
+    /*
+    arr = JSON.parse(input.value);
+    for (const pair_str of arr) {
+        pair = JSON.parse(pair_str);
+        time = JSON.parse(pair[0]);
+        time_zone = pair[1];
+        console.log(time + " " + time_zone + "\n");
+    }*/
 
     submit_form();
-    
   }
 
   function submit_form() {
@@ -181,13 +248,12 @@ body, html {
 .center {
   margin-left: auto;
   margin-right: auto;
-  max-width: 400px;
+  max-width: 450px;
   padding: 0px;
   background-color: white;
   box-sizing: border-box;
   width: 100%;
   overflow-x: scroll;
-  min-height: 630px;
 }
 
 .step-one-of-three {
@@ -216,14 +282,17 @@ body, html {
   height:10;
 }
 
+.invalid-input-text-holder {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0px 15px 10px;
+}
+
 .invalid-input-text {
-  font-size: 12px;
-  margin-left: 15px;
-  margin-top: 40px;
   font-weight: 400;
-  text-align: left;
   color: #b92d2b;
-  height: 10;
+  text-align: left;
+  font-size: 12px;
 }
 
 .input-box {
@@ -363,8 +432,23 @@ input[type=submit] {
     padding: 3px;
 }
 
+.drop-down:hover {
+    cursor: pointer;
+}
+
 .time {
 
+}
+
+.multiple-closing-notes-holder {
+    display: flex;
+    margin: 0px 15px 15px;
+}
+
+.multiple-closing-notes {
+    color: gray;
+    text-align: center;
+    font-size: 13px !important;
 }
 
 @media only screen and (max-width: 600px) {
@@ -393,86 +477,93 @@ input[type=submit] {
         <div class="step-one-of-three">Step 7 of 7</div>
         <div class="create-your-account">Enter Closing Hours</div>
         <div class="page-explanation-holder">
-            <a class="page-explanation">We need to collect your normal closing hours information to automatically prevent your customers from placing orders once your restaurant is closed.</a>
+            <a class="page-explanation">We collect your normal closing hours information to automatically prevent your customers from placing orders once your restaurant is closed. You can always manually turn online orders back on again.</a>
         </div>
-        <br>
         <div class="cell example example1" id="example-1">
 
         <form id="form" class="main-form">
           <fieldset>
             <div class="row">
-              <label>Monday</label>
-              <input class="time" id="monday" placeholder="7:00pm" name="monday">
+              <label class="day-label">Monday</label>
+              <input class="time" id="monday" placeholder="7:00pm" name="monday" onclick="clear_checkbox('monday_closed')">
               <div class="checkbox-elements">
                 <label for="monday_closed" class="checkbox-label">Closed?</label>
-                <input id="monday_closed" type="checkbox" name="monday_closed" class="checkbox">
+                <input id="monday_closed" type="checkbox" name="monday_closed" class="checkbox" onclick="update_input_text('monday', 'monday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Tuesday</label>
-              <input class="time" id="tuesday" placeholder="7:00pm" name="tuesday">
+              <label class="day-label">Tuesday</label>
+              <input class="time" id="tuesday" placeholder="7:00pm" name="tuesday" onclick="clear_checkbox('tuesday_closed')">
               <div class="checkbox-elements">
                 <label for="tuesday_closed" class="checkbox-label">Closed?</label>
-                <input id="tuesday_closed" type="checkbox" name="tuesday_closed" class="checkbox">
+                <input id="tuesday_closed" type="checkbox" name="tuesday_closed" class="checkbox" onclick="update_input_text('tuesday', 'tuesday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Wednesday</label>
-              <input class="time" id="wednesday" placeholder="7:00pm" name="wednesday">
+              <label class="day-label">Wednesday</label>
+              <input class="time" id="wednesday" placeholder="7:00pm" name="wednesday" onclick="clear_checkbox('wednesday_closed')">
               <div class="checkbox-elements">
                 <label for="wednesday_closed" class="checkbox-label">Closed?</label>
-                <input id="wednesday_closed" type="checkbox" name="wednesday_closed" class="checkbox">
+                <input id="wednesday_closed" type="checkbox" name="wednesday_closed" class="checkbox" onclick="update_input_text('wednesday', 'wednesday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Thursday</label>
-              <input class="time" id="thursday" placeholder="7:00pm" name="thursday">
+              <label class="day-label">Thursday</label>
+              <input class="time" id="thursday" placeholder="7:00pm" name="thursday" onclick="clear_checkbox('thursday_closed')">
               <div class="checkbox-elements">
                 <label for="thursday_closed" class="checkbox-label">Closed?</label>
-                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox">
+                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox" onclick="update_input_text('thurdsay', 'thursday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Friday</label>
-              <input class="time" id="friday" placeholder="7:00pm" name="friday">
+              <label class="day-label">Friday</label>
+              <input class="time" id="friday" placeholder="7:00pm" name="friday" onclick="clear_checkbox('friday_closed')">
               <div class="checkbox-elements">
                 <label for="friday_closed" class="checkbox-label">Closed?</label>
-                <input id="friday_closed" type="checkbox" name="friday_closed" class="checkbox">
+                <input id="friday_closed" type="checkbox" name="friday_closed" class="checkbox" onclick="update_input_text('friday', 'friday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Saturday</label>
-              <input class="time" id="saturday" placeholder="8:30pm" name="saturday">
+              <label class="day-label">Saturday</label>
+              <input class="time" id="saturday" placeholder="8:30pm" name="saturday" onclick="clear_checkbox('saturday_closed')">
               <div class="checkbox-elements">
                 <label for="saturday_closed" class="checkbox-label">Closed?</label>
-                <input id="saturday_closed" type="checkbox" name="saturday_closed" class="checkbox">
+                <input id="saturday_closed" type="checkbox" name="saturday_closed" class="checkbox" onclick="update_input_text('saturday', 'saturday_closed')">
               </div>
             </div>
             <div class="row">
-              <label>Sunday</label>
-              <input class="time" id="sunday" placeholder="8:30pm" name="sunday">
+              <label class="day-label">Sunday</label>
+              <input class="time" id="sunday" placeholder="8:30pm" name="sunday" onclick="clear_checkbox('sunday_closed')">
               <div class="checkbox-elements">
                 <label for="sunday_closed" class="checkbox-label">Closed?</label>
-                <input id="sunday_closed" type="checkbox" name="sunday_closed" class="checkbox">
+                <input id="sunday_closed" type="checkbox" name="sunday_closed" class="checkbox" onclick="update_input_text('sunday', 'sunday_closed')">
               </div>
             </div>
           </fieldset>
 
+          <div class="multiple-closing-notes-holder">
+              <a class="multiple-closing-notes">*If your restaurant closes more than once in a day, please enter the times separated by commas, e.g., "2:00pm, 8:00pm"</a>
+          </div>
+
           <div class="upload-holder">
             <a class="upload-instructions">Select Time Zone</a>
             <select class="drop-down">
-                <option value="pacific">Pacific Daylight Time (PDT)</option>
-                <option value="Mountain">Mountain Daylight Time (MST)</option>
-                <option value="Pacific">Mountain Standard Time (MDT)</option>
-                <option value="Pacific">Central Daylight Time (CDT)</option>
-                <option value="sst">Eastern Daylight Time (EDT)</option>
-                <option value="alaska">Alaska Daylight Time (AKDT)</option>
-                <option value="pacific">Aleutian Daylight Time (HADT)</option>
-                <option value="Mountain">Hawaii Standard Time (HST)</option>
+                <option value="">No Time Zone Selected</option>
+                <option value="pdt">Pacific Daylight Time (PDT)</option>
+                <option value="mst">Mountain Daylight Time (MST)</option>
+                <option value="mdt">Mountain Standard Time (MDT)</option>
+                <option value="cdt">Central Daylight Time (CDT)</option>
+                <option value="edt">Eastern Daylight Time (EDT)</option>
+                <option value="akdt">Alaska Daylight Time (AKDT)</option>
+                <option value="hadt">Aleutian Daylight Time (HADT)</option>
+                <option value="hst">Hawaii Standard Time (HST)</option>
             </select>
           </div>
           
           <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Finish Signup</button>
+          <div class="invalid-input-text-holder">
+              <a class="invalid-input-text"></a>
+          </div>
         </form>
 
       </div>
@@ -485,5 +576,9 @@ input[type=submit] {
   <a href="/privacy-policy" class="privacy">Privacy</a>
 </div>
 </div>
+
+<form id="closing_times_to_send" action="/fillthisin", method="POST">
+    <input type="hidden" id="inp" name="stringified_array">
+</form>
 
 </html>
