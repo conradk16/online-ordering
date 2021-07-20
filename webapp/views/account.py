@@ -5,6 +5,7 @@ from webapp import db, mail
 from webapp.models.db_models import User, Order
 from flask_login import login_user, logout_user, current_user
 import json
+import datetime, pytz
 
 account = Blueprint('account', __name__)
 
@@ -72,7 +73,7 @@ def view_orders():
     if current_user.is_authenticated:
         pending_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -87,7 +88,7 @@ def view_orders():
 
         archived_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -112,7 +113,7 @@ def get_updated_orders():
     if current_user.is_authenticated:
         pending_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -127,7 +128,7 @@ def get_updated_orders():
 
         archived_orders = []
 
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
             d = {}
             d['json_order'] = order.json_order
             d['refunded_status'] = order.refunded
@@ -140,7 +141,9 @@ def get_updated_orders():
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
-        return jsonify([pending_orders, archived_orders])
+        currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+
+        return jsonify([pending_orders, archived_orders, currently_accepting_orders])
     else:
         return redirect('/login')
 
@@ -194,6 +197,33 @@ def refund_order():
         return "success"
     else:
         return "failure"
+
+def calculate_next_closing_time(closing_times):
+    current_time = datetime.datetime.now()
+
+    next_closing_times = []
+
+    # ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
+    # closing_time is a dict: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
+    for closing_time in closing_times:
+        current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
+        next_closing_time = current_time_in_new_tz
+
+        while next_closing_time.weekday() != closing_time['day']:
+            next_closing_time += datetime.timedelate(1)
+        while next_closing_time.hour != closing_time['hour']:
+            next_closing_time += datetime.timedelta(hours=1)
+        while next_closing_time.minute != closing_time['minute']:
+            next_closing_time += datetime.timedelta(minutes=1)
+
+        next_closing_times.append(next_closing_time)
+
+    return min(next_closing_times)
+        
+def calculate_next_time
+
+def convertTimeToSpecificTimezone(time, timezone):
+    return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
 
 def send_order_refunded_email(customer_email, rejection_description):
 

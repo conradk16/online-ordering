@@ -96,9 +96,6 @@ function createOrderElement(metaOrder, isPendingTab) {
   var orderElement = document.createElement("div");
   orderElement.classList.add("order");
 
-
-
-
   var nonTableElement = document.createElement("div");
   nonTableElement.classList.add("non-table-holder");
 
@@ -287,12 +284,16 @@ function createOrderElement(metaOrder, isPendingTab) {
 
 function populateOrders(pendingOrders, archivedOrders) {
   var bottomHalfPending = document.getElementById("bottom-half-pending");
-  bottomHalfPending.innerHTML = ''; // clear any existing orders
+  bottomHalfPending.innerHTML = ''; // clear everything in the tab
 
   if (pendingOrders == "No orders") {
     var noPendingOrdersElement = document.createElement("div");
     noPendingOrdersElement.classList.add("no-orders-text");
+    noPendingOrdersElement.id = "no-orders-text";
     noPendingOrdersElement.innerHTML = "No new orders";
+    if (!document.getElementById("switch-button-checkbox").checked) {
+      noPendingOrdersElement.innerHTML += "\n\nNot currently accepting orders";
+    }
     bottomHalfPending.appendChild(noPendingOrdersElement);
   } else {
     for (const pendingOrder of pendingOrders) {
@@ -317,8 +318,8 @@ function populateOrders(pendingOrders, archivedOrders) {
   }
 }
 
-function setAcceptingOrdersToggleStatus() {
-  if ({{currently_accepting_orders|tojson}} == "true") {
+function setAcceptingOrdersToggleStatus(toggleOn) {
+  if (toggleOn) {
     document.getElementById("switch-button-checkbox").checked = true;
   } else {
     document.getElementById("switch-button-checkbox").checked = false;
@@ -340,8 +341,16 @@ function toggleAcceptingOrdersStatus(toggleElement) {
   xhr.onload = function(event) {
       if (event.target.response == "accepting orders") {
         toggleElement.checked = true;
+        var noOrdersElement = document.getElementById("no-orders-text");
+        if (noOrdersElement) {
+          noOrdersElement.innerHTML = "No new orders";
+        }
       } else {
         toggleElement.checked = false;
+        var noOrdersElement = document.getElementById("no-orders-text");
+        if (noOrdersElement) {
+          noOrdersElement.innerHTML = "No new orders\n\nNot currently accepting orders";
+        }
       }
   };
   var formData = new FormData(document.getElementById("accepting-orders-form"));
@@ -382,6 +391,8 @@ function reloadOrderData() {
     var parsed = JSON.parse(event.target.response);
     var pendingOrders = parsed[0];
     var archivedOrders = parsed[1];
+    var acceptingOrdersStatus = (parsed[2] == "true");
+    toggleAcceptingOrdersStatus(acceptingOrdersStatus);
     populateOrders(pendingOrders, archivedOrders);
   };
   var formData = new FormData(document.getElementById("reload-orders-form"));
@@ -423,13 +434,16 @@ function rejectOrderClicked() {
   var reject_order_description_input = document.getElementById("reject-order-description");
   reject_order_description_input.value = rejectionReason;
 
+  document.getElementById("reject-order-loader-holder").style.visibility = "visible";
+
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/account/refund-order");
   xhr.onload = function(event) {
-      if (event.target.response == "success") {
-        closeRejectOrderPopup();
-        reloadOrderData();
-      }
+    document.getElementById("reject-order-loader-holder").style.visibility = "hidden";
+    if (event.target.response == "success") {
+      closeRejectOrderPopup();
+      reloadOrderData();
+    }
   };
   var formData = new FormData(document.getElementById("reject-order-form"));
   xhr.send(formData);
@@ -696,16 +710,17 @@ body, html {
   margin: 12px 12px;
   border-width: 1px;
   border-style: solid;
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
   align-items: stretch;
 }
 
 .table-holder {
   overflow-y: auto;
   overflow-x: auto;
-  margin: 8px 8px 8px 4px;
+  margin: -1px -1px -1px 0px;
   align-self: stretch;
   flex: 1;
+  z-index: 2;
 }
 
 .non-table-holder {
@@ -751,6 +766,8 @@ body, html {
   font-size: 20px;
   margin: 70px;
   text-align: center;
+  white-space:pre-wrap;
+  word-wrap:break-word;
 }
 
 .tab-holder {
@@ -758,8 +775,7 @@ body, html {
   flex: 0;
   display:flex;
   width:320px;
-  border-width: 1px 1px 0px 1px;
-  border-style: solid;
+  border-width: 0;
 }
 
 .pending-tab {
@@ -768,6 +784,7 @@ body, html {
   background-color: #bababa;
   margin: 0px;
   cursor:pointer;
+  border-radius: 10px 10px 0px 0px;
 }
 
 .archived-tab {
@@ -776,6 +793,7 @@ body, html {
   background-color: #dddddd;
   margin: 0px;
   cursor:pointer;
+  border-radius: 10px 10px 0px 0px;
 }
 
 
@@ -899,6 +917,7 @@ tr:nth-child(even) {
   border-radius: 5px;
   font-family: verdana;
   font-size: 14px;
+  resize: none;
 }
 
 .popup-button {
@@ -926,11 +945,40 @@ tr:nth-child(even) {
   height: 10;
 }
 
+.reject-order-loader-holder {
+  visibility: hidden;
+  position:absolute;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  border-radius: 4px;
+  width: 460px;
+  height: 258px;
+  display: flex;
+  justify-content: center;
+}
+.reject-order-loading-icon {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #555;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin:auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 </style>
 
 <div id="reject-order-popup" class="reject-order-popup">
   <div id="reject-order-popup-content" class="reject-order-popup-content">
+    <div id="reject-order-loader-holder" class="reject-order-loader-holder">
+      <div class="reject-order-loading-icon"></div>
+    </div>
     <div class="popup-header">
       <div class="popup-title">Reject and refund order?</div>
       <div class="close-button" onclick="closeRejectOrderPopup();">&times;</div>
@@ -991,8 +1039,8 @@ tr:nth-child(even) {
 </div>
 
 <script>
+setAcceptingOrdersToggleStatus({{currently_accepting_orders|tojson}} == "true");
 populateOrders({{pending_orders|tojson}}, {{archived_orders|tojson}});
-setAcceptingOrdersToggleStatus();
 </script>
 
 <form id="accepting-orders-form">
