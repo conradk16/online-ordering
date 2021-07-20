@@ -74,6 +74,14 @@ body, html {
   background-color: rgba(255, 255, 255, 1);
 }
 
+body {
+  overflow: auto;
+}
+
+html {
+  overflow: hidden;
+}
+
 /* Add a background color to the top navigation */
 .topnav {
   display: flex;
@@ -86,6 +94,9 @@ body, html {
   align-items: center;
   padding: 0;
   margin: 0;
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
 }
 
 /* Style the links inside the navigation bar */
@@ -190,7 +201,6 @@ input[type=submit] {
   flex-direction: column;
 }
 .top-half {
-  min-height: 550px;
   flex:2;
 }
 .bottom-half {
@@ -235,10 +245,10 @@ input[type=submit] {
   </div>
 </div>
 
-<br><br><br>
+<br><br>
 
 <div class="center">
-      <div class="step-one-of-three">Step 1 of 5</div>
+      <div class="step-one-of-three">Step 1 of 7</div>
       <div class="create-your-account">Create an account</div>
 
       <div>
