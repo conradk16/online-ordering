@@ -280,8 +280,12 @@ def refund_order():
 # MARK: admin
 
 def get_admin_page():
-    #users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)
     users_without_websites = User.query.filter_by(order_url=None)
+    users = []
+    for userObject in users_without_websites:
+        user = {}
+        
+
     account_details_without_websites = [(("Account email: " + user_without_website.email_address), ("Account details: " + str(user_without_website.account_details)), ("paid for hardware: " + str(user_without_website.paid_for_hardware)))  for user_without_website in users_without_websites]
     return render_template('admin.html', accounts_without_websites=account_details_without_websites)
 
@@ -331,6 +335,7 @@ def is_valid_menu_notes_post_request(request):
     return False
 
 def is_valid_closing_times_post_request(request):
+    print(request.form)
     if request.form:
         if 'closing_times' in request.form:
             for closing_time in json.loads(request.form['closing_times']):
