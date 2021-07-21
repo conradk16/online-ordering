@@ -11,8 +11,7 @@
 <head>
   <script>
     function check_if_menu() {
-        orders_link = "www.m3orders.com/super-cucas-micheltorena";
-        //orders_link = "";
+        var orders_link = "https://m3orders.com/" + {{order_url|tojson}};
         var menu_view_orders = document.getElementById("menu_view_orders");
         var button = document.getElementById("button");
         if (orders_link == "") {  
@@ -50,6 +49,14 @@
         }
     }
 
+    function check_if_active_subscription() {
+        var active_subscription = {{active_subscription|tojson}};
+        if (active_subscription == false) {
+            link_title = document.getElementsByClassName("description")[0];
+            link_title.innerHTML = "You subscription is currently inactive. Go to Manage Subscription in the menu bar to re-subscribe.";
+        }
+    }
+
     function run_on_resize() {
         var logo = document.getElementById("logo");
         if (window.innerWidth < 450) {
@@ -63,6 +70,7 @@
 
     function run_on_load() {
         check_if_menu();
+        check_if_active_subscription();
         run_on_resize();
     }
 

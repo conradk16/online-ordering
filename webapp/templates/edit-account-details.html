@@ -82,9 +82,8 @@
   }
 
 
-    function check_if_menu() {
-        orders_link = "www.m3orders.com/super-cucas-micheltorena";
-        //orders_link = "";
+    function check_if_orders() {
+        orders_link = "https://m3orders.com/" + {{order_url|tojson}};
         var menu_view_orders = document.getElementById("menu_view_orders");
         if (orders_link == "") {
             menu_view_orders.style.cursor = "default";
@@ -102,7 +101,7 @@
     }
 
     function run_on_load() {
-        check_if_menu();
+        check_if_orders();
         run_on_resize();
         pre_fill_form();
     }
