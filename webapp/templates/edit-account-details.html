@@ -7,11 +7,13 @@
 <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="../static/css/account-details.css" data-rel-css="">
+<link rel="stylesheet" type="text/css" href="../static/css/account-details.css">
+<link rel="stylesheet" type="text/css" href="../static/css/account-menu.css">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<link rel="stylesheet" type="text/css" href="../static/css/account-home.css" data-rel-css="">
 
 <script src="../static/js/account-details.js"></script>
+<script src="../static/js/account-menu.js"></script>
 
 <head>
   <script>
@@ -99,210 +101,26 @@
         }
     }
 
-    function run_on_resize() {
-        var logo = document.getElementById("logo");
-        if (window.innerWidth < 450) {
-            logo.width="100";
-            logo.height="14.2";
-        } else {
-            logo.width="200";
-            logo.height="28.4";
-        }
-    }
-
     function run_on_load() {
         check_if_menu();
         run_on_resize();
         pre_fill_form();
     }
 
-
     window.onload = run_on_load;
     window.onresize = run_on_resize;
+
   </script>
 </head>
 
 <style>
-body, html {
-  margin: 0;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.logo {
-    margin: 10px 0px;
-}
-
-/* Add a background color to the top navigation */
-.topnav {
-  display: flex;
-  justify-content: space-between;
-  overflow: hidden;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  position: sticky;
-  top: 0;
-  box-shadow: 0 3px 6px 0 rgba(0,0,0,.2);
-  z-index: 2;
-}
-
-/* Style the links inside the navigation bar */
-.topnav-right {
-  color: black;
-  text-align: center;
-  padding: 18px 16px;
-  text-decoration: none;
-  opacity: 1;
-  font-size: 17px;
-  cursor: pointer;
-  font-family:verdana;
-}
-
-.topnav-right:hover {
-    background-color: #f0f0f0; 
-}
-
-.hidden-text {
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    opacity: 0;
-    font-size: 17px;
-    cursor: pointer;
-    font-family:verdana;
-}
-
-.hidden-text:hover {
-    cursor: default;
-}
-
-.topnav-left {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-.overall-div {
-  height:100%;
-  display:flex;
-  flex-direction: column;
-  background: #fff
-}
-.top-half {
-  flex:2;
-}
-.bottom-half {
-  min-height:150px;
-  background-color: #f3f3f3;
-}
-.questions {
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:18px;
-}
-
-.terms-of-use {
-  margin: 30px 60px 30px 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-  text-align: center;
-}
-
-.privacy {
-  text-align: center;
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-} 
 
 .center {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 575px;
-  padding: 0px;
-  background-color: white;
-  box-sizing: border-box;
-  width: 100%;
-  overflow-x: scroll;
+    margin-top: 15px;
 }
-
-.title {
-  font-size: 30px;
-  font-family:verdana;
-  font-weight: 400;
-  margin: 0;
-  text-align: center;
-  padding: 8px 8px 10px 8px;
-  min-width: 390px;
-}
-
-.upload-holder {
-    margin-left: 15px;
-    margin-right: 15px;
-    padding: 7px 15px;
-    padding-bottom: 5px;
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
-}
-
-.horizontal-holder {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.custom-file-button {
-    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2), 0 0 4px 0 rgba(0,0,0,0.2);
-    padding: 4px 3px !important;
-    font-size: 14px !important;
-    /*border-radius: 10px;*/
-    width: auto !important;
-    margin-left: 10px;
-    min-width: 0 !important;
-}
-
-.custom-file-button:hover {
-    cursor: pointer;
-}
-
-.uploaded-file-name {
-    margin-left: 10px;
-    font-size: 14px !important;
-    padding: 0px !important;
-}
-
-.asterisk {
-    font-size: 13px !important;
-    margin-top: 5px;
-}
-
-.main-form {
-    min-width: 390px;
-    overflow-x: scroll;
-}
-
-.invalid-input-text {
-  font-size: 12px;
-  margin-left: 15px;
-  margin-top: 40px;
-  font-weight: 400;
-  text-align: left;
-  color: #b92d2b;
-  height: 10;
-}
-
         
 </style>
 
-<div class="overall-div">
 <div class="top-half">
 
   <div class="topnav">
@@ -311,7 +129,7 @@ body, html {
     </div>
     <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
     <div class="topnav-right">
-    <a style="text-decoration:inherit; color:black" href="/signout">Sign Out</a>
+    <a style="text-decoration:inherit; color:black" href="/logout">Sign out</a>
     </div>
   </div>
 
@@ -332,8 +150,7 @@ body, html {
       <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Manage Subscription</a></li>
     </ul>
   </div>
-
-  <br>
+  
   <div class="center">
         <div class="title">Update Account Details</div>
         <div class="cell example example1" id="example-1">
@@ -369,7 +186,7 @@ body, html {
               <span class="asterisk">*not necessary if menu URL is provided</span>
           </div>
 
-          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Update</button>
+          <button class="button" id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Update</button>
         </form>
 
       </div>
@@ -382,6 +199,4 @@ body, html {
   <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
   <a href="/privacy-policy" class="privacy">Privacy</a>
 </div>
-</div>
-
 </html>

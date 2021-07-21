@@ -3,154 +3,12 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-select-box.css">
 
-<head>
-  <script>
-  function submit_form(plan_type) {
-    form = document.getElementById('select-form');
-    input = document.getElementById('inp');
-    input.value = plan_type;
-    form.submit();
-  }
-
-  function run_on_load() {
-    run_on_resize();
-  }
-
-  function run_on_resize() {
-    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
-    center = document.getElementsByClassName("center")[0];
-    for (const elem of bullet_text_elements) {
-        if (window.innerWidth < 500) {
-            elem.style.fontSize = "12px";
-            center.style.padding = "30px 15px";
-
-        } else {
-            elem.style.fontSize = "15px";
-            center.style.padding = "30px 30px";
-        }
-    }
-  }
-
-  window.onload = run_on_load;
-  window.onresize = run_on_resize;
-
-  </script>
-</head>
+<script src="../static/js/signup-select-box.js"></script>
 
 <style>
-body, html {
-  margin: 0;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 1);
-  font-family: Arial, verdana, helvetica, sans-serif;
-  box-sizing: border-box;
-  -webkit-appearance: none;
-}
-
-html {
-    overflow: hidden;
-}
-
-body {
-    overflow: auto;
-}
-
-/* Add a background color to the top navigation */
-.topnav {
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  border-style:solid;
-  border-width: 0px 0px 1px 0px;
-  border-bottom-color: rgba(230, 230, 230, 1);
-  overflow: hidden;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-/* Style the links inside the navigation bar */
-.topnav-right {
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  opacity: 1;
-  font-size: 17px;
-  cursor: pointer;
-  font-family:verdana;
-}
-
-.topnav-left {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-/* Change the color of links on hover */
-.topnav-right:hover {
-  background-color: rgba(240, 240, 240, 0.75);
-}
-
-.center {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 575px;
-  overflow-x: scroll;
-  padding: 15px;
-  width: 100%;
-  background-color: white;
-  box-sizing: border-box;
-}
-
-.plans {
-    display: flex;
-    justify-content: space-between;
-    width: inherit;
-    margin: 0;
-}
-
-.plan {
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
-    border-radius: 20px;
-    padding: 15px;
-    width: 40%;
-    text-decoration: none;
-}
-
-.plan:hover {
-    cursor: pointer;
-}
-
-.plan-title {
-    font-family: inherit;
-    font-size: 26px;
-}
-
-.plan-caption {
-    color: #8f8f8f;
-    font-size: 15px;
-}
-
-.plan-img {
-    margin: auto;
-    margin-bottom: 70px;
-    margin-top: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    object-fit: contain;
-    width: 30%;
-}
 
 .img-teal {
     filter: invert(82%) sepia(17%) saturate(7120%) hue-rotate(149deg) brightness(89%) contrast(81%);
@@ -160,184 +18,8 @@ body {
     filter: invert(25%) sepia(82%) saturate(1992%) hue-rotate(214deg) brightness(95%) contrast(85%);
 }
 
-.plan-bullet-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.plan-bullet {
-    max-width: 10px;
-}
-
-.plan-bullet-text {
-    flex: 2;
-    padding-left: 10px;
-    font-size: 15px;
-    color: black;
-}
-
-
-.step-one-of-three {
-  text-align: center;
-  font-size: 17px;
-  font-family:verdana;
-  padding: 0px 8px 0px 8px;
-}
-
-.create-your-account {
-  font-size: 30px;
-  font-family:verdana;
-  font-weight: 400;
-  margin: auto;
-  text-align: center;
-  padding: 8px 8px 35px 8px;
-}
-
-.input-label {
-  font-size: 14px;
-  font-family:verdana;
-  font-weight: 400;
-  text-align: left;
-  margin: 8px 8px 0px 0px;
-  height:10;
-}
-
-.invalid-input-text {
-  font-size: 12px;
-  margin: 0;
-  font-family:verdana;
-  font-weight: 400;
-  text-align: left;
-  color: #b92d2b;
-  height: 10;
-}
-
-.input-box {
-  width: 100%;
-  padding: 12px 8px;
-  margin: 4px 0px 4px 0px;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-family:verdana;
-  outline: none;
-}
-
-input[type=submit] {
-  width: 100%;
-  background-color: black;
-  color: white;
-  padding: 12px 8px;
-  margin: 12px 0px 12px 0px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-family:verdana;
-}
-
-.inputText {
-  font-size: 14px;
-  width: 200px;
-  height: 35px;
-}
-
-.overall-div {
-  height:100%;
-  display:flex;
-  flex-direction: column;
-}
-.top-half {
-  flex:2;
-}
-.bottom-half {
-  min-height:150px;
-  background-color: #f3f3f3;
-}
-.questions {
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:18px;
-}
-
-.terms-of-use {
-  margin: 30px 60px 30px 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-  text-align: center;
-}
-
-.privacy {
-  text-align: center;
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-}
-
-.columns {
-    float: left;
-    width: 50%;
-    box-sizing: border-box;}
-
-.price {
-  list-style-type: none;
-  border: 1px solid #eee;
-  margin: 0;
-  padding: 0;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
-  border-radius: 20px;
-
-}
-
-.price:hover {
-  box-shadow: 0 8px 12px 0 rgba(0,0,0,0.2)
-}
-
-.price .header {
-  background-color: #111;
-  color: white;
-  font-size: 25px;
-}
-
-.price li {
-  border-bottom: 1px solid #eee;
-  padding: 20px;
-  text-align: center;
-}
-
-.price .grey {
-  background-color: #eee;
-  font-size: 20px;
-}
-
-.button {
-  background-color: #04AA6D;
-  border: none;
-  color: white;
-  padding: 0px 0px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 18px;
-}
-
-@media only screen and (max-width: 600px) {
-  .columns {
-    width: 100%;
-  }
-}
-
 </style>
 
-<div class="overall-div">
 <div class="top-half">
   <div class="topnav">
     <a href="/">
@@ -346,13 +28,13 @@ input[type=submit] {
     </div>
     </a>
     <div class="topnav-right">
-    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    <a style="text-decoration:inherit; color:black" href="/logout">Sign out</a>
     </div>
   </div>
 
 <div class="center">
-        <div class="step-one-of-three">Step 3 of 7</div>
-        <div class="create-your-account">Select a signup fee</div>
+        <div class="step">Step 3 of 7</div>
+        <div class="title">Select a signup fee</div>
         <div class="plans">
             <div class="plan" name="plan2" onclick="submit_form('')">
                 <div class="plan-title img-teal">Basic Signup</div>
@@ -385,7 +67,6 @@ input[type=submit] {
                 </div>
             </div>
         </div>
-        <br>
 </div>
 
 </div>
@@ -393,7 +74,6 @@ input[type=submit] {
   <div class="questions">Questions? Call 1-805-284-7912&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
   <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
   <a href="/privacy-policy" class="privacy">Privacy</a>
-</div>
 </div>
 
 <form id="select-form" method="POST">

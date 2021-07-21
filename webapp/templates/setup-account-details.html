@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 
 <link rel="stylesheet" type="text/css" href="../static/css/account-details.css" data-rel-css="">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
 <script src="../static/js/account-details.js"></script>
 
@@ -78,303 +79,13 @@
 
   }
 
-
-  function run_on_load() {
-    run_on_resize();
-  }
-
-  function run_on_resize() {
-    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
-    center = document.getElementsByClassName("center")[0];
-    for (const elem of bullet_text_elements) {
-        if (window.innerWidth < 500) {
-            elem.style.fontSize = "12px";
-            center.style.padding = "30px 15px";
-
-        } else {
-            elem.style.fontSize = "15px";
-            center.style.padding = "30px 30px";
-        }
-    }
-  }
-
-  window.onload = run_on_load;
-  window.onresize = run_on_resize;
-
   </script>
 </head>
 
 <style>
-body, html {
-  margin: 0;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 1);
-  font-family: Arial, verdana, helvetica, sans-serif;
-  box-sizing: border-box;
-  -webkit-appearance: none;
-}
-
-/* Add a background color to the top navigation */
-.topnav {
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  border-style:solid;
-  border-width: 0px 0px 1px 0px;
-  border-bottom-color: rgba(230, 230, 230, 1);
-  overflow: hidden;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  position: sticky;
-  top: 0;
-}
-
-/* Style the links inside the navigation bar */
-.topnav-right {
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  opacity: 1;
-  font-size: 17px;
-  cursor: pointer;
-  font-family:verdana;
-}
-
-.topnav-left {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-/* Change the color of links on hover */
-.topnav-right:hover {
-  background-color: rgba(240, 240, 240, 0.75);
-}
-
-.center {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 575px;
-  padding: 0px;
-  background-color: white;
-  box-sizing: border-box;
-  width: 100%;
-  overflow-x: scroll;
-}
-
-.step-one-of-three {
-  text-align: center;
-  font-size: 17px;
-  font-family:verdana;
-  padding: 0px 8px 0px 8px;
-  min-width: 390px;
-}
-
-.create-your-account {
-  font-size: 30px;
-  font-family:verdana;
-  font-weight: 400;
-  margin: 0;
-  text-align: center;
-  padding: 8px 8px 10px 8px;
-  min-width: 390px;
-}
-
-.input-label {
-  font-size: 14px;
-  font-family:verdana;
-  font-weight: 400;
-  text-align: left;
-  margin: 8px 8px 0px 0px;
-  height:10;
-}
-
-.invalid-input-text {
-  font-size: 12px;
-  margin-left: 15px;
-  margin-top: 40px;
-  font-weight: 400;
-  text-align: left;
-  color: #b92d2b;
-  height: 10;
-}
-
-.input-box {
-  width: 100%;
-  padding: 12px 8px;
-  margin: 4px 0px 4px 0px;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-family:verdana;
-  outline: none;
-}
-
-input[type=submit] {
-  width: 100%;
-  background-color: black;
-  color: white;
-  padding: 12px 8px;
-  margin: 12px 0px 12px 0px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-family:verdana;
-}
-
-.inputText {
-  font-size: 14px;
-  width: 200px;
-  height: 35px;
-}
-
-.overall-div {
-  height:100%;
-  min-width: 100%;
-  display:flex;
-  flex-direction: column;
-}
-.top-half {
-  flex:2;
-}
-.bottom-half {
-  min-height:150px;
-  background-color: #f3f3f3;
-}
-
-.questions {
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:18px;
-}
-
-.terms-of-use {
-  margin: 30px 60px 30px 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-  text-align: center;
-}
-
-.privacy {
-  text-align: center;
-  margin: 30px;
-  color:#757575;
-  font-family: helvetica neue;
-  font-size:14px;
-}
-
-.columns {
-    float: left;
-    width: 50%;
-    box-sizing: border-box;}
-
-.price {
-  list-style-type: none;
-  border: 1px solid #eee;
-  margin: 0;
-  padding: 0;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
-  border-radius: 20px;
-
-}
-
-.price:hover {
-  box-shadow: 0 8px 12px 0 rgba(0,0,0,0.2)
-}
-
-.price .header {
-  background-color: #111;
-  color: white;
-  font-size: 25px;
-}
-
-.price li {
-  border-bottom: 1px solid #eee;
-  padding: 20px;
-  text-align: center;
-}
-
-.price .grey {
-  background-color: #eee;
-  font-size: 20px;
-}
-
-.button {
-  background-color: #04AA6D;
-  border: none;
-  color: white;
-  padding: 0px 0px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 18px;
-}
-
-.upload-holder {
-    margin-left: 15px;
-    margin-right: 15px;
-    padding: 7px 15px;
-    padding-bottom: 5px;
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
-}
-
-.horizontal-holder {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.custom-file-button {
-    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2), 0 0 4px 0 rgba(0,0,0,0.2);
-    padding: 4px 3px !important;
-    font-size: 14px !important;
-    /*border-radius: 10px;*/
-    width: auto !important;
-    margin-left: 10px;
-    min-width: 0 !important;
-}
-
-.custom-file-button:hover {
-    cursor: pointer;
-}
-
-.uploaded-file-name {
-    margin-left: 10px;
-    font-size: 14px !important;
-    padding: 0px !important;
-}
-
-.asterisk {
-    font-size: 13px !important;
-    margin-top: 5px;
-}
-
-.main-form {
-    min-width: 390px;
-    overflow-x: scroll;
-}
-
-@media only screen and (max-width: 600px) {
-  .columns {
-    width: 100%;
-  }
-}
 
 </style>
 
-<div class="overall-div">
 <div class="top-half">
   <div class="topnav">
     <a href="/">
@@ -383,14 +94,13 @@ input[type=submit] {
     </div>
     </a>
     <div class="topnav-right">
-    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    <a style="text-decoration:inherit; color:black" href="/logout">Sign out</a>
     </div>
   </div>
 
-<br>
 <div class="center">
-        <div class="step-one-of-three">Step 4 of 7</div>
-        <div class="create-your-account">Enter Account Details</div>
+        <div class="step">Step 4 of 7</div>
+        <div class="title">Enter Account Details</div>
         <div class="cell example example1" id="example-1">
 
         <form id="form" class="main-form", method="POST" enctype="multipart/form-data">
@@ -431,7 +141,11 @@ input[type=submit] {
               <span class="asterisk">*not necessary if menu URL is provided</span>
           </div>
 
-          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Next</button>
+          <button id="submit-button" class="button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Next</button>
+
+          <div class="invalid-input-text-holder">
+              <a class="invalid-input-text"></a>
+          </div>
         </form>
 
       </div>
@@ -442,7 +156,6 @@ input[type=submit] {
   <div class="questions">Questions? Call 1-805-284-7912&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
   <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
   <a href="/privacy-policy" class="privacy">Privacy</a>
-</div>
 </div>
 
 </html>
