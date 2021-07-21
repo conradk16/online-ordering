@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     next_closing_time = db.Column(db.DateTime, default=datetime.datetime.max)
     most_recent_time_orders_queried = db.Column(db.DateTime, default=datetime.datetime.min)
     paid_for_hardware = db.Column(db.Boolean, nullable=False, default=False)
+    shipping_address = db.Column(db.String)
     account_details = db.Column(db.String)
     menu_file = db.Column(db.LargeBinary)
     menu_file_filename = db.Column(db.String) # the name of the file they uploaded

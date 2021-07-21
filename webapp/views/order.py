@@ -4,7 +4,7 @@ from webapp.models.db_models import User, Order
 from webapp import db
 import stripe
 import json
-from datetime import datetime
+import datetime
 from webapp.views.account import calculate_next_closing_time
 
 order = Blueprint('order', __name__)
@@ -56,7 +56,7 @@ def super_cucas_micheltorena():
         order = ConvertJsonToOrder(json.loads(request.form['order']), super_cucas_menu.order_url).order()
 
         if not order.is_valid_order(super_cucas_menu):
-            return jsonify({'error': {'message': "Order invalid"}}), 400
+            return jsonify({'error': {'message': "Order invalid"}}), 400        
 
         # price in cents
         payment_intent = stripe.PaymentIntent.create(
@@ -65,7 +65,7 @@ def super_cucas_micheltorena():
             currency='usd',
             application_fee_amount=0,
             stripe_account=order.connected_account().stripe_connected_account_id,
-            description="Online order",
+            description=order.description(),
         )
 
         db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=super_cucas_menu.order_url)
@@ -82,6 +82,15 @@ def super_cucas_micheltorena():
 def super_cucas_micheltorena_payment():
 
     if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
+
+        # Don't allow loading of payments page if session's payment_intent_id has already been paid for
+        payment_intent = stripe.PaymentIntent.retrieve(
+            session.get('payment_intent_id'),
+            stripe_account=session.get('stripe_connected_account_id'),
+        )
+        if payment_intent.status == "succeeded":
+            return redirect('/super-cucas-micheltorena')
+
         return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
     else:
         return redirect('/super-cucas-micheltorena')
@@ -104,7 +113,7 @@ def update_order_details():
     order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
     order.customer_name = customer_name[:50]
     order.customer_email = customer_email[:100]
-    order.datetime = datetime.utcnow()
+    order.datetime = datetime.datetime.utcnow()
     db.session.commit()
 
     restaurant_user = User.query.filter_by(order_url=order.order_url).first()

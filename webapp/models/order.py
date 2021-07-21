@@ -36,6 +36,18 @@ class Order():
     def price(self):
         return sum([order_item.price() for order_item in self.order_items])
 
+    def description(self):
+        desc = ""
+        i = 0
+        for order_item in self.order_items:
+            desc += order_item.menu_item.item_name + " x" + str(order_item.quantity) + ": $" + str(order_item.price())
+
+            i += 1
+            if i < len(self.order_items):
+                desc += "\n"
+        return desc
+            
+
     def connected_account(self):
         return User.query.filter_by(order_url=self.order_url).first()
 

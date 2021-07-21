@@ -164,6 +164,7 @@ def signup_select_setup_fee():
         else:
             try:
 
+                shipping_address_collection = None
                 line_items=[
                     {
                     'price': session['subscription_price_id'],
@@ -171,19 +172,22 @@ def signup_select_setup_fee():
                     }]
 
                 if request.form['setup_fee_price_id'] != '':
+                    shipping_address_collection = {'allowed_countries': ['US']}
                     line_items.append({
                     'price': request.form['setup_fee_price_id'],
                     'quantity': 1
                     })
 
+
                 checkout_session = stripe.checkout.Session.create(
-                success_url='https://m3orders.com',
-                cancel_url='https://m3orders.com/signup-select-setup-fee',
+                success_url='https://m3orders.com/account/setup-account-details',
+                cancel_url='https://m3orders.com/signup/select-setup-fee',
                 customer_email=current_user.email_address,
                 client_reference_id=current_user.email_address,
                 payment_method_types=['card'],
                 mode='subscription',
-                line_items=line_items
+                line_items=line_items,
+                shipping_address_collection=shipping_address_collection
                 )
                 
                 return redirect(checkout_session.url, code=303);
