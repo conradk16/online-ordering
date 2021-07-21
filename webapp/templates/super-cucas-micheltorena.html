@@ -970,6 +970,26 @@ function preload_images()
     img.src="../static/menu.png";
 }
 
+function check_if_closed() {
+    var closed = true;
+    /*if ({{not_accepting_orders}} == "true") {
+        closed = true;
+    }*/
+
+    if (closed) {
+        var screen_cover = document.createElement("div");
+        screen_cover.classList.add("closed-info-screen-cover");
+        document.body.appendChild(screen_cover);
+
+        var closed_holder = document.createElement("div");
+        closed_holder.classList.add("closed-info-holder");
+        screen_cover.appendChild(closed_holder);
+
+        //var closed_info = document.createElement("div");
+        //closed_info.classList.add("closed-info");
+    }
+}
+
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
     popup_x.onclick = close_popup;
@@ -984,6 +1004,7 @@ function run_on_load() {
     set_onclicks();
     initialize_layout();
     preload_images();
+    check_if_closed();
 }
 
 class menuGroup {
@@ -1560,6 +1581,32 @@ body {
     z-index: 3;
     font-weight:bold;
     width: 100%;
+}
+
+.closed-info-screen-cover:after {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    opacity: 0.5;
+}
+
+.closed-info-holder {
+    background-color: white;
+    width: 300px;
+    height: 120px;
+    border-radius: 10px;
+    opacity: 1;
+}
+
+.closed-info {
+    width: 40%;
 }
 
 </style>
