@@ -18,10 +18,12 @@
 <head>
   <script>
     function pre_fill_form() {
-        var name = "Dat boi"; //{{name}};
-        var email = "datboi6969@hotmail.io" //{{email}};
-        var phone = "805-284-7912"; //{{phone}};
-        var menu_url = "www.datboi.com" //{{menu_url}};
+        var account_details = JSON.parse({{account_details|tojson}});
+        //closing_times
+        var name = account_details["name"];
+        var email = account_details["email"];
+        var phone = account_details["phone"];
+        var menu_url = account_details["menu_url"];
         var file_name = "filename" //{{file_name}};
 
         var name_inp = document.getElementById("name");
@@ -32,7 +34,7 @@
         phone_inp.value = phone;
         var menu_url_inp = document.getElementById("menu_url");
         menu_url_inp.value = menu_url;
-        var file_name_elem = document.getElementById("file_name");
+        var file_name_elem = document.getElementById("menu_filename");
         file_name_elem.innerHTML = file_name;
     }
 
