@@ -11,10 +11,10 @@
 <head>
   <script>
     function check_if_menu() {
-        var orders_link = "https://m3orders.com/" + {{order_url|tojson}};
+        var orders_link = {{order_url|tojson}};
         var menu_view_orders = document.getElementById("menu_view_orders");
         var button = document.getElementById("button");
-        if (orders_link == "") {  
+        if (orders_link == null) {  
             menu_view_orders.style.cursor = "default";
             menu_view_orders.style.color = "gray";
 
@@ -26,6 +26,7 @@
             button.style.backgroundColor = "gray";
             button.style.display = "block";
         } else {
+            orders_link = "https://m3orders.com/" + orders_link;
             menu_view_orders.style.cursor = "pointer";
             menu_view_orders.style.color = "black";
             button.style.cursor = "pointer";
