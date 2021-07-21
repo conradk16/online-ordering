@@ -50,13 +50,10 @@ def webhook_account_received():
             user.active_subscription = True
             db.session.commit()
     elif event_type == 'invoice.payment_failed':
-        # The payment failed or the customer does not have a valid payment method.
-        # The subscription becomes past_due. Notify your customer (email them) and send them to the
-        # customer portal to update their payment information.
-        stripe_customer_id = data_object.customer
-        user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
-        user.active_subscription = False
-        db.session.commit()
+        # The payment failed or the customer does not have a valid payment method. The subscription becomes past_due.
+        # Do nothing. Stripe will email them and prompt them to update their payment method.
+        # If all retries fail, Stripe will cancel the subscription and trigger customer.subscription.deleted
+        pass
     elif event_type == 'customer.subscription.deleted':
         # The customer cancelled the subscription and it has now ended
         stripe_customer_id = data_object.customer

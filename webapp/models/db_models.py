@@ -1,6 +1,7 @@
 from webapp import db, login_manager, app
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -17,8 +18,9 @@ class User(db.Model, UserMixin):
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
     order_url = db.Column(db.String)
     currently_accepting_orders = db.Column(db.Boolean, nullable=False, default=False)
-    closing_times = db.Column(db.String)
-    next_closing_time = db.Column(db.DateTime)
+    closing_times = db.Column(db.String, default='[]')
+    next_closing_time = db.Column(db.DateTime, default=datetime.datetime.max)
+    most_recent_time_orders_queried = db.Column(db.DateTime, default=datetime.datetime.min)
     paid_for_hardware = db.Column(db.Boolean, nullable=False, default=False)
     account_details = db.Column(db.String)
     menu_file = db.Column(db.LargeBinary)

@@ -95,23 +95,12 @@ def reset_password(token):
             return redirect('/login')
 
 def send_reset_email(user):
-    if not user:
-        return
+    if user:
+        token = user.get_reset_token()
 
-    token = user.get_reset_token()
-
-    msg = Message('M3 Orders Password Reset', sender="no-reply@m3orders.com", recipients=[user.email_address])
-    link = url_for('home.reset_password', token=token, _external=True)
-    msg.body = f'''To reset your password, visit the following link:
-
-{link}
-
-This link will expire in 10 minutes.
-'''
-
-    mail.send(msg)
-
-
+        msg = Message(subject='M3 Orders Password Reset', sender="no-reply@m3orders.com", recipients=[user.email_address])
+        msg.html = render_template('reset-password-email.html', reset_link=url_for('home.reset_password', token=token, _external=True))
+        mail.send(msg)
 
 # logout POST endpoint
 @home.route('/logout')
