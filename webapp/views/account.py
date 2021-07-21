@@ -28,7 +28,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription)
+        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, test=None)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
