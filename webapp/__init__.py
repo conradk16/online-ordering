@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 import stripe
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c0a5be14fe3cb64fbfba58ec0a74897c83511fc15f6c267b'
@@ -14,6 +15,14 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'no-reply@m3orders.com'
 app.config['MAIL_PASSWORD'] = 'YB\'S!#4GqUZPsP"6'
+
+# When deployed on AWS:
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + os.environ['RDS_USERNAME'] + ':' + os.environ['RDS_PASSWORD'] + '@' + os.environ['RDS_HOST'] + ':' + os.environ['RDS_PORT'] + '/' + os.environ['DB_NAME']
+
+# Test
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://kuklinskywork:Y2xqe88r_!PDT7qM@database-online-ordering-production.cylzqlzjlkqo.us-east-2.rds.amazonaws.com:3306/ebdb'
+
+
 mail = Mail(app)
 
 
