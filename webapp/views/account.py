@@ -28,7 +28,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url, active_subscription = current_user.active_subscription)
+        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -155,7 +155,7 @@ def edit_account_details():
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
-        return render_template('edit-account-details.html', account_details=current_user.account_details)
+        return render_template('edit-account-details.html', account_details=current_user.account_details, order_url=current_user.order_url, active_subscription=current_user.active_subscription)
     elif request.method == 'POST':
         if not is_valid_edit_account_details_post_request(request):
             return redirect('/account/account-details')
@@ -185,7 +185,7 @@ def edit_closing_times():
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
-        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times)
+        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, order_url=current_user.order_url, active_subscription=current_user.active_subscription)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
@@ -262,8 +262,8 @@ def view_orders():
         
         db.session.commit()
 
-
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+
         return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders)
     else:
         return redirect('/login')
@@ -317,6 +317,7 @@ def get_updated_orders():
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+ 
         return jsonify([pending_orders, archived_orders, currently_accepting_orders])
     else:
         return redirect('/login')
