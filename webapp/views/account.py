@@ -280,10 +280,18 @@ def refund_order():
 # MARK: admin
 
 def get_admin_page():
-    #users_without_websites = User.query.filter_by(order_url=None, stripe_connected_account_details_submitted=True)
-    users_without_websites = User.query.filter_by(order_url=None)
-    account_details_without_websites = [(("Account email: " + user_without_website.email_address), ("Account details: " + str(user_without_website.account_details)), ("paid for hardware: " + str(user_without_website.paid_for_hardware)))  for user_without_website in users_without_websites]
-    return render_template('admin.html', accounts_without_websites=account_details_without_websites)
+    users_without_urls = User.query.filter_by(order_url=None)
+    users = []
+    for userObject in users_without_urls:
+        user = {}
+        user['email_address'] = userObject.email_address
+        user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
+        user['paid_for_hardware'] = userObject.paid_for_hardware
+        user['account_details'] = userObject.account_details
+        user['menu_notes'] = userObject.menu_notes
+        users.append(user)
+
+    return render_template('admin.html', users_without_urls=json.dumps(users))
 
 @account.route('/account/admin-download-database')
 def admin_download_database():
@@ -350,7 +358,7 @@ def is_valid_closing_times_post_request(request):
 
 
 def calculate_next_closing_time(closing_times):
-    current_time = datetime.datetime.now()
+    current_time = datetime.datetime.now().replace(second=0, microsecond=0)
 
     next_closing_times = []
 
@@ -366,7 +374,7 @@ def calculate_next_closing_time(closing_times):
         while next_closing_time.hour != closing_time['hour']:
             next_closing_time += datetime.timedelta(hours=1)
         while next_closing_time.weekday() != closing_time['day']:
-            next_closing_time += datetime.timedelate(1)
+            next_closing_time += datetime.timedelta(1)
 
         next_closing_times.append(next_closing_time)
 

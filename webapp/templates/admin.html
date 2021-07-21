@@ -10,10 +10,18 @@
     <input type="submit" value="Download menu file" /><br>
 </form>
 
-<p> Account emails without websites:</p>
-{% for account in accounts_without_websites %}
-<p> {{account}} </p>
-{% endfor %}
+<div id="users-without-urls"></div>
+
+<script>
+
+usersWithoutURLsElement = document.getElementById("users-without-urls");
+for (account of JSON.parse({{users_without_urls|tojson}})) {
+  var elem = document.createElement("p");
+  elem.innerHTML = JSON.stringify(account);
+  usersWithoutURLsElement.appendChild(elem);
+}
+</script>
+
 
 <form name="form" id="form" action="/account/admin-assign-url-to-account" method="POST">
   <div id="email_address_label" for="email_address">Account email</div>
