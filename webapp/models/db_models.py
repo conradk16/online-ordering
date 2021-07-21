@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
     order_url = db.Column(db.String)
     currently_accepting_orders = db.Column(db.Boolean, nullable=False, default=False)
-    closing_times = db.Column(db.String, default='{}')
+    closing_times = db.Column(db.String, default='[]')
     next_closing_time = db.Column(db.DateTime, default=datetime.datetime.max)
     most_recent_time_orders_queried = db.Column(db.DateTime, default=datetime.datetime.min)
     paid_for_hardware = db.Column(db.Boolean, nullable=False, default=False)

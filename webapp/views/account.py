@@ -26,7 +26,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url)
+        return render_template('account.html', order_url=current_user.order_url, active_subscription = current_user.active_subscription)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -36,7 +36,7 @@ def enter_account_details():
     if request.method == 'GET':
         return render_template('setup-account-details.html')
     elif request.method == 'POST':
-        if not  is_valid_account_details_post_request(request):
+        if not  is_valid_setup_account_details_post_request(request):
             return redirect('/account')
         
         account_details = {}
@@ -142,18 +142,17 @@ def edit_account_details():
     if request.method == 'GET':
         return render_template('edit-account-details.html', account_details=current_user.account_details)
     elif request.method == 'POST':
-        if not is_valid_account_details_post_request(request):
+        if not is_valid_edit_account_details_post_request(request):
             return redirect('/account/account-details')
         
-        account_details = {}
-        account_details['name'] = request.form['name']
-        account_details['email'] = request.form['email']
-        account_details['phone'] = request.form['phone']
-        account_details['restaurant_name'] = request.form['restaurant_name']
-        account_details['restaurant_address'] = request.form['restaurant_address']
-        account_details['menu_url'] = request.form['menu_url'] if ('menu_url' in request.form) else ''
+        current_account_details = json.loads(current_user.account_details)
 
-        current_user.account_details = json.dumps(account_details)
+        current_account_details['name'] = request.form['name']
+        current_account_details['email'] = request.form['email']
+        current_account_details['phone'] = request.form['phone']
+        current_account_details['menu_url'] = request.form['menu_url'] if ('menu_url' in request.form) else ''
+
+        current_user.account_details = json.dumps(current_account_details)
 
         if 'menu_file' in request.files:
             current_user.menu_file = request.files['menu_file'].read()
@@ -163,13 +162,13 @@ def edit_account_details():
 
         return redirect('/account')
 
-@account.route('/account/closing-times')
+@account.route('/account/closing-times', methods=['GET', 'POST'])
 def edit_closing_times():
     if not current_user.is_authenticated:
         return redirect('/login')
 
     if request.method == 'GET':
-        return render_template('edit-closing-hours.html')
+        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
@@ -197,6 +196,11 @@ def manage_subcription():
 @account.route('/account/orders')
 def view_orders():
     if current_user.is_authenticated:
+
+        if not current_user.active_subscription:
+            current_user.currently_accepting_orders = False
+            db.session.commit()
+
         pending_orders = []
 
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
@@ -246,6 +250,11 @@ def view_orders():
 @account.route('/account/get-updated-orders', methods=['POST'])
 def get_updated_orders():
     if current_user.is_authenticated:
+
+        if not current_user.active_subscription:
+            current_user.currently_accepting_orders = False
+            db.session.commit()
+        
         pending_orders = []
 
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
@@ -294,6 +303,9 @@ def get_updated_orders():
 @account.route('/account/update-accepting-orders-status', methods=['POST'])
 def update_accepting_orders_status():
     if current_user.is_authenticated:
+        if not current_user.active_subscription:
+            return "not accepting orders"
+
         if request.form['currently_accepting_orders'] == 'true':
             current_user.currently_accepting_orders = True
             db.session.commit()
@@ -389,12 +401,20 @@ def admin_assign_url_to_account():
         abort(404)
 
 # MARK: functions
-def is_valid_account_details_post_request(request):
+def is_valid_setup_account_details_post_request(request):
     if request.form:
         if ('name' in request.form) and ('email' in request.form) and ('phone' in request.form) and ('restaurant_name' in request.form) and ('restaurant_address' in request.form):
             if ('menu_url' in request.form) or ('menu_file' in request.files):
                 return True
     return False
+
+def is_valid_edit_account_details_post_request(request):
+    if request.form:
+        if ('name' in request.form) and ('email' in request.form) and ('phone' in request.form):
+            if ('menu_url' in request.form) or ('menu_file' in request.files):
+                return True
+    return False
+
 
 def is_valid_menu_notes_post_request(request):
     if request.form:
@@ -451,7 +471,6 @@ def convertTimeToSpecificTimezone(time, timezone):
     return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
 
 def send_order_refunded_email(customer_email, rejection_description):
-
     msg = Message(subject='Order Could Not be Fulfilled', sender="no-reply@m3orders.com", recipients=[customer_email])
     msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description)
     mail.send(msg)

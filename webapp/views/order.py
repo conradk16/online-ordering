@@ -44,7 +44,7 @@ def super_cucas_micheltorena():
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 
-    currently_accepting_orders = restaurant_user.currently_accepting_orders
+    currently_accepting_orders = restaurant_user.currently_accepting_orders and restaurant_user.active_subscription
     
     if request.method == 'GET':
         return render_template('super-cucas-micheltorena.html', menu=json.dumps(super_cucas_menu, default=lambda x:x.__dict__), accepting_orders=currently_accepting_orders)
@@ -107,7 +107,7 @@ def update_order_details():
     order.datetime = datetime.utcnow()
     db.session.commit()
 
-    restaurant_user = User.query.filter_by(stripe_connected_account_id=connected_account).first()
+    restaurant_user = User.query.filter_by(order_url=order.order_url).first()
     current_time = datetime.datetime.now()
     if current_time > restaurant_user.next_closing_time:
         restaurant_user.currently_accepting_orders = False
@@ -117,8 +117,7 @@ def update_order_details():
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 
-    accepting_orders = User.query.filter_by(order_url=order.order_url).first().currently_accepting_orders
-    if accepting_orders:
+    if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription:
         return 'accepting orders'
     else:
         return 'not accepting orders'
