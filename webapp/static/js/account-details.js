@@ -19,17 +19,8 @@ function update_file_name() {
     file_name.innerHTML = filename;
   }
 
-  // creates the element if it doesn't exist
   function getErrorElement() {
-    if (document.getElementsByClassName("invalid-input-text").length == 0) {
-        var invalid_input_text = document.createElement("span");
-        invalid_input_text.classList.add("invalid-input-text");
-        var form = document.getElementById("form");
-        form.appendChild(invalid_input_text);
-        return invalid_input_text;
-    } else {
-        return document.getElementsByClassName("invalid-input-text")[0];
-    }
+    return document.getElementsByClassName("invalid-input-text")[0];
   }
 
   function submit_form() {
