@@ -985,8 +985,10 @@ function check_if_closed() {
         closed_holder.classList.add("closed-info-holder");
         screen_cover.appendChild(closed_holder);
 
-        //var closed_info = document.createElement("div");
-        //closed_info.classList.add("closed-info");
+        var closed_info = document.createElement("a");
+        closed_info.classList.add("closed-info");
+        closed_info.innerHTML = "Sorry, we are currently not accepting online orders.";
+        closed_holder.appendChild(closed_info);
     }
 }
 
@@ -1583,18 +1585,17 @@ body {
     width: 100%;
 }
 
-.closed-info-screen-cover:after {
+.closed-info-screen-cover {
     position: fixed;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background-color: black;
+    background-color: rgba(0,0,0,0.3);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 3;
-    opacity: 0.5;
 }
 
 .closed-info-holder {
@@ -1602,11 +1603,15 @@ body {
     width: 300px;
     height: 120px;
     border-radius: 10px;
-    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .closed-info {
-    width: 40%;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 </style>
