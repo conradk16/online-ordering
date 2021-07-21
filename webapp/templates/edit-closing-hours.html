@@ -23,7 +23,7 @@
             const closed = closed_bools[i];
             const time = times[i];
             const checkbox = checkboxes[i];
-            
+
             time.value = closing_time;
             checkbox.checked = closed;
         }
@@ -37,7 +37,7 @@
         //orders_link = "www.m3orders.com/super-cucas-micheltorena";
         orders_link = "";
         var menu_view_orders = document.getElementById("menu_view_orders");
-        if (orders_link == "") {  
+        if (orders_link == "") {
             menu_view_orders.style.cursor = "default";
             menu_view_orders.style.color = "gray";
 
@@ -48,7 +48,7 @@
 
         } else {
             menu_view_orders.style.cursor = "pointer";
-            menu_view_orders.style.color = "black";            
+            menu_view_orders.style.color = "black";
         }
     }
 
@@ -113,7 +113,7 @@ body, html {
 }
 
 .topnav-right:hover {
-    background-color: #f0f0f0; 
+    background-color: #f0f0f0;
 }
 
 .center {
@@ -263,13 +263,12 @@ body, html {
   </label>
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
-      <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Account Home</a></li>
-      <li id="menu_view_orders_block"><a href="https://instagram.com/plavookac" style="display:block;" id="menu_view_orders" target="_blank">View Orders</a></li>
-      <li><a href="https://instagram.com/plavookac" style="display:block;" target="_blank">Account Details</a></li>
-      <li><a href="https://twitter.com/plavookac" style="display:block;" target="_blank">Closing Hours</a></li>
-      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Menu Notes</a></li>
-      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Stripe</a></li>
-      <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Manage Subscription</a></li>
+      <li><a href="/account" style="display:block;">Account Home</a></li>
+      <li id="menu_view_orders_block"><a href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
+      <li><a href="/account/account-details" style="display:block;">Account Details</a></li>
+      <li><a href="/account/closing-times" style="display:block;">Closing Hours</a></li>
+      <li><a href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
+      <li><a href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
     </ul>
   </div>
   <br>

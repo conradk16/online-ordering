@@ -26,7 +26,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', orderl_url=current_user.order_url)
+        return render_template('account.html', order_url=current_user.order_url)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -92,6 +92,7 @@ def setup_closing_hours():
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
+        
         current_user.closing_times = request.form['closing_times']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
@@ -133,10 +134,59 @@ def setup_stripe():
 
         return redirect(account_link_object.url)
 
+@account.route('/account/account-details', methods=['GET', 'POST'])
+def edit_account_details():
+    if not current_user.is_authenticated:
+        return redirect('/login')
 
-# POST endpoint for customers to manage their billing
-@account.route('/account/manage-billing', methods=['POST'])
-def manage_billing():
+    if request.method == 'GET':
+        return render_template('edit-account-details.html', account_details=current_user.account_details)
+    elif request.method == 'POST':
+        if not is_valid_account_details_post_request(request):
+            return redirect('/account/account-details')
+        
+        account_details = {}
+        account_details['name'] = request.form['name']
+        account_details['email'] = request.form['email']
+        account_details['phone'] = request.form['phone']
+        account_details['restaurant_name'] = request.form['restaurant_name']
+        account_details['restaurant_address'] = request.form['restaurant_address']
+        account_details['menu_url'] = request.form['menu_url'] if ('menu_url' in request.form) else ''
+
+        current_user.account_details = json.dumps(account_details)
+
+        if 'menu_file' in request.files:
+            current_user.menu_file = request.files['menu_file'].read()
+            current_user.menu_file_filename = request.files['menu_file'].filename
+
+        db.session.commit()
+
+        return redirect('/account')
+
+@account.route('/account/closing-times')
+def edit_closing_times():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'GET':
+        return render_template('edit-closing-hours.html')
+    elif request.method == 'POST':
+        if not is_valid_closing_times_post_request(request):
+            return redirect('/account')
+
+        current_user.closing_times = request.form['closing_times']
+        current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
+        db.session.commit()
+        
+        return redirect('/account')
+
+
+# GET endpoint that redirects customers to manage their billing
+@account.route('/account/manage-subscription')
+def manage_subcription():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,
         return_url="https://m3orders.com/account")
