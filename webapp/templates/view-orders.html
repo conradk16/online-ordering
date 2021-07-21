@@ -318,6 +318,7 @@ function populateOrders(pendingOrders, archivedOrders) {
   }
 }
 
+// set toggle display to be toggled on or off
 function setAcceptingOrdersToggleStatus(toggleOn) {
   if (toggleOn) {
     document.getElementById("switch-button-checkbox").checked = true;
@@ -326,6 +327,7 @@ function setAcceptingOrdersToggleStatus(toggleOn) {
   }
 }
 
+// action when toggle button is clicked
 function toggleAcceptingOrdersStatus(toggleElement) {
   toggleElement.checked = !toggleElement.checked; // revert checked status so net effect is zero
   var currently_accepting_orders_input = document.getElementById("currently-accepting-orders");
@@ -392,7 +394,7 @@ function reloadOrderData() {
     var pendingOrders = parsed[0];
     var archivedOrders = parsed[1];
     var acceptingOrdersStatus = (parsed[2] == "true");
-    toggleAcceptingOrdersStatus(acceptingOrdersStatus);
+    setAcceptingOrdersToggleStatus(acceptingOrdersStatus);
     populateOrders(pendingOrders, archivedOrders);
   };
   var formData = new FormData(document.getElementById("reload-orders-form"));
