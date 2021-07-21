@@ -95,9 +95,6 @@ def setup_closing_hours():
         current_user.closing_times = request.form['closing_times']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
-
-        print(request.form['closing_times'])
-        print(current_user.next_closing_time)
         
         return redirect('/account/setup-stripe')
 
@@ -180,6 +177,15 @@ def view_orders():
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
+        current_time = datetime.datetime.now()
+        current_user.most_recent_time_orders_queried = current_time
+
+        if current_time > current_user.next_closing_time:
+            current_user.currently_accepting_orders = False
+            current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
+        
+        db.session.commit()
+
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
         return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders)
@@ -220,8 +226,16 @@ def get_updated_orders():
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
-        currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+        current_time = datetime.datetime.now()
+        current_user.most_recent_time_orders_queried = current_time
 
+        if current_time > current_user.next_closing_time:
+            current_user.currently_accepting_orders = False
+            current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
+        
+        db.session.commit()
+
+        currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
         return jsonify([pending_orders, archived_orders, currently_accepting_orders])
     else:
         return redirect('/login')
@@ -378,7 +392,10 @@ def calculate_next_closing_time(closing_times):
 
         next_closing_times.append(next_closing_time)
 
-    return min(next_closing_times)
+    if len(next_closing_times) == 0:
+        return datetime.datetime.max
+    else:
+        return min(next_closing_times)
 
 def convertTimeToSpecificTimezone(time, timezone):
     return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
