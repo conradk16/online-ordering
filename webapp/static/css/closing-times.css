@@ -808,3 +808,77 @@ footer {
   color: #6772e5;
 }
 
+.columns {
+    float: left;
+    width: 50%;
+    box-sizing: border-box;}
+
+.button {
+  background-color: #04AA6D;
+  border: none;
+  color: white;
+  padding: 0px 0px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600px !important;
+}
+
+.main-form {
+    min-width: 400px;
+    overflow-x: scroll;
+}
+
+.page-explanation-holder {
+    display: flex;
+    justify-content: center;
+    padding: 0 15px;
+    min-width: 400px;
+}
+
+.page-explanation {
+    font-size: 15px;
+    text-align: center;
+    color: gray;
+}
+
+.upload-holder {
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 7px;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
+}
+
+.drop-down {
+    border-radius: 10px;
+    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
+    padding: 3px;
+}
+
+.drop-down:hover {
+    cursor: pointer;
+}
+
+.time {
+
+}
+
+.multiple-closing-notes-holder {
+    display: flex;
+    margin: 0px 15px 15px;
+}
+
+.multiple-closing-notes {
+    color: gray;
+    text-align: center;
+    font-size: 13px !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .columns {
+    width: 100%;
+  }
+}

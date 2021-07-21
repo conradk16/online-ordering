@@ -3,9 +3,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="../static/css/account-home.css" data-rel-css="">
 
 <link rel="stylesheet" type="text/css" href="../static/css/closing-times.css" data-rel-css="">
 
@@ -13,29 +11,67 @@
 
 <head>
   <script>
+    function pre_fill_form() {
+        var closing_times = new Array("7:00pm, 8:00pm", "", "2:00pm", "", "", "", ""); //JSON.parse({{closing_times}});
+        var closed_bools = new Array(false, true, false, true, true, true, true);//JSON.parse({{closed_bools}});
 
-  function run_on_load() {
-    run_on_resize();
-  }
+        var times = document.getElementsByClassName("time");
+        var checkboxes = document.getElementsByClassName("checkbox");
 
-  function run_on_resize() {
-    bullet_text_elements = document.getElementsByClassName("plan-bullet-text");
-    center = document.getElementsByClassName("center")[0];
-    for (const elem of bullet_text_elements) {
-        if (window.innerWidth < 500) {
-            elem.style.fontSize = "12px";
-            center.style.padding = "30px 15px";
+        for (let i = 0; i < 7; i++) {
+            const closing_time = closing_times[i];
+            const closed = closed_bools[i];
+            const time = times[i];
+            const checkbox = checkboxes[i];
+            
+            time.value = closing_time;
+            checkbox.checked = closed;
+        }
+
+        var time_zone = "US/Pacific"; //{{time_zone}}
+        var time_zone_elem = document.getElementsByClassName("drop-down")[0];
+        time_zone_elem.value = time_zone;
+    }
+
+    function check_if_menu() {
+        //orders_link = "www.m3orders.com/super-cucas-micheltorena";
+        orders_link = "";
+        var menu_view_orders = document.getElementById("menu_view_orders");
+        if (orders_link == "") {  
+            menu_view_orders.style.cursor = "default";
+            menu_view_orders.style.color = "gray";
+
+            menu_view_orders_block = document.getElementById("menu_view_orders_block");
+            menu_view_orders_block.display = "block";
+            menu_view_orders_block.style.backgroundColor = "#fff";
+
 
         } else {
-            elem.style.fontSize = "15px";
-            center.style.padding = "30px 30px";
+            menu_view_orders.style.cursor = "pointer";
+            menu_view_orders.style.color = "black";            
         }
     }
-  }
 
-  window.onload = run_on_load;
-  window.onresize = run_on_resize;
+    function run_on_resize() {
+        var logo = document.getElementById("logo");
+        if (window.innerWidth < 450) {
+            logo.width="100";
+            logo.height="14.2";
+        } else {
+            logo.width="200";
+            logo.height="28.4";
+        }
+    }
 
+    function run_on_load() {
+        check_if_menu();
+        run_on_resize();
+        pre_fill_form();
+    }
+
+
+    window.onload = run_on_load;
+    window.onresize = run_on_resize;
   </script>
 </head>
 
@@ -44,32 +80,31 @@ body, html {
   margin: 0;
   height: 100%;
   background-color: rgba(255, 255, 255, 1);
-  font-family: Arial, verdana, helvetica, sans-serif;
-  box-sizing: border-box;
-  -webkit-appearance: none;
+}
+
+.logo {
+    margin: 10px 0px;
 }
 
 /* Add a background color to the top navigation */
 .topnav {
   display: flex;
   justify-content: space-between;
-  background-color: white;
-  border-style:solid;
-  border-width: 0px 0px 1px 0px;
-  border-bottom-color: rgba(230, 230, 230, 1);
   overflow: hidden;
   align-items: center;
   padding: 0;
   margin: 0;
   position: sticky;
   top: 0;
+  box-shadow: 0 3px 6px 0 rgba(0,0,0,.2);
+  z-index: 2;
 }
 
 /* Style the links inside the navigation bar */
 .topnav-right {
   color: black;
   text-align: center;
-  padding: 14px 16px;
+  padding: 18px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
@@ -77,16 +112,8 @@ body, html {
   font-family:verdana;
 }
 
-.topnav-left {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-/* Change the color of links on hover */
 .topnav-right:hover {
-  background-color: rgba(240, 240, 240, 0.75);
+    background-color: #f0f0f0; 
 }
 
 .center {
@@ -100,40 +127,6 @@ body, html {
   overflow-x: scroll;
 }
 
-.step-one-of-three {
-  text-align: center;
-  font-size: 17px;
-  font-family:verdana;
-  padding: 0px 8px 0px 8px;
-  min-width: 400px;
-}
-
-.create-your-account {
-  font-size: 30px;
-  font-family:verdana;
-  font-weight: 400;
-  margin: 0;
-  text-align: center;
-  padding: 8px 8px 10px 8px;
-  width: 100%;
-  min-width: 400px;
-}
-
-.input-label {
-  font-size: 14px;
-  font-family:verdana;
-  font-weight: 400;
-  text-align: left;
-  margin: 8px 8px 0px 0px;
-  height:10;
-}
-
-.invalid-input-text-holder {
-    display: flex;
-    justify-content: flex-start;
-    margin: 0px 15px 10px;
-}
-
 .invalid-input-text {
   font-weight: 400;
   color: #b92d2b;
@@ -141,43 +134,33 @@ body, html {
   font-size: 12px;
 }
 
-.input-box {
-  width: 100%;
-  padding: 12px 8px;
-  margin: 4px 0px 4px 0px;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-family:verdana;
-  outline: none;
+.hidden-text {
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    opacity: 0;
+    font-size: 17px;
+    cursor: pointer;
+    font-family:verdana;
 }
 
-input[type=submit] {
-  width: 100%;
-  background-color: black;
-  color: white;
-  padding: 12px 8px;
-  margin: 12px 0px 12px 0px;
-  border: none;
-  border-radius: 4px;
+.hidden-text:hover {
+    cursor: default;
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  font-size: 16px;
-  font-family:verdana;
-}
-
-.inputText {
-  font-size: 14px;
-  width: 200px;
-  height: 35px;
+  margin-left: 4px;
 }
 
 .overall-div {
   height:100%;
-  min-width: 100%;
   display:flex;
   flex-direction: column;
+  background: #fff
 }
 .top-half {
   flex:2;
@@ -186,7 +169,6 @@ input[type=submit] {
   min-height:150px;
   background-color: #f3f3f3;
 }
-
 .questions {
   margin: 30px;
   color:#757575;
@@ -209,7 +191,30 @@ input[type=submit] {
   font-family: helvetica neue;
   font-size:14px;
 }
-  
+
+.title {
+  font-size: 30px;
+  font-family:verdana;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+  padding: 8px 8px 10px 8px;
+  min-width: 390px;
+}
+
+.invalid-input-text-holder {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0px 15px 10px;
+}
+
+.invalid-input-text {
+  font-weight: 400;
+  color: #b92d2b;
+  text-align: left;
+  font-size: 12px;
+}
+
 .checkbox-elements {
     width: 50%;
     display: flex;
@@ -226,6 +231,7 @@ input[type=submit] {
     width: 20px !important;
     margin-right: 10px;
     appearance: checkbox !important;
+    display: block !important;
 }
 
 .checkbox:hover {
@@ -233,25 +239,42 @@ input[type=submit] {
 }
 
 
+
 </style>
 
 <div class="overall-div">
 <div class="top-half">
+
   <div class="topnav">
-    <a href="/">
     <div class="topnav-left">
-      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+        <a class="hidden-text">Sign Out</a>
     </div>
-    </a>
+    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
     <div class="topnav-right">
-    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    <a style="text-decoration:inherit; color:black" href="/signout">Sign Out</a>
     </div>
   </div>
 
-<br>
-<div class="center">
-        <div class="step-one-of-three">Step 6 of 7</div>
-        <div class="create-your-account">Enter Closing Hours</div>
+  <input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+  <label for="openSidebarMenu" class="sidebarIconToggle">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+  </label>
+  <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Account Home</a></li>
+      <li id="menu_view_orders_block"><a href="https://instagram.com/plavookac" style="display:block;" id="menu_view_orders" target="_blank">View Orders</a></li>
+      <li><a href="https://instagram.com/plavookac" style="display:block;" target="_blank">Account Details</a></li>
+      <li><a href="https://twitter.com/plavookac" style="display:block;" target="_blank">Closing Hours</a></li>
+      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Menu Notes</a></li>
+      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" style="display:block;" target="_blank">Stripe</a></li>
+      <li><a href="https://www.linkedin.com/in/plavookac/" style="display:block;" target="_blank">Manage Subscription</a></li>
+    </ul>
+  </div>
+  <br>
+  <div class="center">
+        <div class="title">Update Closing Hours</div>
         <div class="page-explanation-holder">
             <a class="page-explanation">We collect your normal closing hours information to automatically prevent your customers from placing orders once your restaurant is closed. You can always manually turn online orders back on again.</a>
         </div>
@@ -340,16 +363,16 @@ input[type=submit] {
             </select>
           </div>
 
-          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Next</button>
+          <button id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Update</button>
           <div class="invalid-input-text-holder">
               <a class="invalid-input-text"></a>
           </div>
         </form>
 
       </div>
+  </div>
 </div>
 
-</div>
 <div class="bottom-half">
   <div class="questions">Questions? Call 1-805-284-7912&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
   <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
