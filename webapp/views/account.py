@@ -11,7 +11,7 @@ import io
 account = Blueprint('account', __name__)
 
 # account homepage
-@account.route('/account')
+@account.route('/account/')
 def account_homepage():
     if not current_user.is_authenticated:
         return redirect('/login')
