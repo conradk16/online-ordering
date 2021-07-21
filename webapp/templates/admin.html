@@ -10,16 +10,32 @@
     <input type="submit" value="Download menu file" /><br>
 </form>
 
+<h2 id="users-without-urls-header">Users without URLS:</h2>
 <div id="users-without-urls"></div>
+
+<h2 id="users-with-urls-header">Users with URLS:</h2>
+<div id="users-with-urls"></div>
 
 <script>
 
 usersWithoutURLsElement = document.getElementById("users-without-urls");
 for (account of JSON.parse({{users_without_urls|tojson}})) {
   var elem = document.createElement("p");
+  var br = document.createElement("br");
   elem.innerHTML = JSON.stringify(account);
   usersWithoutURLsElement.appendChild(elem);
+  usersWithoutURLsElement.appendChild(br);
 }
+
+usersWithURLsElement = document.getElementById("users-with-urls");
+for (account of JSON.parse({{users_with_urls|tojson}})) {
+  var elem = document.createElement("p");
+  var br = document.createElement("br");
+  elem.innerHTML = JSON.stringify(account);
+  usersWithURLsElement.appendChild(elem);
+  usersWithURLsElement.appendChild(br);
+}
+
 </script>
 
 

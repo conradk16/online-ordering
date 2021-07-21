@@ -3,6 +3,7 @@ import json
 import stripe
 from webapp.models.db_models import User, Order
 from webapp import db
+import json
 
 webhook = Blueprint('webhook', __name__)
 
@@ -38,6 +39,8 @@ def webhook_account_received():
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(email_address=client_reference_id).first()
         user.paid_for_hardware = paid_for_hardware
+        if data_object.shipping:
+            user.shipping_address = json.dumps(data_object.shipping)
         user.stripe_customer_id = stripe_customer_id
         user.active_subscription = True
         db.session.commit()

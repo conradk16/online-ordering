@@ -17,6 +17,8 @@ def account_homepage():
         return redirect('/login')
     elif current_user.email_address == "kuklinskywork@gmail.com":
         return get_admin_page()
+    elif not current_user.stripe_customer_id:
+        return redirect('/signup/select-plan')
     elif not current_user.account_details:
         return redirect('/account/setup-account-details')
     elif not current_user.menu_notes:
@@ -34,6 +36,9 @@ def enter_account_details():
         return redirect('/login')
 
     if request.method == 'GET':
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+
         return render_template('setup-account-details.html')
     elif request.method == 'POST':
         if not  is_valid_setup_account_details_post_request(request):
@@ -64,7 +69,9 @@ def setup_menu_notes():
         return redirect('/login')
 
     if request.method == 'GET':
-        if not current_user.account_details:
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+        elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         else:
             return render_template('setup-menu-notes.html')
@@ -83,7 +90,9 @@ def setup_closing_hours():
         return redirect('/login')
 
     if request.method == 'GET':
-        if not current_user.account_details:
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+        elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
@@ -105,12 +114,16 @@ def setup_stripe():
         return redirect('/login')
 
     if request.method == 'GET':
-        if not current_user.account_details:
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+        elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
         elif not current_user.closing_times:
             return redirect('/account/setup-closing-times')
+        elif current_user.stripe_connected_account_details_submitted:
+            return redirect('/account')
         else:
             return render_template('setup-stripe.html')
     elif request.method == 'POST':
@@ -140,6 +153,8 @@ def edit_account_details():
         return redirect('/login')
 
     if request.method == 'GET':
+        if not current_user.stripe_connected_account_details_submitted:
+            return redirect('/account/setup-stripe')
         return render_template('edit-account-details.html', account_details=current_user.account_details)
     elif request.method == 'POST':
         if not is_valid_edit_account_details_post_request(request):
@@ -168,6 +183,8 @@ def edit_closing_times():
         return redirect('/login')
 
     if request.method == 'GET':
+        if not current_user.stripe_connected_account_details_submitted:
+            return redirect('/account/setup-stripe')
         return render_template('edit-closing-hours.html', closing_times=current_user.closing_times)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
@@ -185,6 +202,8 @@ def edit_closing_times():
 def manage_subcription():
     if not current_user.is_authenticated:
         return redirect('/login')
+    if not current_user.stripe_customer_id:
+        return redirect('/signup/select-plan')
     
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,
@@ -196,6 +215,9 @@ def manage_subcription():
 @account.route('/account/orders')
 def view_orders():
     if current_user.is_authenticated:
+
+        if not current_user.stripe_connected_account_details_submitted:
+            return redirect('/account/setup-stripe')
 
         if not current_user.active_subscription:
             current_user.currently_accepting_orders = False
@@ -363,11 +385,25 @@ def get_admin_page():
         user['email_address'] = userObject.email_address
         user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
         user['paid_for_hardware'] = userObject.paid_for_hardware
+        user['shipping_address'] = userObject.shipping_address
         user['account_details'] = userObject.account_details
         user['menu_notes'] = userObject.menu_notes
         users.append(user)
 
-    return render_template('admin.html', users_without_urls=json.dumps(users))
+    users_with_urls = User.query.filter(User.order_url.isnot(None))
+    users_with = []
+    for userObject in users_with_urls:
+        user = {}
+        user['email_address'] = userObject.email_address
+        user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
+        user['paid_for_hardware'] = userObject.paid_for_hardware
+        user['shipping_address'] = userObject.shipping_address
+        user['account_details'] = userObject.account_details
+        user['menu_notes'] = userObject.menu_notes
+        user['order_url'] = userObject.order_url
+        users_with.append(user)
+
+    return render_template('admin.html', users_without_urls=json.dumps(users), users_with_urls=json.dumps(users_with))
 
 @account.route('/account/admin-download-database')
 def admin_download_database():
