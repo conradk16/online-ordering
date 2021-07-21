@@ -3,6 +3,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" type="text/css" href="../static/css/account-menu.css">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
 <script>
 
 class menuItem {
@@ -454,56 +457,9 @@ function rejectOrderClicked() {
 </script>
 
 <style>
-body, html {
-  margin: 0;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 1);
-}
 
-/* Add a background color to the top navigation */
-.topnav {
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  border-style:solid;
-  border-width: 0px 0px 1px 0px;
-  border-bottom-color: rgba(230, 230, 230, 1);
-  overflow: hidden;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-}
-
-/* Style the links inside the navigation bar */
-.topnav-right {
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  opacity: 1;
-  font-size: 17px;
-  cursor: pointer;
-  font-family:verdana;
-}
-
-.topnav-left {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-/* Change the color of links on hover */
-.topnav-right:hover {
-  background-color: rgba(240, 240, 240, 0.75);
-}
-
-.overall-div {
-  height:100%;
-  display:flex;
-  flex-direction: column;
-}
 .top-half {
+    flex: 0;
 }
 
 .meta-buttons {
@@ -730,6 +686,7 @@ body, html {
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  border-right: 1px solid black;
 }
 
 .metadata-elements {
@@ -994,17 +951,32 @@ tr:nth-child(even) {
   </div>
 </div>
 
-<div class="overall-div">
 <div class="top-half">
   <div class="topnav">
-    <a href="/">
     <div class="topnav-left">
-      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+        <a class="hidden-text">Sign Out</a>
     </div>
-    </a>
+    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
     <div class="topnav-right">
-    <a style="text-decoration:inherit; color:black" href="/logout">Log out</a>
+    <a style="text-decoration:inherit; color:black" href="/logout">Sign out</a>
     </div>
+  </div>
+
+  <input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+  <label for="openSidebarMenu" class="sidebarIconToggle">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+  </label>
+  <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li><a href="/account" style="display:block;">Account Home</a></li>
+      <li id="menu_view_orders_block"><a href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
+      <li><a href="/account/account-details" style="display:block;">Account Details</a></li>
+      <li><a href="/account/closing-times" style="display:block;">Closing Hours</a></li>
+      <li><a href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
+      <li><a href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
+    </ul>
   </div>
 
 <div class="meta-buttons">
@@ -1036,8 +1008,6 @@ tr:nth-child(even) {
 <div class="bottom-half-pending" id="bottom-half-pending">
 </div>
 <div class="bottom-half-archived" id="bottom-half-archived">
-</div>
-
 </div>
 
 <script>

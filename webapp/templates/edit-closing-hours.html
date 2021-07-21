@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
 <script src="../static/js/closing-hours.js"></script>
-<script src="../static/js/account-menu.js"></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url|tojson}}></script>
 
 <head>
   <script>
@@ -34,34 +34,15 @@
         time_zone_elem.value = time_zone;
     }
 
-    function check_if_menu() {
-        orders_link = "www.m3orders.com/super-cucas-micheltorena";
-        //orders_link = "";
-        var menu_view_orders = document.getElementById("menu_view_orders");
-        if (orders_link == "") {
-            menu_view_orders.style.cursor = "default";
-            menu_view_orders.style.color = "gray";
-
-            menu_view_orders_block = document.getElementById("menu_view_orders_block");
-            menu_view_orders_block.display = "block";
-            menu_view_orders_block.style.backgroundColor = "#fff";
-
-
-        } else {
-            menu_view_orders.style.cursor = "pointer";
-            menu_view_orders.style.color = "black";
-        }
-    }
-
     function run_on_load() {
-        check_if_menu();
+        check_if_view_orders();
         run_on_resize();
         pre_fill_form();
     }
 
-
     window.onload = run_on_load;
     window.onresize = run_on_resize;
+    
   </script>
 </head>
 
@@ -89,12 +70,12 @@
   </label>
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
-      <li><a href="/account" style="display:block;">Account Home</a></li>
-      <li id="menu_view_orders_block"><a href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
-      <li><a href="/account/account-details" style="display:block;">Account Details</a></li>
-      <li><a href="/account/closing-times" style="display:block;">Closing Hours</a></li>
-      <li><a href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
-      <li><a href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
+      <li><a  href="/account" style="display:block;">Account Home</a></li>
+      <li id="menu_view_orders_block"><a  href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
+      <li><a  href="/account/account-details" style="display:block;">Account Details</a></li>
+      <li><a  href="/account/closing-times" style="display:block;">Closing Hours</a></li>
+      <li><a  href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
+      <li><a  href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
     </ul>
   </div>
   <br>
