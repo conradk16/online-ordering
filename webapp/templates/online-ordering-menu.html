@@ -631,7 +631,7 @@ function load_menu_narrow() {
 }
 
 // assumes food-items exists
-function load_menu_wide() {
+async function load_menu_wide() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
     // clear the menu
@@ -697,6 +697,8 @@ function load_menu_wide() {
 
         }
 
+        await sleep(1);
+
         // move items back to right stack
 
         while (true) {
@@ -715,6 +717,10 @@ function load_menu_wide() {
         }
 
     }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function remove_from_cart_items(to_remove) {
