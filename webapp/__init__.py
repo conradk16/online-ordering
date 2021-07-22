@@ -10,7 +10,8 @@ PROD = os.getenv('PROD') # PROD is None if environment variable not set. AWS env
 env = {}
 
 # SHOULD ONLY BE TRUE IF WANT TO USE DEVELOPMENT ENVIRONMENT WHILE DEPLOYED TO AWS
-use_test_webhook_with_live_m3_url = False:
+use_test_webhook_with_live_m3_url = False
+if use_test_webhook_with_live_m3_url:
     PROD = False
     env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
