@@ -6,3 +6,8 @@ function validateEmail(email) {
 
     return (email.match(mail_format) != null) && (email.length <= 100);
 }
+
+function validatePhone(phone) {
+    //var phone_format = "/\(?\d{3}\)?-? *\d{3}-? *-?\d{4}/"
+    return (phone.match(/\(?\d{3}\)?-? *\d{3}-? *-?\d{4}/) == phone);
+}
