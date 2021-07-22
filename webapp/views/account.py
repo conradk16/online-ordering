@@ -169,7 +169,7 @@ def edit_account_details():
 
         current_user.account_details = json.dumps(current_account_details)
 
-        if 'menu_file' in request.files:
+        if 'menu_file' in request.files and request.files['menu_file'].filename:
             current_user.menu_file = request.files['menu_file'].read()
             current_user.menu_file_filename = request.files['menu_file'].filename
 
