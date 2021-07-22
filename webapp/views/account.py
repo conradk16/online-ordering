@@ -188,7 +188,7 @@ def edit_closing_times():
         return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, order_url=current_user.order_url, active_subscription=current_user.active_subscription)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
-            return redirect('/account')
+            return redirect('/account/closing-times')
 
         current_user.closing_times = request.form['closing_times']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
