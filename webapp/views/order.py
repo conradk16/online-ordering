@@ -12,14 +12,14 @@ order = Blueprint('order', __name__)
 
 @order.route('/super-cucas-micheltorena', methods=['GET', 'POST'])
 def super_cucas_micheltorena():
-    return handle_order_website_request(request, 'test@gmail.com', '/super-cucas-micheltorena', 'Super Cucas Micheltorena')
+    return handle_order_website_request(request, 'test@gmail.com', '/super-cucas-micheltorena', 'Super Cucas - Micheltorena')
 
 @order.route('/super-cucas-micheltorena/payment')
 def super_cucas_micheltorena_payment():
     return handle_order_payment_request(request, '/super-cucas-micheltorena')
 
 # request = flask request obj, account_email = restaurant accoutn email, url of form: '/restaurant-name-location'
-def handle_order_website_request(request, account_email, restaurant_display_name):
+def handle_order_website_request(request, account_email, url, restaurant_display_name):
     restaurant_user = User.query.filter_by(email_address=account_email).first()
     current_time = datetime.datetime.now()
     if current_time > restaurant_user.next_closing_time:
