@@ -3,6 +3,8 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+<link rel="icon" href="/static/favicon.png">
+
 <!--javascript-->
 <script>
 
@@ -1175,6 +1177,7 @@ const width_three = 1120;
 
 window.onload = run_on_load;
 window.onresize = update_layout;
+window.document.title={{restaurant_display_name|tojson}};
 
 </script>
 
@@ -1692,7 +1695,7 @@ body {
 <body>
 
 <div class="topnav">
-    <p class="store-name">Super Cucas - Micheltorena</p>
+    <p class="store-name">{{restaurant_display_name}}</p>
     <div class=cart-menu-icon-holder>
         <div class="cart-number-holder">
             <img src="../static/circle.png" class="cart-number-circle" alt="" height=25>

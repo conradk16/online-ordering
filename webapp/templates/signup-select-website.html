@@ -10,16 +10,20 @@
 
 <script src="../static/js/signup-select-box.js"></script>
 
-<script>window.document.title="Select Fee";</script>
+<script>window.document.title="Select Website Option";</script>
 
 <style>
 
-.img-teal {
-    filter: invert(82%) sepia(17%) saturate(7120%) hue-rotate(149deg) brightness(89%) contrast(81%);
+.img-purple {
+    filter: invert(22%) sepia(35%) saturate(5225%) hue-rotate(260deg) brightness(89%) contrast(86%);
 }
 
 .img-blue {
     filter: invert(25%) sepia(82%) saturate(1992%) hue-rotate(214deg) brightness(95%) contrast(85%);
+}
+
+.plan-img {
+    width: 33% !important;
 }
 
 </style>
@@ -38,37 +42,29 @@
 
 <div class="center">
 
-        <div class="step">Step 4 of 8</div>
-        <div class="title">Select a signup fee</div>
+        <div class="step">Step 2 of 8</div>
+        <div class="title">Do You Have an Existing Website?</div>
         <div class="plans">
             <div class="plan" name="plan2" onclick="submit_form('')">
-                <div class="plan-title img-teal">Basic Setup</div>
+                <div class="plan-title img-purple">Yes, I already have a website.</div>
                 <div class="plan-caption">$0</div>
-                <img src="../static/basic_registration.svg" class="img-teal plan-img"></img>
+                <img src="../static/www-icon.png" class="img-purple plan-img"></img>
                 <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-teal"></img>
-                    <div class="plan-bullet-text">Save money by supplying your own device</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-teal"></img>
-                    <div class="plan-bullet-text">You will need a tablet or laptop in your restaurant to view your orders</div>
+                    <img src="../static/circle.png" class="plan-bullet img-purple"></img>
+                    <div class="plan-bullet-text">Select this option if you already have a restaurant website.</div>
                 </div>
             </div>
             <div class="plan" name="plan1" onclick="submit_form('price_1JFMNILGQW192ovflSPEK3sp')">
-                <div class="plan-title img-blue">Tablet Included</div>
-                <div class="plan-caption">$149</div>
-                <img src="../static/tablet.svg" class="img-blue plan-img"></img>
+                <div class="plan-title img-blue">No, I need a website.</div>
+                <div class="plan-caption">$199 + $19/month</div>
+                <img src="../static/globe.png" class="img-blue plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-blue"></img>
-                    <div class="plan-bullet-text">Includes tablet for viewing orders in your restaurant</div>
+                    <div class="plan-bullet-text">Includes website creation and hosting.</div>
                 </div>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-blue"></img>
-                    <div class="plan-bullet-text">Includes stand</div>
-                </div>
-                <div class="plan-bullet-container">
-                    <img src="../static/circle.png" class="plan-bullet img-blue"></img>
-                    <div class="plan-bullet-text">Includes long charger</div>
+                    <div class="plan-bullet-text">Required if you do not already have a website.</div>
                 </div>
             </div>
         </div>
