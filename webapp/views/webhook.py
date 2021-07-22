@@ -10,8 +10,7 @@ webhook = Blueprint('webhook', __name__)
 # POST endpoint for receiving Account webhooks from Stripe
 @webhook.route('/webhook-account', methods=['POST'])
 def webhook_account_received():
-    #webhook_secret = "whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU" # TEST INTEGRATION WEBHOOK
-    webhook_secret = "whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap" # TEST localhost webhook
+    webhook_secret = env['stripe_webhook_account_signing_secret']
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')
@@ -71,8 +70,7 @@ def webhook_account_received():
 # POST endpoint for receiving Connect webhooks from Stripe
 @webhook.route('/webhook-connect', methods=['POST'])
 def webhook_connect_received():
-    #webhook_secret = "whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE" # TEST INTEGRATION WEBHOOK
-    webhook_secret = "whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5" # TEST localhost webhook
+    webhook_secret = env['stripe_webhook_connect_signing_secret']
     request_data = json.loads(request.data)
 
     signature = request.headers.get('stripe-signature')

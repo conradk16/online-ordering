@@ -7,8 +7,15 @@ import stripe
 import os
 
 PROD = os.getenv('PROD') # PROD is None if environment variable not set. AWS environment value set to "true", which is a True value
-PROD = False # Want to be able to upload to Amazon but not yet have things be live so we can continue testing on m3orders.com
 env = {}
+
+# SHOULD ONLY BE TRUE IF WANT TO USE DEVELOPMENT ENVIRONMENT WHILE DEPLOYED TO AWS
+use_test_webhook_with_live_m3_url = False:
+    PROD = False
+    env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
+
+
 if PROD:
     env['stripe_secret_api_key'] = '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'
     env['stripe_webhook_account_signing_secret'] = 'whsec_5fk3ps0nQqpEHiSRFIVTXMfunysdzOTg'
@@ -30,11 +37,7 @@ env['email_sender_address'] = 'no-reply@m3orders.com'
 env['email_sender_password'] = 'YB\'S!#4GqUZPsP"6'
 env['accepting_orders_autoshutoff_threshold_in_seconds'] = 300 # stop accepting orders if 300 seconds go by with no queries to view orders page
 
-use_test_webhook_with_live_m3_url = False
-if use_test_webhook_with_live_m3_url:
-    env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
-
+    
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c0a5be14fe3cb64fbfba58ec0a74897c83511fc15f6c267b'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
