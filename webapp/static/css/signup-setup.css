@@ -36,12 +36,18 @@ html {
 .topnav-right {
   color: black;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
   opacity: 1;
   font-size: 17px;
   cursor: pointer;
   font-family:verdana;
+}
+
+.topnav-right-text {
+    text-decoration:inherit; 
+    color:black; 
+    display:block; 
+    padding:14px 16px;
 }
 
 .topnav-right:hover {
