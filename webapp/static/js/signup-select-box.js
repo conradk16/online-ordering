@@ -1,8 +1,8 @@
 'use strict';
 
 function submit_form(plan_type) {
-    form = document.getElementById('select-form');
-    input = document.getElementById('inp');
+    var form = document.getElementById('select-form');
+    var input = document.getElementById('inp');
     input.value = plan_type;
     form.submit();
   }
