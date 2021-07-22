@@ -3,9 +3,14 @@
 <html>
 <body>
 
-<p>Your order could not be fulfilled and was rejected for the following reason: {{rejection_description}}</p>
-<br>
-<p>Your order has been refunded</p>
+<style>
+.par {
+    font-family: "Helvetica Neue";
+    font-size: 13px;
+}
+</style>
+
+<p class="par">Dear {{customer_name}}, <br><br> Your order at {{restaurant_name}} could not be fulfilled and was refunded for the following reason:<br><br> {{rejection_description}}<br><br> We apologize for the inconvenience.</p>
 
 </body>
 </html>
