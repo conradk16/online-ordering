@@ -25,6 +25,7 @@ else:
     env['stripe_secret_api_key'] = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
     env['stripe_webhook_account_signing_secret'] = 'whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5'
+    env['stripe_hardware_product_price_id'] = ''
 
 env['admin_username'] = 'kuklinskywork@gmail.com'
 env['admin_password'] = "36e&'&4K`c4mp~#cjZZ.6q@!#3?APZ%*"
