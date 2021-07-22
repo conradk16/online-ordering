@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, abort, send_file, request, jsonify
 from flask_mail import Message
 import stripe
-from webapp import db, mail
+from webapp import db, mail, env
 from webapp.models.db_models import User, Order
 from flask_login import login_user, logout_user, current_user
 import json
@@ -15,7 +15,7 @@ account = Blueprint('account', __name__)
 def account_homepage():
     if not current_user.is_authenticated:
         return redirect('/login')
-    elif current_user.email_address == "kuklinskywork@gmail.com":
+    elif current_user.email_address == env['admin_username']:
         return get_admin_page()
     elif not current_user.stripe_customer_id:
         return redirect('/signup/select-plan')
@@ -140,8 +140,8 @@ def setup_stripe():
         # create account link (a Stripe URL) where the user can onboard with Stripe
         account_link_object = stripe.AccountLink.create(
             account=account_id,
-            refresh_url='https://m3orders.com/account/setup-stripe',
-            return_url='https://m3orders.com/account',
+            refresh_url=env['stripe_account_link_refresh_url'],
+            return_url=env['stripe_account_link_return_url'],
             type='account_onboarding',
         )
 
@@ -207,7 +207,7 @@ def manage_subcription():
     
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,
-        return_url="https://m3orders.com/account")
+        return_url=env['stripe_billing_portal_return_url'])
 
     return redirect(session.url)
 
@@ -370,7 +370,9 @@ def refund_order():
         order.refunded = True
         db.session.commit()
 
-        send_order_refunded_email(order.customer_email, rejection_description)
+        restaurant_name = json.loads(User.query.filter_by(order_url=order.order_url).first().account_details)['restaurant_name']
+
+        send_order_refunded_email(order.customer_email, rejection_description, order.customer_name, restaurant_name)
 
         return "success"
     else:
@@ -408,14 +410,14 @@ def get_admin_page():
 
 @account.route('/account/admin-download-database')
 def admin_download_database():
-    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+    if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         return send_file("database.db", as_attachment=True)
     else:
         abort(404)
 
 @account.route('/account/admin-download-menu-file', methods=['POST'])
 def admin_download_menu_file():
-    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+    if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         user =  User.query.filter_by(email_address=request.form['email_address']).first()
         menu_file = user.menu_file
         menu_file_filename = user.menu_file_filename
@@ -427,7 +429,7 @@ def admin_download_menu_file():
 
 @account.route('/account/admin-assign-url-to-account', methods=['POST'])
 def admin_assign_url_to_account():
-    if current_user.is_authenticated and current_user.email_address == "kuklinskywork@gmail.com":
+    if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         account_email = request.form['email_address']
         account_url = request.form['url']
         user = User.query.filter_by(email_address=account_email).first()
@@ -483,7 +485,6 @@ def calculate_next_closing_time(closing_times):
 
     next_closing_times = []
 
-    # Timezone options: ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
     # closing_time is a json string containing a list of dicts: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
     for closing_time in json.loads(closing_times):
 
@@ -507,7 +508,7 @@ def calculate_next_closing_time(closing_times):
 def convertTimeToSpecificTimezone(time, timezone):
     return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
 
-def send_order_refunded_email(customer_email, rejection_description):
-    msg = Message(subject='Order Could Not be Fulfilled', sender="no-reply@m3orders.com", recipients=[customer_email])
-    msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description)
+def send_order_refunded_email(customer_email, rejection_description, customer_name, restaurant_name):
+    msg = Message(subject='Order Could Not be Fulfilled', sender=env['email_sender_address'], recipients=[customer_email])
+    msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description, customer_name=customer_name, restaurant_name=restaurant_name)
     mail.send(msg)

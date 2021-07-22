@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import json
 import stripe
 from webapp.models.db_models import User, Order
-from webapp import db
+from webapp import db, env
 import json
 
 webhook = Blueprint('webhook', __name__)
