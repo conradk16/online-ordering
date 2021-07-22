@@ -7,31 +7,55 @@
 <link rel="stylesheet" type="text/css" href="../static/css/closing-times.css">
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<script src="../static/js/closing-hours.js"></script>
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url|tojson}}></script>
+<script src="../static/js/closing-hours.js" id="closing-times-script" data-closing_times={{closing_times}} data-is_update="true"></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}}></script>
 
 <head>
   <script>
     function pre_fill_form() {
-        var closing_times = new Array("7:00pm, 8:00pm", "", "2:00pm", "", "", "", ""); //JSON.parse({{closing_times}});
-        var closed_bools = new Array(false, true, false, true, true, true, true);//JSON.parse({{closed_bools}});
+        var closing_times = JSON.parse({{closing_times|tojson}});
 
-        var times = document.getElementsByClassName("time");
+        var time_elems = document.getElementsByClassName("time");
         var checkboxes = document.getElementsByClassName("checkbox");
 
-        for (let i = 0; i < 7; i++) {
-            const closing_time = closing_times[i];
-            const closed = closed_bools[i];
-            const time = times[i];
-            const checkbox = checkboxes[i];
+        var day_strings = {};
 
-            time.value = closing_time;
-            checkbox.checked = closed;
+        for (const closing_time of closing_times) {
+            const day = closing_time["day"];
+            var hour = closing_time["hour"];
+            var minute = closing_time["minute"];
+
+            var ampm = "am"
+            if (hour > 12) {
+                hour -= 12;
+                ampm = "pm";
+            }
+        
+            if (minute < 10) {
+                minute = "0" + minute;
+            } else {
+                minute = minute + "";
+            }
+
+            const str = hour + ":" + minute + ampm;
+            
+            if (!(day in day_strings)) {
+                day_strings[day] = str;
+            } else {
+                day_strings[day] = day_strings[day] + ", " + str;
+            }
         }
 
-        var time_zone = "US/Pacific"; //{{time_zone}}
-        var time_zone_elem = document.getElementsByClassName("drop-down")[0];
-        time_zone_elem.value = time_zone;
+        for (let i = 0; i < 7; i++) {
+            const time_elem = time_elems[i];
+            const checkbox = checkboxes[i];
+
+            if (!(i in day_strings)) {
+                checkbox.checked = true;
+            } else {
+                time_elem.value = day_strings[i];
+            }
+        }
     }
 
     function run_on_load() {
@@ -148,25 +172,6 @@
 
           <div class="multiple-closing-notes-holder">
               <a class="multiple-closing-notes">*If your restaurant closes more than once in a day, please enter the times separated by commas, e.g., "2:00pm, 8:00pm"</a>
-          </div>
-
-          <div class="upload-holder">
-            <a class="upload-instructions">Select Time Zone</a>
-            <select class="drop-down">
-                <option value="">No Time Zone Selected</option>
-                <option value="US/Alaska">Alaska</option>
-                <option value="US/Aleutian">Aleutian</option>
-                <option value="US/Arizona">Arizona</option>
-                <option value="US/Central">Central</option>
-                <option value="US/East-Indiana">East-Indiana</option>
-                <option value="US/Eastern">Eastern</option>
-                <option value="US/Hawaii">Hawaii</option>
-                <option value="US/Indiana-Starke">Indiana-Starke</option>
-                <option value="US/Michigan">Michigan</option>
-                <option value="US/Mountain">Mountain</option>
-                <option value="US/Pacific">Pacific</option>
-                <option value="US/Samoa">Samoa</option>
-            </select>
           </div>
 
           <div class="button-holder">

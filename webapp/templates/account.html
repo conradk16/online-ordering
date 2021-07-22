@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="../static/css/account-menu.css">
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url|tojson}}></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}}></script>
 
 <head>
   <script>
@@ -31,20 +31,17 @@
         } else {
             button.style.cursor = "pointer";
             var description = document.getElementsByClassName("description")[0];
-            description.innerHTML = "This is the link to your online ordering website. Add this link to your main website and make sure it is easily accessible to your customers.";
+            description.innerHTML = "This is the link to your online ordering website. Add it to your main website and make sure it's easily accessible to your customers.";
+            description.style.marginBottom = "20px";
 
             // add link title
             var content_holder = document.getElementsByClassName("content-holder")[0];
-            var link_title = document.createElement("a");
-            link_title.classList.add("link-title");
-            link_title.innerHTML = "Your online ordering link:";
-            content_holder.insertBefore(link_title, description);
-
+                  
             // add link text
             var link_text = document.createElement("a");
             link_text.classList.add("link-text");
             link_text.innerHTML = "https://m3orders.com/" + orders_link;
-            content_holder.insertBefore(link_text, description);
+            content_holder.insertBefore(link_text, button);
         }
     }
 
