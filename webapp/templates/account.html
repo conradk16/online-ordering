@@ -46,6 +46,12 @@
             link_text.classList.add("link-text");
             link_text.innerHTML = "https://m3orders.com/" + orders_link;
             content_holder.insertBefore(link_text, button);
+
+            // add view orders notes
+            var comment = document.createElement("a");
+            comment.classList.add("view-order-notes");
+            comment.innerHTML = "*Orders will automatically stop being accepted at your specified closing times or when you leave the View Orders page for more than 5 minutes. You can always manually switch back to accepting orders."
+            content_holder.appendChild(comment);
         }
     }
 
@@ -129,6 +135,13 @@
     justify-content: flex-start;
     align-items: center;
     word-wrap: break-word;
+}
+
+.view-order-notes {
+    text-align: center;
+    color: gray;
+    font-size: 13px;
+    margin-top: 10px;
 }
   
 
