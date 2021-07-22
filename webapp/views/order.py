@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, session, redirect
 from webapp.models.order import *
 from webapp.models.db_models import User, Order
-from webapp import db
+from webapp import db, env
 import stripe
 import json
 import datetime
@@ -40,7 +40,7 @@ def super_cucas_micheltorena():
         restaurant_user.currently_accepting_orders = False
         restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)
         db.session.commit()
-    elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > 300):
+    elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 
@@ -122,7 +122,7 @@ def update_order_details():
         restaurant_user.currently_accepting_orders = False
         restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)
         db.session.commit()
-    elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > 300):
+    elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 

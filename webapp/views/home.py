@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user
 from flask_mail import Message
 
 from webapp.models.db_models import User
-from webapp import db, bcrypt, mail
+from webapp import db, bcrypt, mail, env
 
 import stripe
 
@@ -98,7 +98,7 @@ def send_reset_email(user):
     if user:
         token = user.get_reset_token()
 
-        msg = Message(subject='M3 Orders Password Reset', sender="no-reply@m3orders.com", recipients=[user.email_address])
+        msg = Message(subject='M3 Orders Password Reset', sender=env['email_sender_address'], recipients=[user.email_address])
         msg.html = render_template('reset-password-email.html', reset_link=url_for('home.reset_password', token=token, _external=True))
         mail.send(msg)
 
@@ -180,8 +180,8 @@ def signup_select_setup_fee():
 
 
                 checkout_session = stripe.checkout.Session.create(
-                success_url='https://m3orders.com/account/setup-account-details',
-                cancel_url='https://m3orders.com/signup/select-setup-fee',
+                success_url=env['stripe_checkout_session_success_url'],
+                cancel_url=env['stripe_checkout_session_cancel_url'],
                 customer_email=current_user.email_address,
                 client_reference_id=current_user.email_address,
                 payment_method_types=['card'],
