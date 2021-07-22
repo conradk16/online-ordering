@@ -971,10 +971,7 @@ function preload_images()
 }
 
 function check_if_closed() {
-    var closed = false;
-    /*if ({{not_accepting_orders}} == "true") {
-        closed = true;
-    }*/
+    var closed = {{accepting_orders|tojson}} == "False";
 
     if (closed) {
         var screen_cover = document.createElement("div");
