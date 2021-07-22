@@ -83,19 +83,35 @@
     return to_return;
   }
 
-  // creates the element if it doesn't exist
   function getErrorElement() {
     return document.getElementsByClassName("invalid-input-text")[0];
+  }
+
+  // returns null on error, time zone string on success
+  function validate_time_zone() {
+     var time_zone = document.getElementsByClassName("drop-down")[0].value;
+      if (time_zone == "") {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please select a time zone";
+        return null;
+      } else {
+        return time_zone;
+      }
   }
 
 
   function validate_form() {
     // validate time zone
-    var time_zone = document.getElementsByClassName("drop-down")[0].value;
-    if (time_zone == "") {
-        var invalid_input_text = getErrorElement();
-        invalid_input_text.innerHTML = "*Please select a time zone";
-        return;
+    var is_update = document.getElementById("closing-times-script").getAttribute('data-is_update') == "true";
+    if (!is_update) {
+        var time_zone = validate_time_zone();
+        if (time_zone == null) {
+            return;
+        }
+    } else {
+        console.log(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
+        var closing_times = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
+        var time_zone = closing_times[0]["timezone"];
     }
 
     // validate days of the week and add them to array

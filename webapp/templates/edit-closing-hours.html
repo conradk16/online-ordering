@@ -7,29 +7,55 @@
 <link rel="stylesheet" type="text/css" href="../static/css/closing-times.css">
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<script src="../static/js/closing-hours.js"></script>
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url|tojson}}></script>
+<script src="../static/js/closing-hours.js" id="closing-times-script" data-closing_times={{closing_times}} data-is_update="true"></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}}></script>
 
 <head>
   <script>
     function pre_fill_form() {
         var closing_times = JSON.parse({{closing_times|tojson}});
 
-        var times = document.getElementsByClassName("time");
+        var time_elems = document.getElementsByClassName("time");
         var checkboxes = document.getElementsByClassName("checkbox");
 
+        var day_strings = {};
+
+        for (const closing_time of closing_times) {
+            const day = closing_time["day"];
+            var hour = closing_time["hour"];
+            var minute = closing_time["minute"];
+
+            var ampm = "am"
+            if (hour > 12) {
+                hour -= 12;
+                ampm = "pm";
+            }
+        
+            if (minute < 10) {
+                minute = "0" + minute;
+            } else {
+                minute = minute + "";
+            }
+
+            const str = hour + ":" + minute + ampm;
+            
+            if (!(day in day_strings)) {
+                day_strings[day] = str;
+            } else {
+                day_strings[day] = day_strings[day] + ", " + str;
+            }
+        }
+
         for (let i = 0; i < 7; i++) {
-            const closing_time = closing_times[i];
-            const closed = closed_bools[i];
-            const time = times[i];
+            const time_elem = time_elems[i];
             const checkbox = checkboxes[i];
 
-            time.value = closing_time;
-            checkbox.checked = closed;
+            if (!(i in day_strings)) {
+                checkbox.checked = true;
+            } else {
+                time_elem.value = day_strings[i];
+            }
         }
-              
-        var time_zone_elem = document.getElementsByClassName("drop-down")[0];
-        time_zone_elem.value = time_zone;
     }
 
     function run_on_load() {
