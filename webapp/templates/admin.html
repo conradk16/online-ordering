@@ -40,12 +40,27 @@ for (account of JSON.parse({{users_with_urls|tojson}})) {
 
 </script>
 
+<h1>Assign an account an order url</h1>
 
-<form name="form" id="form" action="/account/admin-assign-url-to-account" method="POST">
+<form name="form" id="form" action="/account/admin-assign-order-url-to-account" method="POST">
   <div id="email_address_label" for="email_address">Account email</div>
   <input id="email_address" name="email_address" placeholder="account email">
-  <div id="url_label" for="url">URL (ex: 'super-cucas-micheltorena')</div>
+  <div id="url_label" for="url">Order URL (ex: 'super-cucas-micheltorena')</div>
   <input id="url" name="url" placeholder="url">
+
+  <input type="submit" id="submit" value="Submit" style="-webkit-appearance:none;">
+
+</form>
+
+<br>
+
+<h1>Assign an account a website url</h1>
+
+<form name="form2" id="form2" action="/account/admin-assign-website-url-to-account" method="POST">
+  <div id="email_address_label2" for="email_address2">Account email</div>
+  <input id="email_address2" name="email_address" placeholder="account email">
+  <div id="url_label2" for="url2">Website URL (ex: 'www.super-cucas-micheltorena.com')</div>
+  <input id="url2" name="url" placeholder="url">
 
   <input type="submit" id="submit" value="Submit" style="-webkit-appearance:none;">
 

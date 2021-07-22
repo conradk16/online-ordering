@@ -191,11 +191,13 @@ def signup_select_setup_fee():
                         'price': env['stripe_monthly_without_website_price_id'],
                         'quantity': 1
                     })
-                else:
+                elif session.get('need_website') == 'false' and session.get('monthly_or_yearly') == 'yearly':
                     line_items.append({
                         'price': env['stripe_yearly_without_website_price_id'],
                         'quantity': 1
                     })
+                else:
+                    return redirect('/login')
 
                 # Add line items for one-time fees
                 if session.get('need_website') == 'true':

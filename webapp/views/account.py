@@ -28,7 +28,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription)
+        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -389,9 +389,12 @@ def get_admin_page():
         user['active_subscription'] = userObject.active_subscription
         user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
         user['paid_for_hardware'] = userObject.paid_for_hardware
+        user['paid_for_website'] = userObject.paid_for_website
         user['shipping_address'] = userObject.shipping_address
         user['account_details'] = userObject.account_details
         user['menu_notes'] = userObject.menu_notes
+        user['order_url'] = userObject.order_url
+        user['website_url'] = userObject.website_url
         users.append(user)
 
     users_with_urls = User.query.filter(User.order_url.isnot(None))
@@ -402,10 +405,12 @@ def get_admin_page():
         user['active_subscription'] = userObject.active_subscription
         user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
         user['paid_for_hardware'] = userObject.paid_for_hardware
+        user['paid_for_website'] = userObject.paid_for_website
         user['shipping_address'] = userObject.shipping_address
         user['account_details'] = userObject.account_details
         user['menu_notes'] = userObject.menu_notes
         user['order_url'] = userObject.order_url
+        user['website_url'] = userObject.website_url
         users_with.append(user)
 
     return render_template('admin.html', users_without_urls=json.dumps(users), users_with_urls=json.dumps(users_with))
@@ -429,13 +434,25 @@ def admin_download_menu_file():
     else:
         abort(404)
 
-@account.route('/account/admin-assign-url-to-account', methods=['POST'])
-def admin_assign_url_to_account():
+@account.route('/account/admin-assign-order-url-to-account', methods=['POST'])
+def admin_assign_order_url_to_account():
     if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         account_email = request.form['email_address']
         account_url = request.form['url']
         user = User.query.filter_by(email_address=account_email).first()
         user.order_url = account_url
+        db.session.commit()
+        return redirect('/account')
+    else:
+        abort(404)
+
+@account.route('/account/admin-assign-website-url-to-account', methods=['POST'])
+def admin_assign_website_url_to_account():
+    if current_user.is_authenticated and current_user.email_address == env['admin_username']:
+        account_email = request.form['email_address']
+        website_url = request.form['url']
+        user = User.query.filter_by(email_address=account_email).first()
+        user.website_url = website_url
         db.session.commit()
         return redirect('/account')
     else:

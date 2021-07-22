@@ -28,16 +28,19 @@ def webhook_account_received():
         # Payment is successful and the subscription is created.
 
         # Check if paid for hardware
-        paid_for_hardware = False
+        paid_for_hardware, paid_for_website = False, False
         line_items = stripe.checkout.Session.list_line_items(data_object.id, limit=2).data
         for line_item in line_items:
             if line_item.price.id == env['stripe_hardware_product_price_id']:
                 paid_for_hardware = True
+            if line_item.price.id == env['stripe_website_setup_product_price_id']:
+                paid_for_website = True
 
         client_reference_id = data_object.client_reference_id
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(email_address=client_reference_id).first()
         user.paid_for_hardware = paid_for_hardware
+        user.paid_for_website = paid_for_website
         if data_object.shipping:
             user.shipping_address = json.dumps(data_object.shipping)
         user.stripe_customer_id = stripe_customer_id

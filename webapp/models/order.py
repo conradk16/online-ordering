@@ -172,3 +172,15 @@ class ConvertJsonToOrder:
         for json_choice in json_choice_set['choices']:
             choices.append(Choice(json_choice['name'], json_choice['price']))
         return ChoiceSet(json_choice_set['title'], choices)
+
+class ConvertJsonToMenu:
+
+    def __init__(self, json_menu, order_url):
+        self.json_menu = json_menu
+        self.order_url = order_url
+
+    def menu(self):
+        menu_items = []
+        for json_menu_item in self.json_menu:
+            menu_items.append(ConvertJsonToOrder.json_menu_item_to_class(json_menu_item))
+        return Menu(menu_items, self.order_url)
