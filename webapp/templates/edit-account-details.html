@@ -26,7 +26,8 @@
         var email = account_details["email"];
         var phone = account_details["phone"];
         var menu_url = account_details["menu_url"];
-        var file_name = "filename";
+        var file_name = JSON.parse({{menu_filename|tojson}});
+        console.log(file_name);
         
         var name_inp = document.getElementById("name");
         name_inp.value = name;
@@ -36,7 +37,7 @@
         phone_inp.value = phone;
         var menu_url_inp = document.getElementById("menu_url");
         menu_url_inp.value = menu_url;
-        var file_name_elem = document.getElementById("menu_filename");
+        var file_name_elem = document.getElementById("file_name");
         file_name_elem.innerHTML = file_name;
     }
 
