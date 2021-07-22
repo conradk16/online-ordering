@@ -13,8 +13,7 @@
 <head>
   <script>
     function pre_fill_form() {
-        var closing_times = new Array("7:00pm, 8:00pm", "", "2:00pm", "", "", "", ""); //JSON.parse({{closing_times}});
-        var closed_bools = new Array(false, true, false, true, true, true, true);//JSON.parse({{closed_bools}});
+        var closing_times = JSON.parse({{closing_times|tojson}});
 
         var times = document.getElementsByClassName("time");
         var checkboxes = document.getElementsByClassName("checkbox");
@@ -28,8 +27,7 @@
             time.value = closing_time;
             checkbox.checked = closed;
         }
-
-        var time_zone = "US/Pacific"; //{{time_zone}}
+              
         var time_zone_elem = document.getElementsByClassName("drop-down")[0];
         time_zone_elem.value = time_zone;
     }
@@ -148,25 +146,6 @@
 
           <div class="multiple-closing-notes-holder">
               <a class="multiple-closing-notes">*If your restaurant closes more than once in a day, please enter the times separated by commas, e.g., "2:00pm, 8:00pm"</a>
-          </div>
-
-          <div class="upload-holder">
-            <a class="upload-instructions">Select Time Zone</a>
-            <select class="drop-down">
-                <option value="">No Time Zone Selected</option>
-                <option value="US/Alaska">Alaska</option>
-                <option value="US/Aleutian">Aleutian</option>
-                <option value="US/Arizona">Arizona</option>
-                <option value="US/Central">Central</option>
-                <option value="US/East-Indiana">East-Indiana</option>
-                <option value="US/Eastern">Eastern</option>
-                <option value="US/Hawaii">Hawaii</option>
-                <option value="US/Indiana-Starke">Indiana-Starke</option>
-                <option value="US/Michigan">Michigan</option>
-                <option value="US/Mountain">Mountain</option>
-                <option value="US/Pacific">Pacific</option>
-                <option value="US/Samoa">Samoa</option>
-            </select>
           </div>
 
           <div class="button-holder">
