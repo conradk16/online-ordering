@@ -530,6 +530,9 @@ function load_extrawide_layout() {
         main_body.appendChild(food_items);
     }
 
+    // load wide menu
+    load_menu_wide();
+
     // remove and add the cart
     var cart = document.getElementsByClassName("cart")[0];
     if (cart != null) {
@@ -544,9 +547,6 @@ function load_extrawide_layout() {
     cart.style.borderRadius = "20px";
 
     load_cart();
-
-    // load wide menu
-    load_menu_wide();
 
     // set max-width for food-items
     food_items.style.width = '600px';
@@ -659,7 +659,7 @@ async function load_menu_wide() {
         var group_list_right = document.createElement('ul');
         group_list_right.classList.add("group-list-right");
         group_box.appendChild(group_list_right);
-
+            
         // add items to left stack
 
         for (const item of menu_group.items) {
@@ -698,7 +698,6 @@ async function load_menu_wide() {
         }
 
         await sleep(1);
-
         // move items back to right stack
 
         while (true) {
