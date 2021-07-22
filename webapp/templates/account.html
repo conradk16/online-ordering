@@ -16,6 +16,10 @@
         button.onclick = null;
     }
 
+    function go_to_view_orders() {
+        window.location.href = '/account/orders';
+    }
+
     function load_content() {
         var orders_link = {{order_url|tojson}};
         var active_subscription = {{active_subscription|tojson}};
@@ -42,6 +46,12 @@
             link_text.classList.add("link-text");
             link_text.innerHTML = "https://m3orders.com/" + orders_link;
             content_holder.insertBefore(link_text, button);
+
+            // add view orders notes
+            var comment = document.createElement("a");
+            comment.classList.add("view-order-notes");
+            comment.innerHTML = "*Orders will automatically stop being accepted at your specified closing times or when you leave the View Orders page for more than 5 minutes. You can always manually switch back to accepting orders."
+            content_holder.appendChild(comment);
         }
     }
 
@@ -126,6 +136,13 @@
     align-items: center;
     word-wrap: break-word;
 }
+
+.view-order-notes {
+    text-align: center;
+    color: gray;
+    font-size: 13px;
+    margin-top: 10px;
+}
   
 
 </style>
@@ -162,7 +179,7 @@
   <div class="center">
     <div class="content-holder">
         <a class="description">We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.</a>
-        <button id="button" class="button" onclick="submit_form()">View Orders</button>
+        <button onclick="go_to_view_orders()" id="button" class="button">View Orders</button>
     </div>
   </div>
 

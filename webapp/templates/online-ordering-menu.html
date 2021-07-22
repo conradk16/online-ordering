@@ -216,10 +216,6 @@ function add_to_order(item) {
 
     close_popup();
 
-    // display "added to order"
-    display_error("Added To Order", "#4693e0", "#fff", false, "20px");
-    window.setTimeout("hide_error();", 750);
-
     // add to cart_items
     var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
 
@@ -234,6 +230,10 @@ function add_to_order(item) {
     if (!matched) {
         cart_items.push(cart_item_to_add);
     }
+
+    //update cart number
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.innerHTML = get_num_cart_items();
 
     if (current_layout == "wide" || current_layout == "extrawide") {
         load_cart();
@@ -364,6 +364,14 @@ function load_cart_layout() {
     cart_icon.style.display = "none";
     menu_icon.style.display = "block";
 
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
+
 }
 
 function load_narrow_layout() {
@@ -401,6 +409,13 @@ function load_narrow_layout() {
     // set popup to be full width
     var popup = document.getElementsByClassName("popup-content")[0];
     popup.style.width = "100%";
+
+    //set the number
+    var cart_number_circle = document.getElementsByClassName("cart-number-circle")[0];
+    cart_number_circle.style.display = "block";
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.style.display = "block";
+    cart_number.innerHTML = get_num_cart_items();
 }
 
 function load_medium_layout() {
@@ -438,6 +453,13 @@ function load_medium_layout() {
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
     popup.style.width = "460px";
+
+    //set the number
+    var cart_number_circle = document.getElementsByClassName("cart-number-circle")[0];
+    cart_number_circle.style.display = "block";
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.style.display = "block";
+    cart_number.innerHTML = get_num_cart_items();
 }
 
 function load_wide_layout() {
@@ -485,6 +507,14 @@ function load_wide_layout() {
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
     popup.style.width = "460px";
+
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
 }
 
 function load_extrawide_layout() {
@@ -499,6 +529,9 @@ function load_extrawide_layout() {
         food_items.classList.add("food-items");
         main_body.appendChild(food_items);
     }
+
+    // load wide menu
+    load_menu_wide();
 
     // remove and add the cart
     var cart = document.getElementsByClassName("cart")[0];
@@ -515,9 +548,6 @@ function load_extrawide_layout() {
 
     load_cart();
 
-    // load wide menu
-    load_menu_wide();
-
     // set max-width for food-items
     food_items.style.width = '600px';
 
@@ -531,6 +561,14 @@ function load_extrawide_layout() {
     // set popup to be fixed width
     var popup = document.getElementsByClassName("popup-content")[0];
     popup.style.width = "460px"
+
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
 }
 
 // assumes food-items exists
@@ -593,7 +631,7 @@ function load_menu_narrow() {
 }
 
 // assumes food-items exists
-function load_menu_wide() {
+async function load_menu_wide() {
     var food_items = document.getElementsByClassName("food-items")[0];
 
     // clear the menu
@@ -621,7 +659,7 @@ function load_menu_wide() {
         var group_list_right = document.createElement('ul');
         group_list_right.classList.add("group-list-right");
         group_box.appendChild(group_list_right);
-
+            
         // add items to left stack
 
         for (const item of menu_group.items) {
@@ -659,6 +697,7 @@ function load_menu_wide() {
 
         }
 
+        await sleep(1);
         // move items back to right stack
 
         while (true) {
@@ -679,6 +718,10 @@ function load_menu_wide() {
     }
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function remove_from_cart_items(to_remove) {
     for (let i = 0; i < cart_items.length; i++) {
         cart_item = cart_items[i];
@@ -686,6 +729,14 @@ function remove_from_cart_items(to_remove) {
             cart_items.splice(i, 1);
         }
     }
+}
+
+function get_num_cart_items() {
+    var count = 0;
+    for (const cart_item of cart_items) {
+        count += cart_item.quantity;
+    }
+    return count;
 }
 
 function get_cart_total() {
@@ -1169,15 +1220,35 @@ body {
     font-weight: 700;
     color: #5c5c5c;
     text-transform: uppercase;
-    padding: 10px;
 }
 
 .cart-menu-icon-holder {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
 }
 
 .cart-menu-icon {
-    positon: absolute;
+    /*positon: absolute;*/
+}
+
+.cart-number-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+}
+
+.cart-number {
+    position: absolute;
+    color: white;
+    margin-top: 1px;
+}
+
+.cart-number-circle {
+    position: absolute;
+    filter: invert(48%) sepia(93%) saturate(652%) hue-rotate(184deg) brightness(93%) contrast(88%);
 }
 
 .main-body {
@@ -1621,9 +1692,12 @@ body {
 <body>
 
 <div class="topnav">
-    <img src="../static/super_cucas.jpg" alt="" height=45>
     <p class="store-name">Super Cucas - Micheltorena</p>
     <div class=cart-menu-icon-holder>
+        <div class="cart-number-holder">
+            <img src="../static/circle.png" class="cart-number-circle" alt="" height=25>
+            <a class="cart-number">0</a>
+        </div>
         <img src="../static/cart.jpg" class="cart-menu-icon" alt="" height=50 style="display:block;">
         <img src="../static/menu.png" class="cart-menu-icon" alt="" height=40 style="display:none;">
     </div>
