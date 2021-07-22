@@ -1024,9 +1024,8 @@ function preload_images()
 }
 
 function check_if_closed() {
-    var closed = {{accepting_orders|tojson}} == "False";
-
-    if (closed) {
+    var accepting_orders = {{accepting_orders|tojson}};
+    if (accepting_orders == false) {
         var screen_cover = document.createElement("div");
         screen_cover.classList.add("closed-info-screen-cover");
         document.body.appendChild(screen_cover);
