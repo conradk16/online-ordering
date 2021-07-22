@@ -17,7 +17,7 @@ function check_if_view_orders() {
     //orders_link = null;
 
     var menu_view_orders = document.getElementById("menu_view_orders");
-    if (orders_link == null) {
+    if (orders_link == "null") {
         menu_view_orders.style.cursor = "default";
         menu_view_orders.style.color = "gray";
         menu_view_orders.style.pointerEvents = "none";
