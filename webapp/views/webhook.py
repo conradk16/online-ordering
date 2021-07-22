@@ -31,7 +31,7 @@ def webhook_account_received():
         paid_for_hardware = False
         line_items = stripe.checkout.Session.list_line_items(data_object.id, limit=2).data
         for line_item in line_items:
-            if line_item.price.id == "price_1JFMNILGQW192ovflSPEK3sp":
+            if line_item.price.id == env['stripe_hardware_product_price_id']:
                 paid_for_hardware = True
 
         client_reference_id = data_object.client_reference_id

@@ -386,6 +386,7 @@ def get_admin_page():
     for userObject in users_without_urls:
         user = {}
         user['email_address'] = userObject.email_address
+        user['active_subscription'] = userObject.active_subscription
         user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
         user['paid_for_hardware'] = userObject.paid_for_hardware
         user['shipping_address'] = userObject.shipping_address
@@ -398,6 +399,7 @@ def get_admin_page():
     for userObject in users_with_urls:
         user = {}
         user['email_address'] = userObject.email_address
+        user['active_subscription'] = userObject.active_subscription
         user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
         user['paid_for_hardware'] = userObject.paid_for_hardware
         user['shipping_address'] = userObject.shipping_address
