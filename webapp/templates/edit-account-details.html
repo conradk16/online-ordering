@@ -26,7 +26,7 @@
         var email = account_details["email"];
         var phone = account_details["phone"];
         var menu_url = account_details["menu_url"];
-        var file_name = JSON.parse({{menu_filename|tojson}});
+        var file_name = {{menu_filename|tojson}};
         console.log(file_name);
         
         var name_inp = document.getElementById("name");
@@ -167,6 +167,10 @@
           </div>
 
           <button class="button" id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Update</button>
+          
+          <div class="invalid-input-text-holder">
+              <a class="invalid-input-text"></a>
+          </div>
         </form>
 
       </div>
