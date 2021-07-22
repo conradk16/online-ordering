@@ -16,6 +16,10 @@
         button.onclick = null;
     }
 
+    function go_to_view_orders() {
+        window.location.href = '/account/orders';
+    }
+
     function load_content() {
         var orders_link = {{order_url|tojson}};
         var active_subscription = {{active_subscription|tojson}};
@@ -162,7 +166,7 @@
   <div class="center">
     <div class="content-holder">
         <a class="description">We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.</a>
-        <button id="button" class="button" onclick="submit_form()">View Orders</button>
+        <button onclick="go_to_view_orders()" id="button" class="button">View Orders</button>
     </div>
   </div>
 
