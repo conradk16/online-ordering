@@ -121,19 +121,31 @@ def signup():
         if user:
             if bcrypt.check_password_hash(user.password, request.form['password']):
                 login_user(user, remember=False)
-                if user.stripe_customer_id:
-                    return redirect('/account')
-                else:
-                    return redirect('/signup/select-plan')
+                return redirect('/account')
             else:
                 return render_template('signup.html', user_already_exists="true")
         else:
             user = User(email_address=request.form['email_address'], password=bcrypt.generate_password_hash(request.form['password']).decode('utf-8'))
             user.add_to_db()
             login_user(user, remember=False)
+            return redirect('/signup/select-website')
+
+# select website page, also a POST endpoint for choosing a website
+@home.route('/signup/select-website', methods=['GET', 'POST'])
+def signup_select_plan():
+    if request.method == 'GET':
+        if not current_user.is_authenticated:
+            return redirect('/login')
+        else:
+            return render_template('signup-select-website.html')
+    elif request.method == 'POST':
+        if (not current_user.is_authenticated) or (not is_valid_signup_select_website_post_request(request)):
+            return redirect('/login')
+        else:
+            session['need_website'] = request.form['need_website']
             return redirect('/signup/select-plan')
 
-# select plan page, also a POST endpoint for choosing a plan and being redirected to Stripe checkout
+# select plan page, also a POST endpoint for choosing a plan
 @home.route('/signup/select-plan', methods=['GET', 'POST'])
 def signup_select_plan():
     if request.method == 'GET':
@@ -145,9 +157,10 @@ def signup_select_plan():
         if (not current_user.is_authenticated) or (not is_valid_signup_select_plan_post_request(request)):
             return redirect('/login')
         else:
-            session['subscription_price_id'] = request.form['subscription_price_id']
+            session['monthly_or_yearly'] = request.form['monthly_or_yearly']
             return redirect('/signup/select-setup-fee')
 
+# select setup fee page, also a POST endpoint for choosing a setup fee and being redirected to Stripe checkout
 @home.route('/signup/select-setup-fee', methods=['GET', 'POST'])
 def signup_select_setup_fee():
     if request.method == 'GET':
@@ -160,21 +173,42 @@ def signup_select_setup_fee():
             return redirect('/login')
         else:
             try:
+                line_items, shipping_address_collection = [], None
 
-                shipping_address_collection = None
-                line_items=[
-                    {
-                    'price': session['subscription_price_id'],
-                    'quantity': 1
-                    }]
-
-                if request.form['setup_fee_price_id'] != '':
-                    shipping_address_collection = {'allowed_countries': ['US']}
+                # Set line item for subscription
+                if session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'monthly':
                     line_items.append({
-                    'price': request.form['setup_fee_price_id'],
-                    'quantity': 1
+                        price: env['stripe_monthly_with_website_price_id'],
+                        quantity: 1
+                    })
+                elif session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'yearly':
+                    line_items.append({
+                        price: env['stripe_yearly_with_website_price_id'],
+                        quantity: 1
+                    })
+                elif session.get('need_website') == 'false' and session.get('monthly_or_yearly') == 'monthly':
+                    line_items.append({
+                        price: env['stripe_monthly_without_website_price_id'],
+                        quantity: 1
+                    })
+                else:
+                    line_items.append({
+                        price: env['stripe_yearly_without_website_price_id'],
+                        quantity: 1
                     })
 
+                # Add line items for one-time fees
+                if session.get('need_website') == 'true':
+                    line_items.append({
+                        'price': env['stripe_website_setup_product_price_id'],
+                        'quantity': 1
+                    })
+                if request.form['need_hardware'] == 'true':
+                    line_items.append({
+                        'price': env['stripe_hardware_product_price_id'],
+                        'quantity': 1
+                    })
+                    shipping_address_collection = {'allowed_countries': ['US']}
 
                 checkout_session = stripe.checkout.Session.create(
                 success_url=env['stripe_checkout_session_success_url'],
@@ -205,16 +239,21 @@ def is_valid_signup_post_request(request):
                 return True
     return False
 
+def is_valid_signup_select_website_post_request(request):
+    if request.form:
+        if 'need_website' in request.form:
+            return True
+    return False
+
 def is_valid_signup_select_plan_post_request(request):
     if request.form:
-        if 'subscription_price_id' in request.form:
+        if ('monthly_or_yearly' in request.form) and session.get('need_website'):
             return True
     return False
 
 def is_valid_signup_select_fee_post_request(request):
     if request.form:
-        if 'setup_fee_price_id' in request.form:
-            if session.get('subscription_price_id'):
-                return True
+        if ('need_hardware' in request.form) and session.get('need_website') and session.get('monthly_or_yearly'):
+            return True
     return False
 

@@ -18,7 +18,7 @@ def account_homepage():
     elif current_user.email_address == env['admin_username']:
         return get_admin_page()
     elif not current_user.stripe_customer_id:
-        return redirect('/signup/select-plan')
+        return redirect('/signup/select-website')
     elif not current_user.account_details:
         return redirect('/account/setup-account-details')
     elif not current_user.menu_notes:
