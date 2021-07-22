@@ -43,28 +43,28 @@
 <div class="center">
 
         <div class="step">Step 2 of 8</div>
-        <div class="title">Do You Have an Existing Website?</div>
+        <div class="title">Do You Have a Website?</div>
         <div class="plans">
-            <div class="plan" name="plan2" onclick="submit_form('')">
-                <div class="plan-title img-purple">Yes, I already have a website.</div>
+            <div class="plan" name="plan2" onclick="submit_form('false')">
+                <div class="plan-title img-purple">Yes, I already have a website</div>
                 <div class="plan-caption">$0</div>
                 <img src="../static/www-icon.png" class="img-purple plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-purple"></img>
-                    <div class="plan-bullet-text">Select this option if you already have a restaurant website.</div>
+                    <div class="plan-bullet-text">Select this option if you already have a restaurant website</div>
                 </div>
             </div>
-            <div class="plan" name="plan1" onclick="submit_form('price_1JFMNILGQW192ovflSPEK3sp')">
-                <div class="plan-title img-blue">No, I need a website.</div>
+            <div class="plan" name="plan1" onclick="submit_form('true')">
+                <div class="plan-title img-blue">No, I need a website</div>
                 <div class="plan-caption">$199 + $19/month</div>
                 <img src="../static/globe.png" class="img-blue plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-blue"></img>
-                    <div class="plan-bullet-text">Includes website creation and hosting.</div>
+                    <div class="plan-bullet-text">Includes website creation and hosting</div>
                 </div>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-blue"></img>
-                    <div class="plan-bullet-text">Required if you do not already have a website.</div>
+                    <div class="plan-bullet-text">Required if you do not already have a website</div>
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
 </div>
 
 <form id="select-form" method="POST">
-    <input type="hidden" id="inp" name="setup_fee_price_id">
+    <input type="hidden" id="inp" name="need_website">
 </form>
 
 </html>

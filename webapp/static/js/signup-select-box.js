@@ -1,9 +1,9 @@
 'use strict';
 
-function submit_form(plan_type) {
+function submit_form(selection) {
     var form = document.getElementById('select-form');
     var input = document.getElementById('inp');
-    input.value = plan_type;
+    input.value = selection;
     form.submit();
   }
 

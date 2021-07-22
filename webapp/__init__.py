@@ -23,23 +23,23 @@ if PROD:
     env['stripe_webhook_connect_signing_secret'] = 'whsec_w90BqL9nSa8at3kwalBAmi7UUEa37WPt'
 
     env['stripe_hardware_product_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_website_setup_product_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_monthly_with_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_monthly_without_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
+    env['stripe_website_setup_product_price_id'] = 'price_1JG9U0LGQW192ovfwlmQmLSM'
+    env['stripe_monthly_with_website_price_id'] = 'price_1JG9WaLGQW192ovfb3orKoLz'
+    env['stripe_monthly_without_website_price_id'] = 'price_1JG9VULGQW192ovfVgZpHGIv'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JG9k8LGQW192ovfETjV1N4X'
+    env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y6LGQW192ovf9wEO8yby'
  
 else:
     stripe.api_key = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
     env['stripe_webhook_account_signing_secret'] = 'whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5'
 
-    env['stripe_hardware_product_price_id'] = 'price_1JFMNILGQW192ovflSPEK3sp'
-    env['stripe_website_setup_product_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_monthly_with_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_monthly_without_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_yearly_without_website_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
+    env['stripe_hardware_product_price_id'] = 'price_1JG9IzLGQW192ovfYtOVi098'
+    env['stripe_website_setup_product_price_id'] = 'price_1JG9KKLGQW192ovfU9F9R2Id'
+    env['stripe_monthly_with_website_price_id'] = 'price_1JG9MELGQW192ovf6LIOW1py'
+    env['stripe_monthly_without_website_price_id'] = 'price_1JG9V9LGQW192ovfr3mdX0sX'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JG9jrLGQW192ovf9uACPHcm'
+    env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y1LGQW192ovfzqADppTZ'
 
 env['admin_username'] = 'kuklinskywork@gmail.com'
 env['admin_password'] = "36e&'&4K`c4mp~#cjZZ.6q@!#3?APZ%*"

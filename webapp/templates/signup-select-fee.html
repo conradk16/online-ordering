@@ -39,9 +39,9 @@
 <div class="center">
 
         <div class="step">Step 4 of 8</div>
-        <div class="title">Select a signup fee</div>
+        <div class="title">Select a setup fee</div>
         <div class="plans">
-            <div class="plan" name="plan2" onclick="submit_form('')">
+            <div class="plan" name="plan2" onclick="submit_form('false')">
                 <div class="plan-title img-teal">Basic Setup</div>
                 <div class="plan-caption">$0</div>
                 <img src="../static/basic_registration.svg" class="img-teal plan-img"></img>
@@ -54,7 +54,7 @@
                     <div class="plan-bullet-text">You will need a tablet or laptop in your restaurant to view your orders</div>
                 </div>
             </div>
-            <div class="plan" name="plan1" onclick="submit_form('price_1JFMNILGQW192ovflSPEK3sp')">
+            <div class="plan" name="plan1" onclick="submit_form('true')">
                 <div class="plan-title img-blue">Tablet Included</div>
                 <div class="plan-caption">$149</div>
                 <img src="../static/tablet.svg" class="img-blue plan-img"></img>
@@ -82,7 +82,7 @@
 </div>
 
 <form id="select-form" method="POST">
-    <input type="hidden" id="inp" name="setup_fee_price_id">
+    <input type="hidden" id="inp" name="need_hardware">
 </form>
 
 </html>

@@ -132,7 +132,7 @@ def signup():
 
 # select website page, also a POST endpoint for choosing a website
 @home.route('/signup/select-website', methods=['GET', 'POST'])
-def signup_select_plan():
+def signup_select_website():
     if request.method == 'GET':
         if not current_user.is_authenticated:
             return redirect('/login')
@@ -178,23 +178,23 @@ def signup_select_setup_fee():
                 # Set line item for subscription
                 if session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'monthly':
                     line_items.append({
-                        price: env['stripe_monthly_with_website_price_id'],
-                        quantity: 1
+                        'price': env['stripe_monthly_with_website_price_id'],
+                        'quantity': 1
                     })
                 elif session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'yearly':
                     line_items.append({
-                        price: env['stripe_yearly_with_website_price_id'],
-                        quantity: 1
+                        'price': env['stripe_yearly_with_website_price_id'],
+                        'quantity': 1
                     })
                 elif session.get('need_website') == 'false' and session.get('monthly_or_yearly') == 'monthly':
                     line_items.append({
-                        price: env['stripe_monthly_without_website_price_id'],
-                        quantity: 1
+                        'price': env['stripe_monthly_without_website_price_id'],
+                        'quantity': 1
                     })
                 else:
                     line_items.append({
-                        price: env['stripe_yearly_without_website_price_id'],
-                        quantity: 1
+                        'price': env['stripe_yearly_without_website_price_id'],
+                        'quantity': 1
                     })
 
                 # Add line items for one-time fees

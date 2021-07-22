@@ -41,7 +41,7 @@
         <div class="step">Step 3 of 8</div>
         <div class="title">Select a plan</div>
         <div class="plans">
-            <div class="plan" name="plan1" onclick="submit_form('price_1J8t5yLGQW192ovf4Tkd70Ta')">
+            <div class="plan" name="plan1" onclick="submit_form('monthly')">
                 <div class="plan-title" style="color: #e38552">Monthly</div>
                 <div class="plan-caption">$49 / month</div>
                 <img src="../static/month.jpg" class="img-orange plan-img"></img>
@@ -58,13 +58,13 @@
                     <div class="plan-bullet-text">Personalized Customer Service</div>
                 </div>
             </div>
-            <div class="plan" name="plan2" onclick="submit_form('price_1J8t6xLGQW192ovfioaRFBEB')">
+            <div class="plan" name="plan2" onclick="submit_form('yearly')">
                 <div class="plan-title img-red">Annual</div>
-                <div class="plan-caption">$449 / year</div>
+                <div class="plan-caption">$468 / year ($39 / month)</div>
                 <img src="../static/year.png" class="img-red plan-img"></img>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-red"></img>
-                    <div class="plan-bullet-text">25% discount over monthly plan</div>
+                    <div class="plan-bullet-text">20% discount over monthly plan</div>
                 </div>
                 <div class="plan-bullet-container">
                     <img src="../static/circle.png" class="plan-bullet img-red"></img>
@@ -82,7 +82,7 @@
 </div>
 
 <form id="select-form" method="POST">
-    <input type="hidden" id="inp" name="subscription_price_id">
+    <input type="hidden" id="inp" name="monthly_or_yearly">
 </form>
 
 </html>
