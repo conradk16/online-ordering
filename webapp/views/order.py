@@ -12,15 +12,15 @@ order = Blueprint('order', __name__)
 
 @order.route('/super-cucas-micheltorena', methods=['GET', 'POST'])
 def super_cucas_micheltorena():
-    return handle_order_website_request(request, super_cucas_menu, '/super-cucas-micheltorena', 'Super Cucas Micheltorena')
+    return handle_order_website_request(request, 'test@gmail.com', '/super-cucas-micheltorena', 'Super Cucas - Micheltorena')
 
 @order.route('/super-cucas-micheltorena/payment')
 def super_cucas_micheltorena_payment():
     return handle_order_payment_request(request, '/super-cucas-micheltorena')
 
-# request = flask request obj, menu = Menu obj, url of form: '/restaurant-name-location'
-def handle_order_website_request(request, menu, url, restaurant_display_name):
-    restaurant_user = User.query.filter_by(order_url=menu.order_url).first()
+# request = flask request obj, account_email = restaurant accoutn email, url of form: '/restaurant-name-location'
+def handle_order_website_request(request, account_email, url, restaurant_display_name):
+    restaurant_user = User.query.filter_by(email_address=account_email).first()
     current_time = datetime.datetime.now()
     if current_time > restaurant_user.next_closing_time:
         restaurant_user.currently_accepting_orders = False
@@ -33,14 +33,14 @@ def handle_order_website_request(request, menu, url, restaurant_display_name):
     currently_accepting_orders = restaurant_user.currently_accepting_orders and restaurant_user.active_subscription
 
     if request.method == 'GET':
-        return render_template('online-ordering-menu.html', menu=json.dumps(menu, default=lambda x:x.__dict__), accepting_orders=currently_accepting_orders, restaurant_display_name=restaurant_display_name)
+        return render_template('online-ordering-menu.html', menu=restaurant_user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=restaurant_display_name)
     elif request.method == 'POST':
         if not currently_accepting_orders:
             return redirect(url)
+        
+        order = ConvertJsonToOrder(json.loads(request.form['order']), url[1:]).order()
 
-        order = ConvertJsonToOrder(json.loads(request.form['order']), menu.order_url).order()
-
-        if not order.is_valid_order(menu):
+        if not order.is_valid_order(json.loads(restaurant_user.json_menu)):
             return jsonify({'error': {'message': "Order invalid"}}), 400
 
         # price in cents
@@ -53,7 +53,7 @@ def handle_order_website_request(request, menu, url, restaurant_display_name):
             description=order.description(),
         )
 
-        db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=menu.order_url)
+        db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=url[1:])
         db_order.add_to_db()
 
         session['stripe_client_secret'] = payment_intent.client_secret

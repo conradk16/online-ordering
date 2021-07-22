@@ -1,7 +1,10 @@
 from webapp.models.order import *
+from webapp import db
+from webapp.models.db_models import User
+import json
 
 # SUPER CUCAS MENU
-menu_items, order_url = [], 'super-cucas-micheltorena'
+menu_items, order_url, account_email = [], 'super-cucas-micheltorena', 'test@gmail.com'
 menu_items.append(MenuItem("#1 Chorizo Burrito", "Mexican sausage, scrambled eggs, cheese, and potatoes.", 7.99, [],[], "Breakfast"))
 menu_items.append(MenuItem("#2 Protein Burrito", "Beef, scrambled eggs, cheese, and potatoes.", 7.99, [],[], "Breakfast"))
 menu_items.append(MenuItem("#3 Sausage Burrito", "Sausage scrambled eggs, cheese, and potatoes.", 10.99, [],[], "Breakfast"))
@@ -19,4 +22,6 @@ menu_items.append(MenuItem("#14 Breakfast Plate", "Choice of meat, eggs, cheese,
 menu_items.append(MenuItem("#15 Chile Relleno Burrito", "Pico de gallo, scrambled eggs, cheese, and potatoes.", 7.99, [],[], "Breakfast"))
 menu_items.append(MenuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94, [],[], "Burritos"))
 menu_items.append(MenuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantro.", 10.99, [],[], "Burritos"))
-super_cucas_menu = Menu(menu_items, order_url)
+
+User.query.filter_by(email_address=account_email).first().json_menu = json.dumps(Menu(menu_items, order_url), default=lambda x:x.__dict__)
+db.session.commit()

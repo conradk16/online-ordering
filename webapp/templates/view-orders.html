@@ -468,7 +468,7 @@ window.document.title="View Orders";
 
 .meta-buttons {
   margin:auto;
-  max-width: 400px;
+  max-width: 500px;
   padding: 10px 10px 4px 10px;
   text-align: center;
 }
@@ -482,17 +482,18 @@ window.document.title="View Orders";
   margin:auto;
   border-radius: 30px;
   overflow: hidden;
-  width: 360px;
+  width: 450px;
   text-align: center;
   font-size: 18px;
   letter-spacing: 1px;
   color: white;
   position: relative;
-  padding-right: 180px;
+  padding-right: 225px;
   position: relative;
   font-size: 16px;
   font-family:verdana;
-  margin-bottom: 4px;
+  margin-top: 4px;
+  margin-bottom: 16px;
 }
 .switch-button:before {
   content: "Accepting orders";
@@ -503,7 +504,7 @@ window.document.title="View Orders";
   top: 0;
   bottom: 0;
   right: 0;
-  width: 180px;
+  width: 225px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -522,7 +523,7 @@ window.document.title="View Orders";
   z-index: 2;
 }
 .switch-button-checkbox:checked + .switch-button-label:before {
-  transform: translateX(180px);
+  transform: translateX(225px);
   transition: transform 300ms linear;
 }
 .switch-button-checkbox + .switch-button-label {
@@ -556,7 +557,7 @@ window.document.title="View Orders";
 	color:#000000;
 	font-family:Verdana;
 	font-size:16px;
-	padding:10px 25px;
+	padding:6px 16px;
 	text-decoration:none;
 }
 
@@ -734,7 +735,7 @@ window.document.title="View Orders";
 }
 
 .tab-holder {
-  margin: 0px 0px 0px 20px;
+  margin: 12px 0px 0px 20px;
   flex: 0;
   display:flex;
   width:320px;
@@ -989,9 +990,7 @@ tr:nth-child(even) {
     <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
 </div>
 
-<br>
 <a href="#" class="edit-menu-availability-button">Edit menu availability</a>
-<br>
 <br>
 </div>
 </div>

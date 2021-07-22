@@ -88,9 +88,10 @@ class ChoiceSet:
 
 class Choice:
 
-        def __init__(self, name, price):
+        def __init__(self, name, price, in_stock=True):
             self.name = name
             self.price = price
+            self.in_stock = in_stock
 
         def __eq__(self, other):
             return (self.name == other.name) and (self.price == other.price)
@@ -111,13 +112,14 @@ class Menu:
 
 class MenuItem:
 
-        def __init__(self, item_name, item_description, price, required_choice_sets, optional_choice_sets, category):
+        def __init__(self, item_name, item_description, price, required_choice_sets, optional_choice_sets, category, in_stock=True):
             self.item_name = item_name
             self.item_description = item_description
             self.price = price
             self.required_choice_sets = required_choice_sets
             self.optional_choice_sets = optional_choice_sets
             self.category = category
+            self.in_stock = in_stock
 
         def __eq__(self, other):
             if (self.item_name == other.item_name) and (self.item_description == other.item_description) and (self.price == other.price):

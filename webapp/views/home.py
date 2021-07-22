@@ -52,10 +52,7 @@ def login_page():
                     login_user(user, remember=True)
                 else:
                     login_user(user, remember=False)
-                if user.stripe_customer_id:
-                    return redirect('/account')
-                else:
-                    return redirect('/signup/select-plan')
+                return redirect('/account')
             else:
                 session['invalid_credentials'] = "true"
                 return redirect(url_for('home.login_page'))

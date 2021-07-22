@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
     menu_file = db.Column(db.LargeBinary)
     menu_file_filename = db.Column(db.String) # the name of the file they uploaded
     menu_notes = db.Column(db.String)
+    json_menu = db.Column(db.String)
 
     def get_reset_token(self, expires_sec=600):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
