@@ -38,9 +38,10 @@ def handle_order_website_request(request, account_email, url, restaurant_display
         if not currently_accepting_orders:
             return redirect(url)
         
-        order = ConvertJsonToOrder(json.loads(request.form['order']), url[1:]).order()
+        order = ConvertJsonToOrder(json.loads(request.form['order']), url[1:]).order() # order being placed
+        menu = ConvertJsonToMenu(json.loads(restaurant_user.json_menu)).menu() # restaurant's menu to check the order against for validity
 
-        if not order.is_valid_order(json.loads(restaurant_user.json_menu)):
+        if not order.is_valid_order(menu):
             return jsonify({'error': {'message': "Order invalid"}}), 400
 
         # price in cents
