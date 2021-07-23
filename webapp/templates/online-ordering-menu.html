@@ -1154,22 +1154,25 @@ class cartItem {
     }
 }
 
-function getChoiceSetClass(json_parsed_choice_set) {
-  var choices = [];
-  for (choice of json_parsed_choice_set) {
-    choices.push();
+function getChoiceSetClass(json_parsed_choice_sets) {
+  var choice_sets_classes = [];
+  for (json_parsed_choice_set of json_parsed_choice_sets) {
+    var choices = []
+    for (json_parsed_choice of json_parsed_choice_set.choices) {
+      choices.push(new choice(json_parsed_choice.name, json_parsed_choice.price, json_parsed_choice.in_stock));
+    }
+    choice_sets_classes.push(new choiceSet(json_parsed_choice_set.title, choices));
   }
+  return choice_sets_classes;
 }
 
 function get_menu_groups_from_menu(menu) {
   var menu_groups = {}; // dictionary of category to list of MenuItems
   for (const menu_item of menu["menu_items"]) {
-    //TODO: Convert menu_item to menu_item class so can check equals
 
-    var required_choice_sets = getChoiceSetClass(menu_item["required_choice_sets"]);
-    var optional_choice_sets = getChoiceSetClass(menu_item["optional_choice_sets"]);
-
-    menu_item_class = menuItem(menu_item.name, menu_item.description, menu_item.price, required_choice_sets, optional_choice_sets, menu_item.category, menu_item.in_stock);
+    var required_choice_sets = new getChoiceSetClass(menu_item.required_choice_sets);
+    var optional_choice_sets = new getChoiceSetClass(menu_item.optional_choice_sets);
+    menu_item_class = new menuItem(menu_item.item_name, menu_item.item_description, menu_item.price, required_choice_sets, optional_choice_sets, menu_item.category, menu_item.in_stock);
 
     const category = menu_item_class.category;
     if (category in menu_groups) {
