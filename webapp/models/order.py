@@ -7,6 +7,10 @@ class Order():
         self.order_url = order_url
 
     def is_valid_order(self, menu):
+
+        if len(self.order_items) == 0:
+            return False
+
         for order_item in self.order_items:
 
             # menu item must be part of the menu
@@ -181,6 +185,6 @@ class ConvertJsonToMenu:
 
     def menu(self):
         menu_items = []
-        for json_menu_item in self.json_menu:
+        for json_menu_item in self.json_menu['menu_items']:
             menu_items.append(ConvertJsonToOrder.json_menu_item_to_class(json_menu_item))
         return Menu(menu_items, self.order_url)

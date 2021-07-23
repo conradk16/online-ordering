@@ -79,7 +79,10 @@ def setup_menu_notes():
         if not is_valid_menu_notes_post_request(request):
             return redirect('/account')
         
-        current_user.menu_notes = request.form['menu_notes']
+        if len(request.form['menu_notes']) == 0:
+            current_user.menu_notes = 'No menu notes'
+        else:
+            current_user.menu_notes = request.form['menu_notes']
         db.session.commit()
         return redirect('/account/setup-closing-times')
 

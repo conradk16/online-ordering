@@ -6,7 +6,6 @@ import stripe
 import json
 import datetime
 from webapp.views.account import calculate_next_closing_time
-from webapp.static.menus import *
 
 order = Blueprint('order', __name__)
 
@@ -39,7 +38,7 @@ def handle_order_website_request(request, account_email, url, restaurant_display
             return redirect(url)
         
         order = ConvertJsonToOrder(json.loads(request.form['order']), url[1:]).order() # order being placed
-        menu = ConvertJsonToMenu(json.loads(restaurant_user.json_menu)).menu() # restaurant's menu to check the order against for validity
+        menu = ConvertJsonToMenu(json.loads(restaurant_user.json_menu), url[1:]).menu() # restaurant's menu to check the order against for validity
 
         if not order.is_valid_order(menu):
             return jsonify({'error': {'message': "Order invalid"}}), 400
@@ -54,6 +53,7 @@ def handle_order_website_request(request, account_email, url, restaurant_display
             description=order.description(),
         )
 
+        #TODO: problem
         db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=url[1:])
         db_order.add_to_db()
 
