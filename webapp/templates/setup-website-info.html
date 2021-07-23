@@ -3,19 +3,27 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="icon" href="/static/favicon.png">
+<link rel="icon" href="../static/favicon.png">
 
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 <link rel="stylesheet" type="text/css" href="../static/css/account-details.css" data-rel-css="">
+
+<script src="../static/js/account-details.js"></script>
 
 <head>
   <script>
       function submit_form() {
         var textarea_text = document.getElementById("textarea").value;
-        var notes_input = document.getElementById("notes_inp");
-        notes_input.value = textarea_text;
-        var form = document.getElementById("form");
-        form.submit();
+
+        if (textarea_text == "") {
+            var error_text = document.getElementsByClassName("invalid-input-text")[0];
+            error_text.innerHTML = "*Text cannot be empty";
+        } else {
+            var notes_input = document.getElementById("notes_inp");
+            notes_input.value = textarea_text;
+            var form = document.getElementById("form");
+            form.submit();
+        }
       }
 
       window.document.title="Setup Website Information";
@@ -72,6 +80,10 @@
     border-radius: 10px;
 }
 
+.invalid-input-text {
+    font-family: Roboto, Open Sans, Segoe UI, sans-serif;
+    font-size: 16px;
+}
 
 </style>
 
@@ -111,13 +123,14 @@
                     <a class="uploaded-file-name" id="file_name"></a>
                   </div>
               </div>
-          <div class="button-holder">
-            <button class="button" onclick="submit_form()">Next</button>
-          </div>
       </form>
 
+      <div class="button-holder">
+            <button class="button" onclick="submit_form()">Next</button>
+      </div>
+
       <div class="invalid-input-text-holder">
-          <a class="invalid-input-text">hello</a>
+          <a class="invalid-input-text"></a>
       </div>
 </div>
 </div>
