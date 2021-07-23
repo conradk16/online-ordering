@@ -19,11 +19,11 @@ def account_homepage():
     elif current_user.email_address == env['admin_username']:
         return get_admin_page()
     elif not current_user.stripe_customer_id:
-        return redirect('/signup/select-website')
-    elif current_user.paid_for_website and not current_user.website_notes:
-        return redirect('/account/setup-website-info')
+        return redirect('/signup/select-website')  
     elif not current_user.account_details:
         return redirect('/account/setup-account-details')
+    elif current_user.paid_for_website and not current_user.website_notes:
+        return redirect('/account/setup-website-info')
     elif not current_user.menu_notes:
         return redirect('/account/setup-menu-notes')
     elif not current_user.closing_times:
@@ -33,33 +33,6 @@ def account_homepage():
     else:
         return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
 
-@account.route('/account/setup-website-info', methods=['GET', 'POST'])
-def enter_website_info():
-    if not current_user.is_authenticated:
-        return redirect('/login')
-
-    if request.method == 'GET':
-        if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
-
-        return render_template('setup-website-info.html', paid_for_website=current_user.paid_for_website)
-    elif request.method == 'POST':
-        if not is_valid_setup_website_info_post_request(request):
-            return redirect('/account')
-
-        if len(request.form['website_notes']) == 0:
-            current_user.website_notes = 'No website notes provided'
-        else:
-            current_user.website_notes = request.form['website_notes']
-
-        if 'website_media' in request.files:
-            current_user.website_media = request.files['website_media'].read()
-            current_user.website_media_filename = request.files['website_media'].filename
-
-        db.session.commit()
-
-        return redirect('/account/setup-account-details')
-
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
     if not current_user.is_authenticated:
@@ -68,8 +41,6 @@ def enter_account_details():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
-        elif current_user.paid_for_website and not current_user.website_notes:
-            return redirect('/account/setup-website-info')
 
         return render_template('setup-account-details.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
@@ -94,6 +65,34 @@ def enter_account_details():
 
         return redirect('/account/setup-menu-notes')
 
+@account.route('/account/setup-website-info', methods=['GET', 'POST'])
+def enter_website_info():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'GET':
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+        elif not current_user.account_details:
+            return redirect('/account/setup-account-details')
+
+        return render_template('setup-website-info.html', paid_for_website=current_user.paid_for_website)
+    elif request.method == 'POST':
+        if not is_valid_setup_website_info_post_request(request):
+            return redirect('/account')
+
+        if len(request.form['website_notes']) == 0:
+            current_user.website_notes = 'No website notes provided'
+        else:
+            current_user.website_notes = request.form['website_notes']
+
+        if 'website_media' in request.files:
+            current_user.website_media = request.files['website_media'].read()
+            current_user.website_media_filename = request.files['website_media'].filename
+
+        db.session.commit()
+
+        return redirect('/account/setup-account-details')
 
 @account.route('/account/setup-menu-notes', methods=['GET', 'POST'])
 def setup_menu_notes():
@@ -103,10 +102,10 @@ def setup_menu_notes():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
-        elif current_user.paid_for_website and not current_user.website_notes:
-            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         else:
             return render_template('setup-menu-notes.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
@@ -129,10 +128,10 @@ def setup_closing_hours():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
-        elif current_user.paid_for_website and not current_user.website_notes:
-            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
         else:
@@ -155,10 +154,10 @@ def setup_stripe():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
-        elif current_user.paid_for_website and not current_user.website_notes:
-            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
         elif not current_user.closing_times:
