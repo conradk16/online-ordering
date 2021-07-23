@@ -96,9 +96,10 @@ function popup(item) {
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
             specific_choice_text.innerHTML = choice.name;
-            if (choice.price != null) {
+            if (choice.price != "0.00") {
                 specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
             }
+
             specific_choice_bar.appendChild(specific_choice_text);
 
             var radiobox = document.createElement('input');
@@ -106,6 +107,13 @@ function popup(item) {
             radiobox.name = choice_set.title;
             radiobox.style.cursor = "pointer";
             specific_choice_bar.appendChild(radiobox);
+            
+            if (!choice.in_stock) {
+                specific_choice_text.style.color = "gray";
+                specific_choice_text.innerHTML += " (unavailable)";
+                radiobox.style.display = "none";
+            }
+
         }
     }
 
@@ -131,7 +139,7 @@ function popup(item) {
             var specific_choice_text = document.createElement('a');
             specific_choice_text.classList.add("specific-choice-text");
             specific_choice_text.innerHTML = choice.name;
-            if (choice.price != null) {
+            if (choice.price != "0.00") {
                 specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
             }
             specific_choice_bar.appendChild(specific_choice_text);
@@ -141,6 +149,13 @@ function popup(item) {
             checkbox.name = choice_set.title;
             checkbox.style.cursor = "pointer";
             specific_choice_bar.appendChild(checkbox);
+            
+            if (!choice.in_stock) {
+                specific_choice_text.style.color = "gray";
+                specific_choice_text.innerHTML += " (unavailable)";
+                checkbox.style.display = "none";
+            }
+
         }
     }
 
@@ -217,6 +232,8 @@ function add_to_order(item) {
     var special_instructions_text = special_instructions_element.value;
 
     close_popup();
+    var special_instructions = document.getElementsByClassName("special-instructions")[0];
+    special_instructions.style.height = "50px";
 
     // add to cart_items
     var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
@@ -573,6 +590,48 @@ function load_extrawide_layout() {
     number.style.display = "none";
 }
 
+// item is of class menuItem
+// list_item is the html element
+function set_list_item(list_item, item) {
+    var link = document.createElement('a');
+    link.classList.add("link");
+    link.onclick = function() { popup(item); };
+    list_item.appendChild(link);
+
+    var inside_box = document.createElement('div');
+    inside_box.classList.add("inside-box");
+    link.appendChild(inside_box);
+
+    var top_row = document.createElement('div');
+    top_row.classList.add("top-row");
+    inside_box.appendChild(top_row);
+
+    var title = document.createElement('a');
+    title.classList.add("title");
+    title.innerHTML = item.item_name;
+    top_row.appendChild(title);
+    
+    var price = document.createElement('span');
+    price.classList.add("price");
+    price.innerHTML = item.price;
+    top_row.appendChild(price);
+
+    var description = document.createElement('p');
+    description.classList.add("description");
+    description.innerHTML = item.item_description;
+    inside_box.appendChild(description);
+
+    if (!item.in_stock) {
+        link.style.cursor = "default";
+        link.style.pointerEvents = "none";
+        title.style.color = "gray";
+        title.innerHTML = title.innerHTML + " - unavailable";
+        price.style.color = "gray";
+        description.style.color = "gray";
+        list_item.classList.remove("list-item-hover-class");
+    }
+}
+
 // assumes food-items exists
 function load_menu_narrow() {
     var food_items = document.getElementsByClassName("food-items")[0];
@@ -599,35 +658,10 @@ function load_menu_narrow() {
         for (const item of menu_group.items) {
             var list_item = document.createElement('li');
             list_item.classList.add("list-item");
+            list_item.classList.add("list-item-hover-class");
             group_list.appendChild(list_item);
 
-            var link = document.createElement('a');
-            link.classList.add("link");
-            link.onclick = function() { popup(item); };
-            list_item.appendChild(link);
-
-            var inside_box = document.createElement('div');
-            inside_box.classList.add("inside-box");
-            link.appendChild(inside_box);
-
-            var top_row = document.createElement('div');
-            top_row.classList.add("top-row");
-            inside_box.appendChild(top_row);
-
-            var title = document.createElement('a');
-            title.classList.add("title");
-            title.innerHTML = item.item_name;
-            top_row.appendChild(title);
-
-            var price = document.createElement('span');
-            price.classList.add("price");
-            price.innerHTML = item.price;
-            top_row.appendChild(price);
-
-            var description = document.createElement('p');
-            description.classList.add("description");
-            description.innerHTML = item.item_description;
-            inside_box.appendChild(description);
+            set_list_item(list_item, item);
         }
     }
 }
@@ -667,36 +701,10 @@ async function load_menu_wide() {
         for (const item of menu_group.items) {
             var list_item = document.createElement('li');
             list_item.classList.add("list-item");
+            list_item.classList.add("list-item-hover-class");
             group_list_left.appendChild(list_item);
 
-            var link = document.createElement('a');
-            link.classList.add("link");
-            link.onclick = function() { popup(item); };
-            list_item.appendChild(link);
-
-            var inside_box = document.createElement('div');
-            inside_box.classList.add("inside-box");
-            link.appendChild(inside_box);
-
-            var top_row = document.createElement('div');
-            top_row.classList.add("top-row");
-            inside_box.appendChild(top_row);
-
-            var title = document.createElement('a');
-            title.classList.add("title");
-            title.innerHTML = item.item_name;
-            top_row.appendChild(title);
-
-            var price = document.createElement('span');
-            price.classList.add("price");
-            price.innerHTML = item.price;
-            top_row.appendChild(price);
-
-            var description = document.createElement('p');
-            description.classList.add("description");
-            description.innerHTML = item.item_description;
-            inside_box.appendChild(description);
-
+            set_list_item(list_item, item);
         }
 
         await sleep(1);
@@ -1116,7 +1124,8 @@ class cartItem {
         for (let i = 0; i < this.required_selections.length; i++) {
             var this_choice = this.required_selections[i];
             var other_choice = other.required_selections[i];
-            if (!this_choice.is_equal(other_choice)) {
+
+            if (!(this_choice.is_equal(other_choice))) {
                 return false;
             }
         }
@@ -1455,7 +1464,7 @@ body {
     width: 100%;
 }
 
-.list-item:hover{
+.list-item-hover-class:hover {
     border: 2px solid #914b16;
 }
 
