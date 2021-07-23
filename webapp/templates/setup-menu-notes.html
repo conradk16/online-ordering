@@ -17,6 +17,16 @@
         form.submit();
       }
 
+      function run_on_load() {
+         var step = document.getElementsByClassName("step")[0];
+         if ({{paid_for_website|tojson}}) {
+            step.innerHTML = "Step 3 of 5";
+         } else {
+            step.innerHTML = "Step 2 of 4";
+         }
+      }
+
+      window.onload = run_on_load;
       window.document.title="Setup Menu Notes";
   </script>
 </head>
@@ -72,7 +82,7 @@
 </div>
 
 <div class="center">
-      <div class="step">Step 6 of 8</div>
+      <div class="step"></div>
       <div class="title">Enter Menu Notes</div>
       <div>
       <div class="page-explanation-holder">

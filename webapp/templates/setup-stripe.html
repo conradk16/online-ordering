@@ -14,6 +14,17 @@
     form.submit();
   }
 
+  function run_on_load() {
+     var step = document.getElementsByClassName("step")[0];
+     if ({{paid_for_website|tojson}}) {
+        step.innerHTML = "Step 5 of 5";
+     } else {
+        step.innerHTML = "Step 4 of 4";
+     }
+  }
+
+  window.onload = run_on_load;
+
   window.document.title="Setup Stripe";
 
   </script>
@@ -61,7 +72,7 @@
   </div>
 
 <div class="center">
-    <div class="step">Step 8 of 8</div>
+    <div class="step"></div>
     <div class="title">Enable Payments</div>
     <div class="page-explanation-holder">
         <a class="page-explanation">Our platform uses Stripe for payment processing. Signing up for Stripe will allow you to receive payments from your customers.</a>

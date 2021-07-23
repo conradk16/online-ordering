@@ -75,8 +75,18 @@
     submit_form();
 
   }
+    
+  function run_on_load() {
+     var step = document.getElementsByClassName("step")[0];
+     if ({{paid_for_website|tojson}}) {
+        step.innerHTML = "Step 2 of 5";
+     } else {
+        step.innerHTML = "Step 1 of 4";
+     }
+  }
 
   window.document.title="Setup Account Details";
+  window.onload = run_on_load();
 
   </script>
 </head>
@@ -98,7 +108,7 @@
   </div>
 
 <div class="center">
-        <div class="step">Step 5 of 8</div>
+        <div class="step"></div>
         <div class="title">Enter Account Details</div>
         <div class="cell example example1" id="example-1">
 

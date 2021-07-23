@@ -16,7 +16,19 @@
 
 <head>
 
-    <script>window.document.title="Setup Closing Hours";</script>
+    <script>
+        function run_on_load() {
+             var step = document.getElementsByClassName("step")[0];
+             if ({{paid_for_website|tojson}}) {
+                step.innerHTML = "Step 4 of 5";
+             } else {
+                step.innerHTML = "Step 3 of 4";
+             }                   
+        }
+
+        window.onload = run_on_load;
+        window.document.title="Setup Closing Hours";
+    </script>
   
 </head>
 
@@ -37,7 +49,7 @@
   </div>
   
 <div class="center">
-        <div class="step">Step 7 of 8</div>
+        <div class="step"></div>
         <div class="title">Enter Closing Hours</div>
         <div class="page-explanation-holder">
             <a class="page-explanation">We collect your normal closing hours information to automatically prevent your customers from placing orders once your restaurant is closed. You can always manually turn online orders back on again.</a>
