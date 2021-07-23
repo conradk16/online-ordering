@@ -1,7 +1,8 @@
 'use strict';
 
 var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
-var stripe = Stripe('pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj', {
+var stripe_publishable_api_key = document.getElementById("helper").getAttribute('data-stripe_publishable_api_key');
+var stripe = Stripe(stripe_publishable_api_key, {
     stripeAccount: stripe_account_id
   });
 

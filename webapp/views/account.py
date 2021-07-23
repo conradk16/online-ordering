@@ -3,6 +3,7 @@ from flask_mail import Message
 import stripe
 from webapp import db, mail, env
 from webapp.models.db_models import User, Order
+from webapp.models.order import *
 from flask_login import login_user, logout_user, current_user
 import json
 import datetime, pytz
@@ -266,8 +267,9 @@ def view_orders():
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
+        json_stock_status = ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu().get_json_stock_status()
 
-        return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders, order_url=current_user.order_url)
+        return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders, order_url=current_user.order_url, json_stock_status=json_stock_status)
     else:
         return redirect('/login')
 
@@ -340,6 +342,23 @@ def update_accepting_orders_status():
             current_user.currently_accepting_orders = False
             db.session.commit()
             return "not accepting orders"
+    else:
+        return redirect('/login')
+
+# POST endpoint for changing menu availability
+@account.route('/account/update-menu_availability', methods=['POST'])
+def update_menu_availability():
+    if current_user.is_authenticated:
+        menu = ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu()
+        update_items = json.loads(request.form['update_items'])
+        for update_item in update_items:
+            item_or_option, name, stock_status = update_item['item_or_option'], update_item['name'], update_item['stock_status']
+            menu.change_stock_status(item_or_option, item, stock_status)
+
+        current_user.json_menu = json.dumps(menu, default=lambda x:x.__dict__)
+        db.session.commit()
+
+        return ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu().get_json_stock_status()
     else:
         return redirect('/login')
 

@@ -1,6 +1,7 @@
 from webapp.models.db_models import User
+import json
 
-class Order():
+class OrderClass():
 
     def __init__(self, order_items, order_url):
         self.order_items = order_items
@@ -113,6 +114,40 @@ class Menu:
         self.menu_items = menu_items
         self.order_url = order_url
 
+    # returns string of form: '{'menu_items': {'burrito': 'true', 'burger': 'false'}, 'options': {'avocado': 'true', 'brownies': 'false'}}'    
+    def get_json_stock_status(self):
+        d, menu_items_stock_status, options_stock_status = {}, {}, {}
+
+        for menu_item in self.menu_items:
+            menu_items_stock_status[menu_item.item_name] = menu_item.in_stock
+            for choice_set in menu_item.required_choice_sets:
+                for choice in choice_set.choices:
+                    options_stock_status[choice.name] = choice.in_stock
+            for choice_set in menu_item.optional_choice_sets:
+                for choice in choice_set.choices:
+                    options_stock_status[choice.name] = choice.in_stock
+
+        d['menu_items'] = menu_items_stock_status
+        d['options'] = options_stock_status
+        
+        return json.dumps(d)
+
+    # item_or_option should be either 'item' or 'option', name should be a string, stock_status should be either True or False
+    def change_stock_status(self, item_or_option, name, stock_status):
+        if item_or_option == 'item':
+            for menu_item in self.menu_items:
+                if menu_item.item_name == name:
+                    menu_item.in_stock = stock_status
+        elif item_or_option == 'option':
+            for menu_item in self.menu_items:
+                for choice_set in menu_item.required_choice_sets:
+                    for choice in choice_set:
+                        if choice.name == name:
+                            choice.in_stock = stock_status
+                for choice_set in menu_item.optional_choice_sets:
+                    for choice in choice_set:
+                        if choice.name == name:
+                            choice.in_stock = stock_status
 
 class MenuItem:
 
@@ -147,7 +182,7 @@ class ConvertJsonToOrder:
         order_items = []
         for json_order_item in self.json_order:
             order_items.append(ConvertJsonToOrder.json_order_item_to_class(json_order_item))
-        return Order(order_items, self.order_url)
+        return OrderClass(order_items, self.order_url)
 
     @staticmethod
     def json_order_item_to_class(json_order_item):

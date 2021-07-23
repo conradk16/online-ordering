@@ -53,7 +53,7 @@ def handle_order_website_request(request, account_email, url, restaurant_display
             description=order.description(),
         )
 
-        db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=url[1:])
+        db_order = OrderClass(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=url[1:])
         db_order.add_to_db()
 
         session['stripe_client_secret'] = payment_intent.client_secret
@@ -74,7 +74,7 @@ def handle_order_payment_request(request, url):
         if payment_intent.status == "succeeded":
             return redirect(url)
 
-        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
     else:
         return redirect(url)
 
