@@ -14,7 +14,7 @@ function run_on_resize() {
 function check_if_view_orders() {
     var orders_link = document.getElementById("account-menu-script").getAttribute('data-order_url');
 
-    //orders_link = null;
+    //var orders_link = "None";
 
     var menu_view_orders = document.getElementById("menu_view_orders");
     if (orders_link == "None") {
