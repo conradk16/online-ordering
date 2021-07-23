@@ -31,7 +31,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url)
+        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
 
 @account.route('/account/setup-website-info', methods=['GET', 'POST'])
 def enter_website_info():
@@ -42,7 +42,7 @@ def enter_website_info():
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
 
-        return render_template('setup-website-info.html')
+        return render_template('setup-website-info.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
         if not is_valid_setup_website_info_post_request(request):
             return redirect('/account')
@@ -71,7 +71,7 @@ def enter_account_details():
         elif current_user.paid_for_website and not current_user.website_notes:
             return redirect('/account/setup-website-info')
 
-        return render_template('setup-account-details.html')
+        return render_template('setup-account-details.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
         if not is_valid_setup_account_details_post_request(request):
             return redirect('/account')
@@ -108,7 +108,7 @@ def setup_menu_notes():
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         else:
-            return render_template('setup-menu-notes.html')
+            return render_template('setup-menu-notes.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
         if not is_valid_menu_notes_post_request(request):
             return redirect('/account')
@@ -136,7 +136,7 @@ def setup_closing_hours():
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
         else:
-            return render_template('setup-closing-hours.html')
+            return render_template('setup-closing-hours.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
@@ -166,7 +166,7 @@ def setup_stripe():
         elif current_user.stripe_connected_account_details_submitted:
             return redirect('/account')
         else:
-            return render_template('setup-stripe.html')
+            return render_template('setup-stripe.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
         # Use existing connected account if they have one, otherwise create account and store account.id in the Users table
         account_id = current_user.stripe_connected_account_id
@@ -327,7 +327,7 @@ def get_updated_orders():
 @account.route('/account/update-accepting-orders-status', methods=['POST'])
 def update_accepting_orders_status():
     if current_user.is_authenticated:
-        if not current_user.active_subscription:
+        if (not current_user.active_subscription) or (not current_user.stripe_charges_enabled):
             return "not accepting orders"
 
         if request.form['currently_accepting_orders'] == 'true':
@@ -418,7 +418,7 @@ def admin_download_database():
     else:
         abort(404)
 
-@account.route('/account/admin-download-menu-file')
+@account.route('/account/admin-download-menu-file', methods=['POST'])
 def admin_download_menu_file():
     if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         user =  User.query.filter_by(email_address=request.form['email_address']).first()
@@ -430,7 +430,7 @@ def admin_download_menu_file():
     else:
         abort(404)
 
-@account.route('/account/admin-download-website-media')
+@account.route('/account/admin-download-website-media', methods=['POST'])
 def admin_download_website_media():
     if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         user =  User.query.filter_by(email_address=request.form['email_address']).first()

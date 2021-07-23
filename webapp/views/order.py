@@ -29,7 +29,7 @@ def handle_order_website_request(request, account_email, url, restaurant_display
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 
-    currently_accepting_orders = restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.charges_enabled
+    currently_accepting_orders = restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled
 
     if request.method == 'GET':
         return render_template('online-ordering-menu.html', menu=restaurant_user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=restaurant_display_name)
@@ -109,7 +109,7 @@ def update_order_details():
         restaurant_user.currently_accepting_orders = False
         db.session.commit()
 
-    if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription:
+    if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
         return 'accepting orders'
     else:
         return 'not accepting orders'
