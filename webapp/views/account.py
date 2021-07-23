@@ -20,6 +20,8 @@ def account_homepage():
         return get_admin_page()
     elif not current_user.stripe_customer_id:
         return redirect('/signup/select-website')
+    elif current_user.paid_for_website and not current_user.website_notes:
+        return redirect('/account/setup-website-info')
     elif not current_user.account_details:
         return redirect('/account/setup-account-details')
     elif not current_user.menu_notes:
@@ -31,6 +33,33 @@ def account_homepage():
     else:
         return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url)
 
+@account.route('/account/setup-website-info', methods=['GET', 'POST'])
+def enter_website_info():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'GET':
+        if not current_user.stripe_customer_id:
+            return redirect('/signup/select-plan')
+
+        return render_template('setup-website-info.html')
+    elif request.method == 'POST':
+        if not is_valid_setup_website_info_post_request(request):
+            return redirect('/account')
+
+        if len(request.form['website_notes']) == 0:
+            current_user.website_notes = 'No website notes provided'
+        else:
+            current_user.website_notes = request.form['website_notes']
+
+        if 'website_media' in request.files:
+            current_user.website_media = request.files['website_media'].read()
+            current_user.website_media_filename = request.files['website_media'].filename
+
+        db.session.commit()
+
+        return redirect('/account/setup-account-details')
+
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
     if not current_user.is_authenticated:
@@ -39,10 +68,12 @@ def enter_account_details():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
 
         return render_template('setup-account-details.html')
     elif request.method == 'POST':
-        if not  is_valid_setup_account_details_post_request(request):
+        if not is_valid_setup_account_details_post_request(request):
             return redirect('/account')
         
         account_details = {}
@@ -72,6 +103,8 @@ def setup_menu_notes():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         else:
@@ -96,6 +129,8 @@ def setup_closing_hours():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif not current_user.menu_notes:
@@ -120,6 +155,8 @@ def setup_stripe():
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
             return redirect('/signup/select-plan')
+        elif current_user.paid_for_website and not current_user.website_notes:
+            return redirect('/account/setup-website-info')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif not current_user.menu_notes:
@@ -200,7 +237,6 @@ def edit_closing_times():
         
         return redirect('/account')
 
-
 # GET endpoint that redirects customers to manage their billing
 @account.route('/account/manage-subscription')
 def manage_subcription():
@@ -228,42 +264,22 @@ def view_orders():
             db.session.commit()
 
         pending_orders = []
-
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
-            d = {}
-            d['json_order'] = order.json_order
-            d['refunded_status'] = order.refunded
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['payment_intent_id'] = order.payment_intent_id
-            d['customer_name'] = order.customer_name.split()[0][:20] # just get first name, take 20 characters max
-            pending_orders.append(d)
-
+            pending_orders.append(order.serialize())
         if len(pending_orders) == 0:
             pending_orders = "No orders"
 
         archived_orders = []
-
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
-            d = {}
-            d['json_order'] = order.json_order
-            d['refunded_status'] = order.refunded
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['payment_intent_id'] = order.payment_intent_id
-            d['customer_name'] = order.customer_name.split()[0][:20]
-            archived_orders.append(d)
-
+            archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
         current_time = datetime.datetime.now()
         current_user.most_recent_time_orders_queried = current_time
-
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
-        
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
@@ -283,42 +299,22 @@ def get_updated_orders():
             db.session.commit()
         
         pending_orders = []
-
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
-            d = {}
-            d['json_order'] = order.json_order
-            d['refunded_status'] = order.refunded
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['payment_intent_id'] = order.payment_intent_id
-            d['customer_name'] = order.customer_name.split()[0][:20]
-            pending_orders.append(d)
-
+            pending_orders.append(order.serialize())
         if len(pending_orders) == 0:
             pending_orders = "No orders"
 
         archived_orders = []
-
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
-            d = {}
-            d['json_order'] = order.json_order
-            d['refunded_status'] = order.refunded
-            d['marked_as_complete_by_restaurant'] = order.marked_as_complete_by_restaurant
-            d['datetime'] = order.datetime
-            d['payment_intent_id'] = order.payment_intent_id
-            d['customer_name'] = order.customer_name.split()[0][:20]
-            archived_orders.append(d)
-
+            archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
         current_time = datetime.datetime.now()
         current_user.most_recent_time_orders_queried = current_time
-
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
-        
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
@@ -346,7 +342,7 @@ def update_accepting_orders_status():
         return redirect('/login')
 
 # POST endpoint for changing menu availability
-@account.route('/account/update-menu_availability', methods=['POST'])
+@account.route('/account/update-menu-availability', methods=['POST'])
 def update_menu_availability():
     if current_user.is_authenticated:
         menu = ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu()
@@ -403,39 +399,17 @@ def refund_order():
 # MARK: admin
 
 def get_admin_page():
-    users_without_urls = User.query.filter_by(order_url=None)
-    users = []
-    for userObject in users_without_urls:
-        user = {}
-        user['email_address'] = userObject.email_address
-        user['active_subscription'] = userObject.active_subscription
-        user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
-        user['paid_for_hardware'] = userObject.paid_for_hardware
-        user['paid_for_website'] = userObject.paid_for_website
-        user['shipping_address'] = userObject.shipping_address
-        user['account_details'] = userObject.account_details
-        user['menu_notes'] = userObject.menu_notes
-        user['order_url'] = userObject.order_url
-        user['website_url'] = userObject.website_url
-        users.append(user)
+    user_objects_without_order_url = User.query.filter_by(order_url=None)
+    users_without_order_url = []
+    for user_object_without_order_url in user_objects_without_order_url:
+        users_without_order_url.append(user_object_without_order_url.serialize())
 
-    users_with_urls = User.query.filter(User.order_url.isnot(None))
-    users_with = []
-    for userObject in users_with_urls:
-        user = {}
-        user['email_address'] = userObject.email_address
-        user['active_subscription'] = userObject.active_subscription
-        user['stripe_charges_enabled'] = userObject.stripe_charges_enabled
-        user['paid_for_hardware'] = userObject.paid_for_hardware
-        user['paid_for_website'] = userObject.paid_for_website
-        user['shipping_address'] = userObject.shipping_address
-        user['account_details'] = userObject.account_details
-        user['menu_notes'] = userObject.menu_notes
-        user['order_url'] = userObject.order_url
-        user['website_url'] = userObject.website_url
-        users_with.append(user)
+    user_objects_with_order_url = User.query.filter(User.order_url.isnot(None))
+    users_with_order_url = []
+    for user_object_with_order_url in user_objects_with_order_url:
+        users_with_order_url.append(user_object_with_order_url.serialize())
 
-    return render_template('admin.html', users_without_urls=json.dumps(users), users_with_urls=json.dumps(users_with))
+    return render_template('admin.html', users_without_order_url=json.dumps(users_without_order_url), users_with_order_url=json.dumps(users_with_order_url))
 
 @account.route('/account/admin-download-database')
 def admin_download_database():
@@ -444,7 +418,7 @@ def admin_download_database():
     else:
         abort(404)
 
-@account.route('/account/admin-download-menu-file', methods=['POST'])
+@account.route('/account/admin-download-menu-file')
 def admin_download_menu_file():
     if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         user =  User.query.filter_by(email_address=request.form['email_address']).first()
@@ -452,6 +426,18 @@ def admin_download_menu_file():
         menu_file_filename = user.menu_file_filename
         if menu_file:
             return send_file(io.BytesIO(menu_file), as_attachment=True, attachment_filename=menu_file_filename)
+        return ('', 204) # do nothing
+    else:
+        abort(404)
+
+@account.route('/account/admin-download-website-media')
+def admin_download_website_media():
+    if current_user.is_authenticated and current_user.email_address == env['admin_username']:
+        user =  User.query.filter_by(email_address=request.form['email_address']).first()
+        website_media = user.website_media
+        website_media_filename = user.website_media_filename
+        if website_media:
+            return send_file(io.BytesIO(website_media), as_attachment=True, attachment_filename=website_media_filename)
         return ('', 204) # do nothing
     else:
         abort(404)
@@ -481,6 +467,12 @@ def admin_assign_website_url_to_account():
         abort(404)
 
 # MARK: functions
+
+def is_valid_setup_website_info_post_request(request):
+    if request.form:
+        if 'website_notes' in request.form:
+            return True
+
 def is_valid_setup_account_details_post_request(request):
     if request.form:
         if ('name' in request.form) and ('email' in request.form) and ('phone' in request.form) and ('restaurant_name' in request.form) and ('restaurant_address' in request.form):

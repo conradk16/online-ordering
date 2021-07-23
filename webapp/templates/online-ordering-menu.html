@@ -1150,6 +1150,7 @@ function get_menu_groups_from_menu(menu) {
   for (const menu_item of menu["menu_items"]) {
     const category = menu_item["category"];
     if (category in menu_groups) {
+      //TODO: Convert menu_item to menu_item class so can check equals
       menu_groups[category].push(menu_item);
     } else {
       menu_groups[category] = [menu_item];

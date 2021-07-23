@@ -45,7 +45,7 @@ requests==2.25.1
 semantic-version==2.8.5
 six==1.14.0
 SQLAlchemy==1.4.20
-stripe==2.58.0
+stripe==2.60.0
 svgwrite==1.4.1
 termcolor==1.1.0
 texttable==1.6.3
