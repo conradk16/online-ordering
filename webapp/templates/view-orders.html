@@ -395,8 +395,8 @@ function load_selections(tab_name) {
     var popup_body = document.getElementsByClassName("menu-edit-popup-body")[0];
 
     const num_rows = popup_body.children.length;
-    for (let i = 0; i < num_rows; i++) {
-        popup_body.children[0].remove();
+    for (let i = 0; i < num_rows-1; i++) {
+        popup_body.children[1].remove();
     }
 
     // create rows
@@ -441,12 +441,14 @@ function edit_menu_availability() {
 
     var item_tab = document.getElementsByClassName("item-tab")[0];
     var options_tab = document.getElementsByClassName("options-tab")[0];
+    var header_title = document.getElementsByClassName("menu-edit-popup-body-header-title")[0];
     item_tab.onclick = function() {
         if (selected_tab != "items") {
             load_selections("items");
             item_tab.style.backgroundColor = "#bababa";
             options_tab.style.backgroundColor = "#dddddd";
             selected_tab = "items";
+            header_title.innerHTML = "Item";
         }
     }
 
@@ -456,6 +458,7 @@ function edit_menu_availability() {
             item_tab.style.backgroundColor = "#dddddd";
             options_tab.style.backgroundColor = "#bababa";
             selected_tab = "options";
+            header_title.innerHTML = "Option";
         }
     }
     item_tab.style.backgroundColor = "#bababa";
@@ -1076,15 +1079,6 @@ tr:nth-child(even) {
     cursor: pointer;
 }
 
-.menu-edit-popup-header-name {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: 0.3px;
-    color: rgba(0,0,0,0.87);
-    margin: 8px 0 8px;
-}
-
 .menu-edit-popup-body {
     overflow-y: auto;
     padding: 10px;
@@ -1135,6 +1129,17 @@ tr:nth-child(even) {
     margin-right: 20px;
 }
 
+.menu-edit-popup-body-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px;
+}
+
+.menu-edit-popup-body-header-title {
+    font-weight: 700;
+    font-size: 20px;
+}
+
 
 </style>
 
@@ -1153,6 +1158,10 @@ tr:nth-child(even) {
         </div>
         <!-- Popup body -->
         <div class="menu-edit-popup-body">
+            <div class="menu-edit-popup-body-header">
+                <a class="menu-edit-popup-body-header-title">Item</a>
+                <a class="menu-edit-popup-body-header-title">Available?</a>
+            </div>
         </div>
 
         <!-- Popup button -->
