@@ -11,14 +11,15 @@ PROD = os.getenv('PROD')
 env = {}
 
 # SET TRUE IF WANT TO USE DEV ENVIRONMENT WHILE DEPLOYED TO AWS
-use_test_webhook_with_live_m3_url = False
+use_test_webhook_with_live_m3_url = True 
 if use_test_webhook_with_live_m3_url:
     PROD = False
     env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
 
 if PROD:
-    stripe.api_key = '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'
+    env['prod'] = True
+    env['stripe_secret_api_key'] = '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'
     env['stripe_publishable_api_key'] = 'pk_live_51J8elwLGQW192ovfb5ol6DcMIPKCqfF4WfXK292mR6tAxxFrDb66BTOHlf1qnBlCsrVGUedmcxDK2CBVY0oVP4zk003L136f2S'
     env['stripe_webhook_account_signing_secret'] = 'whsec_5fk3ps0nQqpEHiSRFIVTXMfunysdzOTg'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_w90BqL9nSa8at3kwalBAmi7UUEa37WPt'
@@ -31,7 +32,8 @@ if PROD:
     env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y6LGQW192ovf9wEO8yby'
  
 else:
-    stripe.api_key = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
+    env['prod'] = False
+    env['stripe_secret_api_key'] = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
     env['stripe_publishable_api_key'] = 'pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj'
     env['stripe_webhook_account_signing_secret'] = 'whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5'
@@ -43,6 +45,8 @@ else:
     env['stripe_yearly_with_website_price_id'] = 'price_1JG9jrLGQW192ovf9uACPHcm'
     env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y1LGQW192ovfzqADppTZ'
 
+stripe.api_version = '2020-08-27'
+stripe.api_key = env['stripe_secret_api_key']
 env['admin_username'] = 'kuklinskywork@gmail.com'
 env['admin_password'] = "36e&'&4K`c4mp~#cjZZ.6q@!#3?APZ%*"
 env['stripe_account_link_refresh_url'] = 'https://m3orders.com/account/setup-stripe'

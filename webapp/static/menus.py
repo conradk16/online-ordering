@@ -23,5 +23,7 @@ menu_items.append(MenuItem("#15 Chile Relleno Burrito", "Pico de gallo, scramble
 menu_items.append(MenuItem("Shrimp Burrito", "Grilled vegetables, rice, beans, cheese, and pico de gallo.", 11.94, [],[], "Burritos"))
 menu_items.append(MenuItem("Combo Burrito", "Cheese, sour cream, onion, and cilantro.", 10.99, [],[], "Burritos"))
 
-User.query.filter_by(email_address=account_email).first().json_menu = json.dumps(Menu(menu_items, order_url), default=lambda x:x.__dict__)
-db.session.commit()
+user = User.query.filter_by(email_address=account_email).first()
+if user:
+    user.json_menu = json.dumps(Menu(menu_items, order_url), default=lambda x:x.__dict__)
+    db.session.commit()

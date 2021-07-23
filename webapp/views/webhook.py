@@ -86,11 +86,15 @@ def webhook_connect_received():
 
     event_type = event['type']
     data_object = data['object']
+
+    livemode = event['livemode']
+    print(livemode)
     
     if event_type == 'account.updated':
         account_id = data_object.id
         user = User.query.filter_by(stripe_connected_account_id=account_id).first()
         user.stripe_connected_account_details_submitted = data_object.details_submitted
+        user.stripe_charges_enabled = data_object.charges_enabled
         db.session.commit()
     elif event_type == "payment_intent.succeeded":
         payment_intent = data_object
