@@ -107,7 +107,7 @@ function popup(item) {
             radiobox.name = choice_set.title;
             radiobox.style.cursor = "pointer";
             specific_choice_bar.appendChild(radiobox);
-            
+
             if (!choice.in_stock) {
                 specific_choice_text.style.color = "gray";
                 specific_choice_text.innerHTML += " (unavailable)";
@@ -149,7 +149,7 @@ function popup(item) {
             checkbox.name = choice_set.title;
             checkbox.style.cursor = "pointer";
             specific_choice_bar.appendChild(checkbox);
-            
+
             if (!choice.in_stock) {
                 specific_choice_text.style.color = "gray";
                 specific_choice_text.innerHTML += " (unavailable)";
@@ -610,7 +610,7 @@ function set_list_item(list_item, item) {
     title.classList.add("title");
     title.innerHTML = item.item_name;
     top_row.appendChild(title);
-    
+
     var price = document.createElement('span');
     price.classList.add("price");
     price.innerHTML = item.price;
@@ -1154,6 +1154,13 @@ class cartItem {
     }
 }
 
+function getChoiceSetClass(json_parsed_choice_set) {
+  var choices = [];
+  for (choice of json_parsed_choice_set) {
+    choices.push();
+  }
+}
+
 function get_menu_groups_from_menu(menu) {
   var menu_groups = {}; // dictionary of category to list of MenuItems
   for (const menu_item of menu["menu_items"]) {
@@ -1162,13 +1169,13 @@ function get_menu_groups_from_menu(menu) {
     var required_choice_sets = getChoiceSetClass(menu_item["required_choice_sets"]);
     var optional_choice_sets = getChoiceSetClass(menu_item["optional_choice_sets"]);
 
-    menu_item_class = menuItem(menu_item["name"], menu_item["description"], menu_item["price"]);
+    menu_item_class = menuItem(menu_item.name, menu_item.description, menu_item.price, required_choice_sets, optional_choice_sets, menu_item.category, menu_item.in_stock);
 
-    const category = menu_item.category;
+    const category = menu_item_class.category;
     if (category in menu_groups) {
-      menu_groups[category].push(menu_item);
+      menu_groups[category].push(menu_item_class);
     } else {
-      menu_groups[category] = [menu_item];
+      menu_groups[category] = [menu_item_class];
     }
   }
 
