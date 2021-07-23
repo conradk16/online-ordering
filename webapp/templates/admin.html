@@ -6,76 +6,17 @@
     <input type="submit" value="Download database" /><br>
 </form>
 
-<form action="/account/admin-download-menu-file">
+<form action="/account/admin-download-menu-file", method="POST">
     <div id="email_address_label" for="email_address">Account email</div>
     <input id="email_address" name="email_address">
     <input type="submit" value="Download menu file" /><br>
 </form>
 
-<form action="/account/admin-download-website-media">
+<form action="/account/admin-download-website-media", method="POST">
     <div id="email_address_label" for="email_address">Account email</div>
     <input id="email_address" name="email_address">
     <input type="submit" value="Download website media" /><br>
 </form>
-
-<h2 id="users-without-urls-header">Users without URLS:</h2>
-<div id="users-without-urls"></div>
-
-<h2 id="users-with-urls-header">Users with URLS:</h2>
-<div id="users-with-urls"></div>
-
-<script>
-
-usersWithoutURLsElement = document.getElementById("users-without-urls");
-for (user of JSON.parse({{users_without_order_url|tojson}})) {
-  var userElem = document.createElement("div");
-  for (field of Object.keys(user)) {
-    if (field == 'account_details') {
-      var parsed = JSON.parse(user[field]);
-      for (parsed_item of Object.keys(parsed)) {
-        var fieldElem = document.createElement("p");
-        fieldElem.innerHTML = JSON.stringify(parsed_item) + ": " + JSON.stringify(parsed[parsed_item]);
-        userElem.appendChild(fieldElem);
-      }
-    } else {
-      var fieldElem = document.createElement("p");
-      fieldElem.innerHTML = JSON.stringify(field) + ": " + JSON.stringify(user[field]);
-      userElem.appendChild(fieldElem);
-    }
-  }
-  usersWithoutURLsElement.appendChild(userElem);
-  var br = document.createElement("br");
-  var br2 = document.createElement("br");
-  usersWithoutURLsElement.appendChild(br);
-  usersWithoutURLsElement.appendChild(br2);
-}
-
-usersWithURLsElement = document.getElementById("users-with-urls");
-for (user of JSON.parse({{users_with_order_url|tojson}})) {
-  var userElem = document.createElement("div");
-  for (field of Object.keys(user)) {
-
-    if (field == 'account_details') {
-      var parsed = JSON.parse(user[field]);
-      for (parsed_item of Object.keys(parsed)) {
-        var fieldElem = document.createElement("p");
-        fieldElem.innerHTML = JSON.stringify(parsed_item) + ": " + JSON.stringify(parsed[parsed_item]);
-        userElem.appendChild(fieldElem);
-      }
-    } else {
-      var fieldElem = document.createElement("p");
-      fieldElem.innerHTML = JSON.stringify(field) + ": " + JSON.stringify(user[field]);
-      userElem.appendChild(fieldElem);
-    }
-  }
-  usersWithURLsElement.appendChild(userElem);
-  var br = document.createElement("br");
-  var br2 = document.createElement("br");
-  usersWithURLsElement.appendChild(br);
-  usersWithURLsElement.appendChild(br2);
-}
-
-</script>
 
 <h1>Assign an account an order url</h1>
 
@@ -102,3 +43,84 @@ for (user of JSON.parse({{users_with_order_url|tojson}})) {
   <input type="submit" id="submit" value="Submit" style="-webkit-appearance:none;">
 
 </form>
+
+<h2 id="users-without-urls-header">Users without URLS:</h2>
+<div id="users-without-urls"></div>
+
+<h2 id="users-with-urls-header">Users with URLS:</h2>
+<div id="users-with-urls"></div>
+
+<script>
+
+usersWithoutURLsElement = document.getElementById("users-without-urls");
+for (user of JSON.parse({{users_without_order_url|tojson}})) {
+  var userElem = document.createElement("div");
+  for (field of Object.keys(user)) {
+    if (field == 'account_details') {
+      if (user[field]) {
+        var headerElem = document.createElement("h4");
+        headerElem.innerHTML = "Account details begin:";
+        userElem.appendChild(headerElem);
+        var parsed = JSON.parse(user[field]);
+        for (parsed_item of Object.keys(parsed)) {
+          var fieldElem = document.createElement("p");
+          fieldElem.innerHTML = JSON.stringify(parsed_item) + ": " + JSON.stringify(parsed[parsed_item]);
+          userElem.appendChild(fieldElem);
+        }
+        var headerElemEnd = document.createElement("h4");
+        headerElemEnd.innerHTML = "Account details end:";
+        userElem.appendChild(headerElemEnd);
+      }
+    } else {
+      var fieldElem = document.createElement("p");
+      fieldElem.innerHTML = JSON.stringify(field) + ": " + JSON.stringify(user[field]);
+      userElem.appendChild(fieldElem);
+    }
+  }
+  var userTitleElem = document.createElement("h3");
+  userTitleElem.innerHTML = "User:";
+  usersWithoutURLsElement.appendChild(userTitleElem);
+  usersWithoutURLsElement.appendChild(userElem);
+  var br = document.createElement("br");
+  var br2 = document.createElement("br");
+  usersWithoutURLsElement.appendChild(br);
+  usersWithoutURLsElement.appendChild(br2);
+}
+
+usersWithURLsElement = document.getElementById("users-with-urls");
+for (user of JSON.parse({{users_with_order_url|tojson}})) {
+  var userElem = document.createElement("div");
+  for (field of Object.keys(user)) {
+
+    if (field == 'account_details') {
+      if (user[field]) {
+        var headerElem = document.createElement("h4");
+        headerElem.innerHTML = "Account details begin:";
+        userElem.appendChild(headerElem);
+        var parsed = JSON.parse(user[field]);
+        for (parsed_item of Object.keys(parsed)) {
+          var fieldElem = document.createElement("p");
+          fieldElem.innerHTML = JSON.stringify(parsed_item) + ": " + JSON.stringify(parsed[parsed_item]);
+          userElem.appendChild(fieldElem);
+        }
+        var headerElemEnd = document.createElement("h4");
+        headerElemEnd.innerHTML = "Account details end:";
+        userElem.appendChild(headerElemEnd);
+      }
+    } else {
+      var fieldElem = document.createElement("p");
+      fieldElem.innerHTML = JSON.stringify(field) + ": " + JSON.stringify(user[field]);
+      userElem.appendChild(fieldElem);
+    }
+  }
+  var userTitleElem = document.createElement("h3");
+  userTitleElem.innerHTML = "User:";
+  usersWithURLsElement.appendChild(userTitleElem);
+  usersWithURLsElement.appendChild(userElem);
+  var br = document.createElement("br");
+  var br2 = document.createElement("br");
+  usersWithURLsElement.appendChild(br);
+  usersWithURLsElement.appendChild(br2);
+}
+
+</script>

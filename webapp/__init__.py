@@ -45,6 +45,8 @@ else:
     env['stripe_yearly_with_website_price_id'] = 'price_1JG9jrLGQW192ovf9uACPHcm'
     env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y1LGQW192ovfzqADppTZ'
 
+    env['DEV_charges_enabled_status'] = False # set charges_enabled to be false for connected accounts
+
 stripe.api_version = '2020-08-27'
 stripe.api_key = env['stripe_secret_api_key']
 env['admin_username'] = 'kuklinskywork@gmail.com'

@@ -1148,9 +1148,15 @@ class cartItem {
 function get_menu_groups_from_menu(menu) {
   var menu_groups = {}; // dictionary of category to list of MenuItems
   for (const menu_item of menu["menu_items"]) {
-    const category = menu_item["category"];
+    //TODO: Convert menu_item to menu_item class so can check equals
+
+    var required_choice_sets = getChoiceSetClass(menu_item["required_choice_sets"]);
+    var optional_choice_sets = getChoiceSetClass(menu_item["optional_choice_sets"]);
+
+    menu_item_class = menuItem(menu_item["name"], menu_item["description"], menu_item["price"]);
+
+    const category = menu_item.category;
     if (category in menu_groups) {
-      //TODO: Convert menu_item to menu_item class so can check equals
       menu_groups[category].push(menu_item);
     } else {
       menu_groups[category] = [menu_item];
