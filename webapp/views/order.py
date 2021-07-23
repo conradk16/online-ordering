@@ -53,7 +53,6 @@ def handle_order_website_request(request, account_email, url, restaurant_display
             description=order.description(),
         )
 
-        #TODO: problem
         db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=url[1:])
         db_order.add_to_db()
 
