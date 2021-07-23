@@ -347,7 +347,7 @@ def update_accepting_orders_status():
 
 # POST endpoint for changing menu availability
 @account.route('/account/update-menu_availability', methods=['POST'])
-def update_accepting_orders_status():
+def update_menu_availability():
     if current_user.is_authenticated:
         menu = ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu()
         update_items = json.loads(request.form['update_items'])
