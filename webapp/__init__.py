@@ -19,6 +19,7 @@ if use_test_webhook_with_live_m3_url:
 
 if PROD:
     stripe.api_key = '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'
+    env['stripe_publishable_api_key'] = 'pk_live_51J8elwLGQW192ovfb5ol6DcMIPKCqfF4WfXK292mR6tAxxFrDb66BTOHlf1qnBlCsrVGUedmcxDK2CBVY0oVP4zk003L136f2S'
     env['stripe_webhook_account_signing_secret'] = 'whsec_5fk3ps0nQqpEHiSRFIVTXMfunysdzOTg'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_w90BqL9nSa8at3kwalBAmi7UUEa37WPt'
 
@@ -31,6 +32,7 @@ if PROD:
  
 else:
     stripe.api_key = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
+    env['stripe_publishable_api_key'] = 'pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj'
     env['stripe_webhook_account_signing_secret'] = 'whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5'
 
