@@ -381,7 +381,34 @@ function rejectOrderClicked() {
   xhr.send(formData);
 }
 
+function edit_menu_availability() {
+    var popup = document.getElementById("menu-edit-popup");
+    popup.style.display = "block";
+    document.body.style.overflow = "hidden";
+}
+
+function close_menu_popup_if_open(event) {
+    var popup = document.getElementById("menu-edit-popup");
+    if (event.target == popup) {
+        close_menu_popup();
+    }
+}
+
+function close_menu_popup() {
+    var popup = document.getElementById("menu-edit-popup");
+    popup.style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+
+function setup() {
+    var popup_x = document.getElementsByClassName("menu-edit-close")[0];
+    popup_x.onclick = close_menu_popup;
+    window.onclick = close_menu_popup_if_open;
+}
+
 window.document.title="View Orders";
+window.onload = setup;
 
 </script>
 
@@ -812,14 +839,14 @@ tr:nth-child(even) {
 
 .popup-button {
   margin: 8px auto 12px auto;
-	background-color:#ffffff;
-	border-radius:12px;
-	border:1px solid #b92d2b;
-	cursor:pointer;
-	color:#b92d2b;
-	font-family:Verdana;
-	font-size:16px;
-	padding:8px 0px;
+        background-color:#ffffff;
+        border-radius:12px;
+        border:1px solid #b92d2b;
+        cursor:pointer;
+        color:#b92d2b;
+        font-family:Verdana;
+        font-size:16px;
+        padding:8px 0px;
 	text-decoration:none;
   flex-basis: 50%;
   width: 204px;
@@ -861,8 +888,138 @@ tr:nth-child(even) {
   100% { transform: rotate(360deg); }
 }
 
+.menu-edit-popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 3;
+    padding: 30px; /* Location of the box */
+    padding-top: 70px;
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.menu-edit-popup-content {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    width: 460px;
+    border-radius: 10px;
+    border: 0;
+}
+
+.menu-edit-popup-header {
+    height: 40px;
+}
+
+.menu-edit-tabs {
+    display: flex;
+}
+
+.menu-edit-tab {
+    display: block;
+    padding: 15px;
+}
+
+.item-tab {
+    background-color: #bababa;
+    border-top-left-radius: 10px;
+}
+
+.options-tab {
+    background-color: #dddddd;
+    border-bottom-right-radius: 10px;
+}
+
+.menu-edit-close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    display: block;
+    padding: 5px;
+    padding-top: 6px;
+}
+
+.menu-edit-close:hover,
+.menu-edit-close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.menu-edit-popup-header-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    color: rgba(0,0,0,0.87);
+    margin: 8px 0 8px;
+}
+
+.menu-edit-popup-body {
+    overflow-y: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.menu-edit-popup-description {
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+.menu-edit-popup-button {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+    font-family: verdana;
+    font-size: 16px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    min-height: 35px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 0;
+    margin: 5px;
+}
+
 
 </style>
+
+
+<!-- Popup -->
+<div id="menu-edit-popup" class="menu-edit-popup">
+    <!-- Popup content -->
+    <div class="menu-edit-popup-content">
+        <!-- Popup header -->
+        <div class="menu-edit-popup-header">
+            <span class="menu-edit-close">&times;</span>
+            <div class="menu-edit-tabs">
+                <a class="menu-edit-tab item-tab" id="items-tab">Items</a>
+                <a class="menu-edit-tab options-tab" id="options-tab">Options</a>
+            </div>
+        </div>
+        <!-- Popup body -->
+        <div class="menu-edit-popup-body">
+            <p class=menu-edit-popup-description></p>  
+        </div>
+
+        <!-- Popup button -->
+        <button class="menu-edit-popup-button">Update Menu Availability</button>
+    </div>
+</div>
 
 <div id="reject-order-popup" class="reject-order-popup">
   <div id="reject-order-popup-content" class="reject-order-popup-content">
@@ -916,7 +1073,7 @@ tr:nth-child(even) {
     <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
 </div>
 
-<a href="#" class="edit-menu-availability-button">Edit menu availability</a>
+<a onclick="edit_menu_availability()" class="edit-menu-availability-button">Update menu availability</a>
 <br>
 </div>
 </div>

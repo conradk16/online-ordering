@@ -782,6 +782,7 @@ function load_cart() {
     var cart_button = document.createElement('button');
     cart_button.classList.add("cart-button");
     cart_button.innerHTML = "Proceed to Payment";
+    cart_button.style.pointerEvents = "auto";
     cart_button.onclick = function() {
       form = document.getElementById("proceed_to_payment_form");
       input = document.getElementById("proceed_to_payment_order_data");
@@ -807,6 +808,7 @@ function load_cart() {
     if (cart_items.length == 0) {
         cart_button.style.backgroundColor = "gray";
         cart_button.style.cursor = "auto";
+        cart_button.style.pointerEvents = "none";
         empty_cart_icon.style.display = "block";
         body.style.display = "flex";
         body.style.justifyContent = "center";
