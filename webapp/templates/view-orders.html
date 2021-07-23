@@ -381,10 +381,130 @@ function rejectOrderClicked() {
   xhr.send(formData);
 }
 
+function load_selections(tab_name) {
+    if (tab_name == "items") {
+        var dict = menu_items;
+    }
+    else {
+        var dict = options;
+    }
+    
+    let entries = Object.entries(dict);
+
+    // clear rows
+    var popup_body = document.getElementsByClassName("menu-edit-popup-body")[0];
+
+    const num_rows = popup_body.children.length;
+    for (let i = 0; i < num_rows-1; i++) {
+        popup_body.children[1].remove();
+    }
+
+    // create rows
+    for (const entry of entries) {
+        const item_name = entry[0];
+        
+        var row = document.createElement("div");
+        row.classList.add("menu-edit-row");
+        popup_body.appendChild(row);
+
+        var item_name_elem = document.createElement("a");
+        item_name_elem.innerHTML = item_name;
+        item_name_elem.classList.add("menu-edit-item-name");
+        row.appendChild(item_name_elem);
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("menu-edit-checkbox");
+        checkbox.checked = dict[item_name];
+        checkbox.onclick = function () {
+            dict[item_name] = checkbox.checked;
+        }
+        row.appendChild(checkbox);
+    }
+
+    // update the first row
+    var first_row = popup_body.firstElementChild;
+    first_row.classList.add("menu-edit-first-row");
+    
+}
+
 function edit_menu_availability() {
+    stock_statusus = JSON.parse({{json_stock_status|tojson}});
+    menu_items = stock_statusus["menu_items"];
+    options = stock_statusus["options"];
+
     var popup = document.getElementById("menu-edit-popup");
     popup.style.display = "block";
     document.body.style.overflow = "hidden";
+
+    var selected_tab = "items";
+
+    var item_tab = document.getElementsByClassName("item-tab")[0];
+    var options_tab = document.getElementsByClassName("options-tab")[0];
+    var header_title = document.getElementsByClassName("menu-edit-popup-body-header-title")[0];
+    item_tab.onclick = function() {
+        if (selected_tab != "items") {
+            load_selections("items");
+            item_tab.style.backgroundColor = "#bababa";
+            options_tab.style.backgroundColor = "#dddddd";
+            selected_tab = "items";
+            header_title.innerHTML = "Item";
+        }
+    }
+
+    options_tab.onclick = function() {
+        if (selected_tab != "options") {
+            load_selections("options");
+            item_tab.style.backgroundColor = "#dddddd";
+            options_tab.style.backgroundColor = "#bababa";
+            selected_tab = "options";
+            header_title.innerHTML = "Option";
+        }
+    }
+    item_tab.style.backgroundColor = "#bababa";
+    options_tab.style.backgroundColor = "#dddddd";
+    load_selections("items");
+}
+
+function update_menu_availability() {
+    var form = document.getElementById("menu-availability-form");
+    var input = document.getElementById("menu-availability-inp");
+
+    var to_send = new Array();
+    let menu_items_entries = Object.entries(menu_items);
+    let options_entries = Object.entries(options);
+    
+    for (const entry of menu_items_entries) {
+        var name = entry[0];
+        var stock_status = entry[1];
+        var item_or_option = "item";
+        var dict = {};
+        dict["name"] = name;
+        dict["item_or_option"] = item_or_option;
+        dict["stock_status"] = stock_status;
+        to_send.push(dict);
+    }
+
+    for (const entry of options_entries) {
+        var name = entry[0];
+        var stock_status = entry[1];
+        var item_or_option = "option";
+        var dict = {};
+        dict["name"] = name;
+        dict["item_or_option"] = item_or_option;
+        dict["stock_status"] = stock_status;
+        to_send.push(dict);
+    }
+
+    input.value = JSON.stringify(to_send);
+
+    /*var sent = JSON.parse(input.value);
+    for (const dict of sent) {
+        console.log(dict["name"] + ", " + dict["item_or_option"] + ", " + dict["stock_status"]);
+    }*/
+
+    form.submit();
+    
 }
 
 function close_menu_popup_if_open(event) {
@@ -404,11 +524,14 @@ function close_menu_popup() {
 function setup() {
     var popup_x = document.getElementsByClassName("menu-edit-close")[0];
     popup_x.onclick = close_menu_popup;
-    window.onclick = close_menu_popup_if_open;
 }
 
 window.document.title="View Orders";
 window.onload = setup;
+
+stock_statusus = null;
+menu_items = null;
+options = null;
 
 </script>
 
@@ -916,7 +1039,7 @@ tr:nth-child(even) {
 }
 
 .menu-edit-popup-header {
-    height: 40px;
+    
 }
 
 .menu-edit-tabs {
@@ -926,6 +1049,7 @@ tr:nth-child(even) {
 .menu-edit-tab {
     display: block;
     padding: 15px;
+    cursor: pointer;
 }
 
 .item-tab {
@@ -955,25 +1079,9 @@ tr:nth-child(even) {
     cursor: pointer;
 }
 
-.menu-edit-popup-header-name {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: 0.3px;
-    color: rgba(0,0,0,0.87);
-    margin: 8px 0 8px;
-}
-
 .menu-edit-popup-body {
     overflow-y: auto;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-}
-
-.menu-edit-popup-description {
-    margin-top: 0px;
-    margin-bottom: 8px;
+    padding: 10px;
 }
 
 .menu-edit-popup-button {
@@ -995,6 +1103,43 @@ tr:nth-child(even) {
     margin: 5px;
 }
 
+.menu-edit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #a3a3a3;
+    padding: 10px;
+}
+
+.menu-edit-first-row {
+    border-top: none !important;
+}
+
+.menu-edit-checkbox {
+    appearance: checkbox !important;
+    display: block !important;
+    padding: 5px;
+}
+
+.menu-edit-checkbox:hover {
+    cursor: pointer;
+}
+
+.menu-edit-item-name {
+    margin-right: 20px;
+}
+
+.menu-edit-popup-body-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px;
+}
+
+.menu-edit-popup-body-header-title {
+    font-weight: 700;
+    font-size: 20px;
+}
+
 
 </style>
 
@@ -1013,11 +1158,14 @@ tr:nth-child(even) {
         </div>
         <!-- Popup body -->
         <div class="menu-edit-popup-body">
-            <p class=menu-edit-popup-description></p>
+            <div class="menu-edit-popup-body-header">
+                <a class="menu-edit-popup-body-header-title">Item</a>
+                <a class="menu-edit-popup-body-header-title">Available?</a>
+            </div>
         </div>
 
         <!-- Popup button -->
-        <button class="menu-edit-popup-button">Update Menu Availability</button>
+        <button onclick = "update_menu_availability()" class="menu-edit-popup-button">Update Menu Availability</button>
     </div>
 </div>
 
@@ -1122,6 +1270,10 @@ setInterval(function() {
 </form>
 
 <form id="reload-orders-form">
+</form>
+
+<form id="menu-availability-form" action="/account/update-menu-availability" method="POST">
+    <input id="menu-availability-inp" name="update_items">
 </form>
 
 </html>
