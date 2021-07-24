@@ -141,11 +141,11 @@ class Menu:
         elif item_or_option == 'option':
             for menu_item in self.menu_items:
                 for choice_set in menu_item.required_choice_sets:
-                    for choice in choice_set:
+                    for choice in choice_set.choices:
                         if choice.name == name:
                             choice.in_stock = stock_status
                 for choice_set in menu_item.optional_choice_sets:
-                    for choice in choice_set:
+                    for choice in choice_set.choices:
                         if choice.name == name:
                             choice.in_stock = stock_status
 
@@ -203,13 +203,13 @@ class ConvertJsonToOrder:
         optional_choice_sets = []
         for json_optional_choice_set in json_menu_item['optional_choice_sets']:
             optional_choice_sets.append(ConvertJsonToOrder.json_choice_set_to_class(json_optional_choice_set))
-        return MenuItem(json_menu_item['item_name'], json_menu_item['item_description'], json_menu_item['price'], required_choice_sets, optional_choice_sets, json_menu_item['category'])
+        return MenuItem(json_menu_item['item_name'], json_menu_item['item_description'], json_menu_item['price'], required_choice_sets, optional_choice_sets, json_menu_item['category'], json_menu_item['in_stock'])
 
     @staticmethod
     def json_choice_set_to_class(json_choice_set):
         choices = []
         for json_choice in json_choice_set['choices']:
-            choices.append(Choice(json_choice['name'], json_choice['price']))
+            choices.append(Choice(json_choice['name'], json_choice['price'], json_choice['in_stock']))
         return ChoiceSet(json_choice_set['title'], choices)
 
 class ConvertJsonToMenu:

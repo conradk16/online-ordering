@@ -37,7 +37,7 @@
             link_title.innerHTML = "You subscription is currently inactive. Go to Manage Subscription in the menu bar to re-subscribe.";
         }
         else if ((order_url == null && paid_for_website == false) || (website_url == null && paid_for_website == true)) {
-                  
+
             disable_button();
             var content_holder = document.getElementsByClassName("content-holder")[0];
             if (paid_for_website) {
@@ -45,7 +45,7 @@
             } else {
                 description.innerHTML = "We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.";
             }
-            
+
         } else if (charges_enabled == false) {
             disable_button();
             link_title = document.getElementsByClassName("description")[0];
@@ -162,7 +162,7 @@
     font-size: 13px;
     margin-top: 10px;
 }
-  
+
 
 </style>
 
@@ -191,7 +191,7 @@
       <li class="large-li" onclick="click_link('/account/account-details')"><a>Account Details</a></li>
       <li class="large-li" onclick="click_link('/account/closing-times')"><a>Closing Hours</a></li>
       <li class="large-li" onclick="click_link('https://dashboard.stripe.com')"><a>Stripe</a></li>
-      <li class="large-li" onclick="click_link('/account/closing-times')"><a>Manage Subscription</a></li>
+      <li class="large-li" onclick="click_link('/account/manage-subscription')"><a>Manage Subscription</a></li>
     </ul>
   </div>
 
