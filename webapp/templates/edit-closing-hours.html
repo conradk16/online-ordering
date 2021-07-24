@@ -97,12 +97,12 @@
   </label>
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
-      <li><a  href="/account" style="display:block;">Account Home</a></li>
-      <li id="menu_view_orders_block"><a  href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
-      <li><a  href="/account/account-details" style="display:block;">Account Details</a></li>
-      <li><a  href="/account/closing-times" style="display:block;">Closing Hours</a></li>
-      <li><a  href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
-      <li><a  href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
+      <li class="large-li" onclick="click_link('/account')"><a>Account Home</a></li>
+      <li class="large-li" onclick="click_link('/account/orders')" id="menu_view_orders_block"><a id="menu_view_orders">View Orders</a></li>
+      <li class="large-li" onclick="click_link('/account/account-details')"><a>Account Details</a></li>
+      <li class="large-li" onclick="click_link('/account/closing-times')"><a>Closing Hours</a></li>
+      <li class="large-li" onclick="click_link('https://dashboard.stripe.com')"><a>Stripe</a></li>
+      <li class="large-li" onclick="click_link('/account/closing-times')"><a>Manage Subscription</a></li>
     </ul>
   </div>
   <br>

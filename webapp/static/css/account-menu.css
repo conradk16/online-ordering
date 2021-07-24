@@ -131,3 +131,10 @@ input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-2 {
     transform: rotate(-135deg);
     margin-top: -9px;
 }
+
+.large-li {
+    height: 59px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
