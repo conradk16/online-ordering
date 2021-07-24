@@ -92,7 +92,7 @@ def enter_website_info():
 
         db.session.commit()
 
-        return redirect('/account/setup-account-details')
+        return redirect('/account/setup-menu-notes')
 
 @account.route('/account/setup-menu-notes', methods=['GET', 'POST'])
 def setup_menu_notes():
@@ -195,7 +195,7 @@ def edit_account_details():
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
-        return render_template('edit-account-details.html', account_details=current_user.account_details, order_url=current_user.order_url, active_subscription=current_user.active_subscription, menu_filename=current_user.menu_file_filename)
+        return render_template('edit-account-details.html', account_details=current_user.account_details, menu_filename=current_user.menu_file_filename, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
     elif request.method == 'POST':
         if not is_valid_edit_account_details_post_request(request):
             return redirect('/account/account-details')
@@ -225,7 +225,7 @@ def edit_closing_times():
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
-        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, order_url=current_user.order_url, active_subscription=current_user.active_subscription)
+        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account/closing-times')
@@ -275,10 +275,12 @@ def view_orders():
             archived_orders = "No orders"
 
         current_time = datetime.datetime.now()
-        current_user.most_recent_time_orders_queried = current_time
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
+        elif ((current_time - current_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
+            restaurant_user.currently_accepting_orders = False
+        current_user.most_recent_time_orders_queried = current_time
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
@@ -310,10 +312,12 @@ def get_updated_orders():
             archived_orders = "No orders"
 
         current_time = datetime.datetime.now()
-        current_user.most_recent_time_orders_queried = current_time
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
+        elif ((current_time - current_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
+            restaurant_user.currently_accepting_orders = False
+        current_user.most_recent_time_orders_queried = current_time
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
