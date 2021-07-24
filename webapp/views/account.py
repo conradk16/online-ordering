@@ -26,7 +26,7 @@ def account_homepage():
         return redirect('/account/setup-website-info')
     elif not current_user.menu_notes:
         return redirect('/account/setup-menu-notes')
-    elif not current_user.closing_times:
+    elif current_user.closing_times == None:
         return redirect('/account/setup-closing-times')
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
@@ -141,6 +141,7 @@ def setup_closing_hours():
             return redirect('/account')
         
         current_user.closing_times = request.form['closing_times']
+        current_user.closing_times_timezone = request.form['closing_times_timezone']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
         
@@ -160,7 +161,7 @@ def setup_stripe():
             return redirect('/account/setup-website-info')
         elif not current_user.menu_notes:
             return redirect('/account/setup-menu-notes')
-        elif not current_user.closing_times:
+        elif current_user.closing_times == None:
             return redirect('/account/setup-closing-times')
         elif current_user.stripe_connected_account_details_submitted:
             return redirect('/account')
@@ -231,7 +232,7 @@ def edit_closing_times():
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
-        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, closing_times_timezone=current_user.closing_times_timezone, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account/closing-times')
@@ -505,7 +506,7 @@ def is_valid_menu_notes_post_request(request):
 
 def is_valid_closing_times_post_request(request):
     if request.form:
-        if 'closing_times' in request.form:
+        if 'closing_times_timezone' in request.form and 'closing_times' in request.form:
             for closing_time in json.loads(request.form['closing_times']):
                 if ('minute' not in closing_time) or ('hour' not in closing_time) or ('day' not in closing_time) or ('timezone' not in closing_time):
                     return False
@@ -558,7 +559,3 @@ def send_order_refunded_email(customer_email, rejection_description, customer_na
     msg = Message(subject='Order Could Not be Fulfilled', sender=env['email_sender_address'], recipients=[customer_email])
     msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description, customer_name=customer_name, restaurant_name=restaurant_name)
     mail.send(msg)
-
-def did_user_finish_setup(user):
-    if user.stripe_customer_id and user.account_details and (user.website_notes or not user.paid_for_website) and user.menu_notes and user.closing_times and user.stripe_connected_account_details_submitted:
-        return True

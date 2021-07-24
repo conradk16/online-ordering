@@ -31,7 +31,8 @@ class User(db.Model, UserMixin):
 
     # account details
     account_details = db.Column(db.String)
-    closing_times = db.Column(db.String, default='[]')
+    closing_times = db.Column(db.String)
+    closing_times_timezone = db.Column(db.String)
     next_closing_time = db.Column(db.DateTime, default=datetime.datetime.max)
     shipping_address = db.Column(db.String)
 
