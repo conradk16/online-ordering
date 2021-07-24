@@ -175,7 +175,9 @@ function registerElements(elements, exampleName) {
                         console.log("success");
                         checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
                         var email_input = document.getElementById("email_inp");
-                        result_title.innerHTML = "Thank you, your order has been placed. An email receipt has been sent to " + email_input.value + "."; 
+                        result_title.innerHTML = "Thank you, your order has been placed."; 
+                        var caption = document.getElementById("caption");
+                        caption.innerHTML = "An email receipt has been sent to " + email_input.value + "."
                         resetButton.style.display = "none";
                     }
                 }

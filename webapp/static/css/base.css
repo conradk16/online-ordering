@@ -289,46 +289,6 @@ main {
   height: 100%;
 }
 
-.stripes {
-  position: absolute;
-  width: 100%;
-  transform: skewY(-12deg);
-  height: 950px;
-  top: -350px;
-  background: linear-gradient(180deg, #e6ebf1 350px, rgba(230, 235, 241, 0));
-}
-
-.stripes .stripe {
-  position: absolute;
-  height: 190px;
-}
-
-.stripes .s1 {
-  height: 380px;
-  top: 0;
-  left: 0;
-  width: 24%;
-  background: linear-gradient(90deg, #e6ebf1, rgba(230, 235, 241, 0));
-}
-
-.stripes .s2 {
-  top: 380px;
-  left: 4%;
-  width: 35%;
-  background: linear-gradient(
-    90deg,
-    hsla(0, 0%, 100%, 0.65),
-    hsla(0, 0%, 100%, 0)
-  );
-}
-
-.stripes .s3 {
-  top: 380px;
-  right: 0;
-  width: 38%;
-  background: linear-gradient(90deg, #e4e9f0, rgba(228, 233, 240, 0));
-}
-
 main > .container-lg {
   display: -ms-flexbox;
   display: flex;
@@ -451,57 +411,14 @@ main > .container-lg .example.submitted .success .icon .checkmark {
   stroke-dashoffset: 0 !important;
 }
 
+main > .container-lg .example.submitted .caption {
+    opacity: 1;
+    transition-delay: 0.1s;
+}
+
 main > .container-lg .example * {
   margin: 0;
   padding: 0;
-}
-
-main > .container-lg .example .caption {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  width: 100%;
-  top: 100%;
-  left: 0;
-  padding: 15px 10px 0;
-  color: #aab7c4;
-  font-family: Roboto, "Open Sans", "Segoe UI", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-main > .container-lg .example .caption * {
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-main > .container-lg .example .caption .no-charge {
-  color: #cfd7df;
-  margin-right: 10px;
-}
-
-main > .container-lg .example .caption a.source {
-  text-align: right;
-  color: inherit;
-  transition: color 0.1s ease-in-out;
-  margin-left: 10px;
-}
-
-main > .container-lg .example .caption a.source:hover {
-  color: #6772e5;
-}
-
-main > .container-lg .example .caption a.source:active {
-  color: #43458b;
-}
-
-main > .container-lg .example .caption a.source  svg {
-  margin-right: 10px;
-}
-
-main > .container-lg .example .caption a.source svg path {
-  fill: currentColor;
 }
 
 main > .container-lg .example form {
