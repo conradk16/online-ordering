@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="icon" href="/static/favicon.png">
+
+<!--javascript-->
+<script>
+
+function popup(item) {
+    var popup = document.getElementById("popup");
+    popup.style.display = "block";
+    document.body.style.overflow = "hidden";
+
+    // set header
+    var header_name = document.getElementsByClassName("popup-header-name")[0];
+    header_name.textContent = item.item_name;
+
+    // scroll to top
+    var popup_body = document.getElementsByClassName("popup-body")[0];
+    popup_body.scrollTop = 0;
+
+    // set description
+    if (item.item_description != "") {
+        var description = document.getElementsByClassName("popup-description")[0];
+        description.innerHTML = item.item_description;
+    }
+
+    // clear choices titles
+    const old_choices = document.getElementsByClassName("gray-bar");
+    const num_old_choices = old_choices.length;
+    for (let i = 1; i < num_old_choices - 1; i++) {
+        old_choices[1].remove();
+    }
+
+    // clear specific choices
+    const old_specific_choice_bars = document.getElementsByClassName("specific-choice-bar");
+    const num_old_specific_choice_bars = old_specific_choice_bars.length;
+    for (let i = 0; i < num_old_specific_choice_bars; i++) {
+        old_specific_choice_bars[0].remove();
+    }
+
+    // clear special instructions gray bar
+    var gray_bars = document.getElementsByClassName("gray-bar");
+    var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
+    while (special_instructions_gray_bar.firstChild) {
+        special_instructions_gray_bar.firstChild.remove();
+    }
+
+    // set up special instructions
+    var gray_bars = document.getElementsByClassName("gray-bar");
+    var special_instructions_gray_bar = gray_bars[gray_bars.length - 2];
+    special_instructions_gray_bar.style.justifyContent = "flex-start";
+    special_instructions_gray_bar.style.flexDirection = "column";
+    special_instructions_gray_bar.style.alignItems = "flex-start";
+
+    if (special_instructions_gray_bar.children.length == 0) {
+        var special_instructions_title = document.createElement("span");
+        special_instructions_title.innerHTML = "Special Instructions";
+        special_instructions_title.style.fontWeight = "700";
+        special_instructions_gray_bar.appendChild(special_instructions_title);
+
+        var special_instructions_info = document.createElement("span");
+        special_instructions_info.innerHTML = " (Max 120 Characters)";
+        special_instructions_info.style.fontWeight = "0px";
+        special_instructions_info.style.fontSize = "14px";
+        special_instructions_gray_bar.appendChild(special_instructions_info);
+    }
+
+    var special_instructions = document.getElementsByClassName("special-instructions")[0];
+    special_instructions.value = "";
+    special_instructions.onfocus = function() {
+        special_instructions.scrollIntoView({behavior: "smooth"});
+    }
+
+    // set required choices
+    var quantity_bar = popup_body.lastElementChild;
+
+    for (const choice_set of item.required_choice_sets) {
+        // add a header
+        var required_choice_header = document.createElement('div');
+        required_choice_header.classList.add("gray-bar");
+        popup_body.insertBefore(required_choice_header, special_instructions_gray_bar);
+
+        var choice_title = document.createElement('a');
+        choice_title.classList.add("choice-title");
+        choice_title.innerHTML = choice_set.title + " (required)";
+        required_choice_header.appendChild(choice_title);
+
+        for (const choice of choice_set.choices) {
+            var specific_choice_bar = document.createElement("div");
+            specific_choice_bar.classList.add("specific-choice-bar");
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
+
+            var specific_choice_text = document.createElement('a');
+            specific_choice_text.classList.add("specific-choice-text");
+            specific_choice_text.innerHTML = choice.name;
+            if (choice.price != "0.00") {
+                specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
+            }
+
+            specific_choice_bar.appendChild(specific_choice_text);
+
+            var radiobox = document.createElement('input');
+            radiobox.type = 'radio';
+            radiobox.name = choice_set.title;
+            radiobox.style.cursor = "pointer";
+            specific_choice_bar.appendChild(radiobox);
+
+            if (!choice.in_stock) {
+                specific_choice_text.style.color = "gray";
+                specific_choice_text.innerHTML += " (unavailable)";
+                radiobox.style.display = "none";
+            }
+
+        }
+    }
+
+    // set optional choices
+    var optional_selections = [];
+    var quantity_bar = popup_body.lastElementChild;
+    for (const choice_set of item.optional_choice_sets) {
+        // add a header
+        var optional_choice_header = document.createElement('div');
+        optional_choice_header.classList.add("gray-bar");
+        popup_body.insertBefore(optional_choice_header, special_instructions_gray_bar);
+
+        var choice_title = document.createElement('a');
+        choice_title.classList.add("choice-title");
+        choice_title.innerHTML = choice_set.title;
+        optional_choice_header.appendChild(choice_title);
+
+        for (const choice of choice_set.choices) {
+            var specific_choice_bar = document.createElement("div");
+            specific_choice_bar.classList.add("specific-choice-bar");
+            popup_body.insertBefore(specific_choice_bar, special_instructions_gray_bar);
+
+            var specific_choice_text = document.createElement('a');
+            specific_choice_text.classList.add("specific-choice-text");
+            specific_choice_text.innerHTML = choice.name;
+            if (choice.price != "0.00") {
+                specific_choice_text.innerHTML += " - $" + choice.price.toFixed(2);
+            }
+            specific_choice_bar.appendChild(specific_choice_text);
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = choice_set.title;
+            checkbox.style.cursor = "pointer";
+            specific_choice_bar.appendChild(checkbox);
+
+            if (!choice.in_stock) {
+                specific_choice_text.style.color = "gray";
+                specific_choice_text.innerHTML += " (unavailable)";
+                checkbox.style.display = "none";
+            }
+
+        }
+    }
+
+    // set quantity controls
+    var minus = document.getElementById("minus");
+    minus.style.backgroundColor = "gray";
+    minus.style.cursor = "auto";
+    var plus = document.getElementById("plus");
+    var quantity_count = document.getElementsByClassName("quantity-count")[0];
+
+    quantity_count.innerHTML = "1";
+    plus.onclick = function() {
+        count = parseInt(quantity_count.innerHTML);
+        quantity_count.innerHTML = count + 1;
+        minus.style.cursor = "pointer";
+        minus.style.backgroundColor = "#4693e0";
+    }
+    minus.onclick = function() {
+        count = parseInt(quantity_count.innerHTML);
+        if (count != 1) {
+            quantity_count.innerHTML = count - 1;
+        }
+        if (count == 2) {
+            minus.style.cursor = "auto";
+            minus.style.backgroundColor = "gray";
+        }
+    }
+
+    // set onclick for add_to_order_button
+    const add_to_order_button = document.getElementsByClassName("popup-button")[0];
+    add_to_order_button.onclick = function () { add_to_order(item); };
+
+    //popup.click();
+
+}
+
+function add_to_order(item) {
+    var required_selections = [];
+    var optional_selections = [];
+
+    // extract selected values from popup
+    for (required_choice_set of item.required_choice_sets) {
+        const radio_buttons = document.getElementsByName(required_choice_set.title);
+        at_least_one_selected = false;
+        for (let i = 0; i < required_choice_set.choices.length; i++) {
+            radio_button = radio_buttons[i];
+            if (radio_button.checked) {
+                required_selections.push(required_choice_set.choices[i]);
+                at_least_one_selected = true;
+                break;
+            }
+        }
+        if (!at_least_one_selected) {
+            display_error("Please Select " + required_choice_set.title, "#ff8f8f");
+            window.setTimeout("hide_error();", 1500);
+            return;
+        }
+    }
+
+    for (optional_choice_set of item.optional_choice_sets) {
+        const checkboxes = document.getElementsByName(optional_choice_set.title);
+        for (let i = 0; i < optional_choice_set.choices.length; i++) {
+            checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                optional_selections.push(optional_choice_set.choices[i]);
+            }
+        }
+    }
+
+    var quantity_count = parseInt(document.getElementsByClassName("quantity-count")[0].innerHTML);
+
+    var special_instructions_element = document.getElementsByClassName("special-instructions")[0];
+
+    var special_instructions_text = special_instructions_element.value;
+
+    close_popup();
+    var special_instructions = document.getElementsByClassName("special-instructions")[0];
+    special_instructions.style.height = "50px";
+
+    // add to cart_items
+    var cart_item_to_add = new cartItem(item, required_selections, optional_selections, quantity_count, special_instructions_text);
+
+    var matched = false;
+    for (var cart_item of cart_items) {
+        if (cart_item.is_equal(cart_item_to_add)) {
+            cart_item.quantity += quantity_count;
+            matched = true;
+            break;
+        }
+    }
+    if (!matched) {
+        cart_items.push(cart_item_to_add);
+    }
+
+    //update cart number
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.innerHTML = get_num_cart_items();
+
+    if (current_layout == "wide" || current_layout == "extrawide") {
+        load_cart();
+    }
+}
+
+function display_error(message, background_color, text_color, bold=true, font_size="17px") {
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = "flex";
+
+    // clear message
+    var text = error_box.firstChild;
+    text.remove();
+
+    // create message
+    var message_element = document.createElement('a');
+    message_element.innerHTML = message;
+    message_element.style.color = text_color;
+    if (bold) {
+        message_element.style.fontWeight = "700";
+    } else {
+        message_element.style.fontWeight = "300";
+    }
+    message_element.style.fontSize = font_size;
+
+
+    error_box.style.background = background_color;
+
+    error_box.appendChild(message_element);
+}
+
+function hide_error() {
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = 'none';
+}
+
+function close_popup_if_open(event) {
+    var popup = document.getElementById("popup");
+    if (event.target == popup) {
+        close_popup();
+    }
+}
+
+function close_popup() {
+    var popup = document.getElementById("popup");
+    popup.style.display = "none";
+    document.body.style.overflow = "auto";
+
+    var error_box = document.getElementsByClassName('error-alert')[0];
+    error_box.style.display = "none";
+}
+
+function update_layout() {
+    if (is_cart == true && window.innerWidth < width_two && current_layout != "cart") {
+        current_layout = "cart";
+        load_cart_layout();
+    }
+    else if (is_cart == true && window.innerWidth > width_two) {
+        is_cart = false;
+        update_layout();
+    }
+    else if (is_cart == false && window.innerWidth < width_one && current_layout != "narrow") {
+        load_narrow_layout();
+        current_layout = "narrow";
+    }
+    else if (is_cart == false && window.innerWidth > width_one && window.innerWidth < width_two && current_layout != "medium") {
+        load_medium_layout();
+        current_layout = "medium";
+    }
+    else if (is_cart == false && window.innerWidth > width_two && window.innerWidth < width_three && current_layout != "wide") {
+        load_wide_layout();
+        current_layout = "wide";
+    }
+    else if (is_cart == false && window.innerWidth > width_three && current_layout != "extrawide") {
+        load_extrawide_layout();
+        current_layout = "extrawide";
+    }
+}
+
+function initialize_layout() {
+    if (window.innerWidth < width_one) {
+        load_narrow_layout();
+        current_layout = "narrow";
+    }
+    else if (window.innerWidth < width_two)  {
+        load_medium_layout();
+        current_layout = "medium";
+    }
+    else if (window.innerWidth < width_three) {
+        load_wide_layout();
+        current_layout = "wide";
+    }
+    else {
+        load_extrawide_layout();
+        current_layout = "extrawide";
+    }
+}
+
+function load_cart_layout() {
+    // set main-body margins
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 0px";
+
+    // remove food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items != null) {
+        food_items.remove();
+    }
+
+    // set the cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart == null) {
+        cart = document.createElement('div');
+        cart.classList.add("cart");
+        main_body.appendChild(cart);
+        cart.style.width = "100%";
+        cart.style.margin = "0px";
+        cart.style.boxShadow = "0";
+        cart.style.borderRadius = "0";
+    }
+
+    load_cart();
+
+    // set toggle button to display menu
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "block";
+
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
+
+}
+
+function load_narrow_layout() {
+    // set main-body margins
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 10px";
+
+    // clear cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+
+    // create food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
+
+    // load narrow menu
+    load_menu_narrow();
+
+    // set automatic width for food-items
+    food_items.style.width = 'auto';
+
+    // set cart button to display
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
+
+    // set popup to be full width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "100%";
+
+    //set the number
+    var cart_number_circle = document.getElementsByClassName("cart-number-circle")[0];
+    cart_number_circle.style.display = "block";
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.style.display = "block";
+    cart_number.innerHTML = get_num_cart_items();
+}
+
+function load_medium_layout() {
+    // set main-body margins
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 10px";
+
+    // clear cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+
+    // create food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
+
+    // load wide menu
+    load_menu_wide();
+
+    // set automatic width for food-items
+    food_items.style.width = 'auto';
+
+    // set cart button to display
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "block";
+    menu_icon.style.display = "none";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px";
+
+    //set the number
+    var cart_number_circle = document.getElementsByClassName("cart-number-circle")[0];
+    cart_number_circle.style.display = "block";
+    var cart_number = document.getElementsByClassName("cart-number")[0];
+    cart_number.style.display = "block";
+    cart_number.innerHTML = get_num_cart_items();
+}
+
+function load_wide_layout() {
+    // set main-body margins
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 0px";
+
+    // create food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
+
+    // remove and add the cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    cart = document.createElement('div');
+    cart.classList.add("cart");
+    main_body.appendChild(cart);
+    cart.style.width = "430px";
+    cart.style.margin = "30px 0px";
+    cart.style.boxShadow = "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)";
+    cart.style.borderRadius = "20px";
+
+    load_cart();
+
+    // load narrow menu
+    load_menu_narrow();
+
+    // set max-width for food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    food_items.style.width = '420px';
+
+    // set cart button to not display
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px";
+
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
+}
+
+function load_extrawide_layout() {
+    // set main-body margins
+    var main_body = document.getElementsByClassName("main-body")[0];
+    main_body.style.margin = "0px 0px";
+
+    // create food-items
+    var food_items = document.getElementsByClassName("food-items")[0];
+    if (food_items == null) {
+        var food_items = document.createElement('div');
+        food_items.classList.add("food-items");
+        main_body.appendChild(food_items);
+    }
+
+    // load wide menu
+    load_menu_wide();
+
+    // remove and add the cart
+    var cart = document.getElementsByClassName("cart")[0];
+    if (cart != null) {
+        cart.remove();
+    }
+    cart = document.createElement('div');
+    cart.classList.add("cart");
+    main_body.appendChild(cart);
+    cart.style.width = "470px";
+    cart.style.margin = "30px 0px";
+    cart.style.boxShadow = "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)";
+    cart.style.borderRadius = "20px";
+
+    load_cart();
+
+    // set max-width for food-items
+    food_items.style.width = '600px';
+
+    // set cart button to not display
+    var icons = document.getElementsByClassName("cart-menu-icon");
+    cart_icon = icons[0];
+    menu_icon = icons[1];
+    cart_icon.style.display = "none";
+    menu_icon.style.display = "none";
+
+    // set popup to be fixed width
+    var popup = document.getElementsByClassName("popup-content")[0];
+    popup.style.width = "460px"
+
+    // hide the number
+    var cart_number_holder = document.getElementsByClassName("cart-number-holder")[0];
+    var children = cart_number_holder.children;
+    var circle = children[0];
+    var number = children[1];
+    circle.style.display = "none";
+    number.style.display = "none";
+}
+
+// item is of class menuItem
+// list_item is the html element
+function set_list_item(list_item, item) {
+    var link = document.createElement('a');
+    link.classList.add("link");
+    link.onclick = function() { popup(item); };
+    list_item.appendChild(link);
+
+    var inside_box = document.createElement('div');
+    inside_box.classList.add("inside-box");
+    link.appendChild(inside_box);
+
+    var top_row = document.createElement('div');
+    top_row.classList.add("top-row");
+    inside_box.appendChild(top_row);
+
+    var title = document.createElement('a');
+    title.classList.add("title");
+    title.innerHTML = item.item_name;
+    top_row.appendChild(title);
+
+    var price = document.createElement('span');
+    price.classList.add("price");
+    price.innerHTML = item.price;
+    top_row.appendChild(price);
+
+    var description = document.createElement('p');
+    description.classList.add("description");
+    description.innerHTML = item.item_description;
+    inside_box.appendChild(description);
+
+    if (!item.in_stock) {
+        link.style.cursor = "default";
+        link.style.pointerEvents = "none";
+        title.style.color = "gray";
+        title.innerHTML = title.innerHTML + " - unavailable";
+        price.style.color = "gray";
+        description.style.color = "gray";
+        list_item.classList.remove("list-item-hover-class");
+    }
+}
+
+// assumes food-items exists
+function load_menu_narrow() {
+    var food_items = document.getElementsByClassName("food-items")[0];
+
+    // clear the menu
+    while (food_items.firstChild) {
+        food_items.removeChild(food_items.firstChild);
+    }
+
+    // load the menu
+    for (var menu_group of menu_groups) {
+
+        // add the header
+        var new_header = document.createElement('h2');
+        new_header.innerHTML = menu_group.group_name;
+        new_header.classList.add("group-header");
+        food_items.appendChild(new_header);
+
+        var group_list = document.createElement('ul');
+        group_list.classList.add("group-list");
+        food_items.appendChild(group_list);
+
+        // add items to list
+        for (const item of menu_group.items) {
+            var list_item = document.createElement('li');
+            list_item.classList.add("list-item");
+            list_item.classList.add("list-item-hover-class");
+            group_list.appendChild(list_item);
+
+            set_list_item(list_item, item);
+        }
+    }
+}
+
+// assumes food-items exists
+async function load_menu_wide() {
+    var food_items = document.getElementsByClassName("food-items")[0];
+
+    // clear the menu
+    while (food_items.firstChild) {
+        food_items.removeChild(food_items.firstChild);
+    }
+
+    // load the menu
+    for (var menu_group of menu_groups) {
+
+        // add the header
+        var new_header = document.createElement('h2');
+        new_header.innerHTML = menu_group.group_name;
+        new_header.classList.add("group-header");
+        food_items.appendChild(new_header);
+
+        var group_box = document.createElement('div');
+        group_box.classList.add("group-box");
+        food_items.appendChild(group_box);
+
+        var group_list_left = document.createElement('ul');
+        group_list_left.classList.add("group-list-left");
+        group_box.appendChild(group_list_left);
+
+        var group_list_right = document.createElement('ul');
+        group_list_right.classList.add("group-list-right");
+        group_box.appendChild(group_list_right);
+
+        // add items to left stack
+
+        for (const item of menu_group.items) {
+            var list_item = document.createElement('li');
+            list_item.classList.add("list-item");
+            list_item.classList.add("list-item-hover-class");
+            group_list_left.appendChild(list_item);
+
+            set_list_item(list_item, item);
+        }
+
+        await sleep(1);
+        // move items back to right stack
+
+        while (true) {
+            // move bottom left to top right
+            left_children = group_list_left.children;
+            moving_elem = left_children[left_children.length - 1];
+            group_list_left.removeChild(moving_elem);
+            group_list_right.prepend(moving_elem);
+
+            // check if need to move it back
+            if (group_list_left.clientHeight < group_list_right.clientHeight) {
+                group_list_right.removeChild(moving_elem);
+                group_list_left.append(moving_elem);
+                break;
+            }
+        }
+
+    }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function remove_from_cart_items(to_remove) {
+    for (let i = 0; i < cart_items.length; i++) {
+        cart_item = cart_items[i];
+        if (cart_item.is_equal(to_remove)) {
+            cart_items.splice(i, 1);
+        }
+    }
+}
+
+function get_num_cart_items() {
+    var count = 0;
+    for (const cart_item of cart_items) {
+        count += cart_item.quantity;
+    }
+    return count;
+}
+
+function get_cart_total() {
+    var total_price = 0;
+    var price_elements = document.getElementsByClassName('cart-item-price');
+    for (price_element of price_elements) {
+        total_price += parseFloat(price_element.innerHTML);
+    }
+    return total_price;
+}
+
+// makes use of global `cart_items` variable
+// assumes cart exists
+function load_cart() {
+    var cart = document.getElementsByClassName("cart")[0];
+
+    // clear the cart
+    while (cart.firstChild) {
+        cart.removeChild(cart.firstChild);
+    }
+
+    // add header
+    var header = document.createElement('div');
+    header.classList.add("cart-header");
+    cart.appendChild(header);
+
+    if (current_layout == "cart") {
+        header.style.paddingTop = "10px";
+        header.style.paddingLeft = "4px";
+        header.style.paddingRight = "4px";
+        header.style.paddingBottom = "0px";
+    } else {
+        header.style.padding = "15px";
+    }
+
+    var header_text = document.createElement('a');
+    header_text.innerHTML = "Your Order";
+    header.appendChild(header_text);
+
+    // add button
+    var cart_button = document.createElement('button');
+    cart_button.classList.add("cart-button");
+    cart_button.innerHTML = "Proceed to Payment";
+    cart_button.style.pointerEvents = "auto";
+    cart_button.onclick = function() {
+      form = document.getElementById("proceed_to_payment_form");
+      input = document.getElementById("proceed_to_payment_order_data");
+      input.value = JSON.stringify(cart_items);
+      form.submit();
+    }
+    cart.appendChild(cart_button);
+
+    // add body
+    var body = document.createElement('div');
+    body.classList.add("cart-body");
+    body.style.margin = "0px";
+    cart.insertBefore(body, cart_button);
+
+    // set empty cart icon
+    var empty_cart_icon = document.createElement('img');
+    empty_cart_icon.classList.add("empty-cart-icon");
+    empty_cart_icon.src = "../static/empty_cart.svg";
+    empty_cart_icon.style.display = "none";
+    body.appendChild(empty_cart_icon);
+
+    // if empty, gray payment button and show cart icon
+    if (cart_items.length == 0) {
+        cart_button.style.backgroundColor = "gray";
+        cart_button.style.cursor = "auto";
+        cart_button.style.pointerEvents = "none";
+        empty_cart_icon.style.display = "block";
+        body.style.display = "flex";
+        body.style.justifyContent = "center";
+        body.style.alignItems = "center";
+    }
+
+    // to avoid confusion: 'item' is the div, 'cart_item' is the js object
+    for (let j = 0; j < cart_items.length; j++) {
+        const cart_item = cart_items[j];
+
+        // add item
+
+        const item = document.createElement('div');
+        item.classList.add("cart-item");
+        if (current_layout == "cart") {
+            item.style.margin = "5px 15px";
+        } else { item.style.margin = "5px 18px"; }
+        body.appendChild(item);
+
+        var item_info = document.createElement('div');
+        item_info.classList.add("cart-item-info");
+        item.appendChild(item_info);
+
+        var title = document.createElement('a');
+        title.classList.add("cart-item-title");
+        title.innerHTML = cart_item.item.item_name;
+        item_info.appendChild(title);
+
+        for (let i = 0; i < cart_item.item.required_choice_sets.length; i++) {
+            var required_choice = document.createElement('a');
+            required_choice.classList.add("cart-item-choices");
+            const choice_title = cart_item.item.required_choice_sets[i].title;
+            const selection = cart_item.required_selections[i].name;
+            const required_choices_text = "• " + choice_title + ": " + selection;
+
+            required_choice.innerHTML = required_choices_text;
+            item_info.appendChild(required_choice);
+        }
+
+        if (cart_item.optional_selections.length != 0) {
+            var optional_choices = document.createElement('a');
+            optional_choices.classList.add("cart-item-choices");
+            var optional_choices_text = "• ";
+            for (let i = 0; i < cart_item.optional_selections.length; i++) {
+                const selection = cart_item.optional_selections[i].name;
+                optional_choices_text = optional_choices_text + selection + ", ";
+            }
+            optional_choices_text = optional_choices_text.substring(0, optional_choices_text.length - 2); // remove comma at the end
+            optional_choices.innerHTML = optional_choices_text;
+            item_info.appendChild(optional_choices);
+        }
+
+        if (cart_item.special_instructions != "") {
+            var special_instructions = document.createElement('a');
+            special_instructions.classList.add("cart-item-choices");
+            special_instructions.innerHTML = "• " + cart_item.special_instructions;
+            item_info.appendChild(special_instructions);
+        }
+
+        // add right section
+        var right_section = document.createElement('div');
+        right_section.classList.add("cart-item-right-section");
+        if (current_layout == "cart") {
+            right_section.style.minWidth = "172px";
+            right_section.style.maxWidth = "172px";
+        }
+        else {
+            right_section.style.minWidth = "180px";
+            right_section.style.maxWidth = "180px";
+        }
+        item.appendChild(right_section);
+
+        // add quantity section
+        var quantity_section = document.createElement('div');
+        quantity_section.classList.add("cart-item-quantity-section");
+        right_section.appendChild(quantity_section);
+
+        // add quantity elements
+        const minus_symbol = document.createElement('img');
+        minus_symbol.classList.add("cart-item-plus-minus-symbol");
+        minus_symbol.src = "../static/minus-white.png";
+        if (cart_item.quantity == 1) {
+            minus_symbol.style.backgroundColor = "gray";
+            minus_symbol.style.cursor = "auto";
+        }
+        quantity_section.appendChild(minus_symbol);
+
+        const quantity_count = document.createElement('a');
+        quantity_count.classList.add("cart-item-quantity-count");
+        quantity_count.innerHTML = cart_item.quantity;
+        quantity_section.appendChild(quantity_count);
+
+        const plus_symbol = document.createElement('img');
+        plus_symbol.classList.add("cart-item-plus-minus-symbol");
+        plus_symbol.src = "../static/plus-white.png";
+        quantity_section.appendChild(plus_symbol);
+
+        // add price
+        const price = document.createElement('a');
+        price.classList.add("cart-item-price");
+        price.innerHTML = cart_item.get_price();
+        right_section.appendChild(price);
+
+        minus_symbol.onclick = function() {
+            if (cart_item.quantity != 1) {
+                cart_item.quantity -= 1;
+                quantity_count.innerHTML = cart_item.quantity;
+                price.innerHTML = cart_item.get_price();
+
+                if (cart_item.quantity == 1) {
+                    minus_symbol.style.backgroundColor = "gray";
+                    minus_symbol.style.cursor = "auto";
+                }
+
+                var total_text = document.getElementsByClassName("cart-total-text")[0];
+                if (total_text != null) {
+                    var new_total = get_cart_total();
+                    total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                    cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+                }
+            }
+        };
+
+        plus_symbol.onclick = function() {
+            cart_item.quantity += 1;
+            quantity_count.innerHTML = cart_item.quantity;
+            price.innerHTML = cart_item.get_price();
+
+            minus_symbol.style.backgroundColor = "#4693e0";
+            minus_symbol.style.cursor = "pointer";
+
+            total_text = document.getElementsByClassName("cart-total-text")[0];
+            if (total_text != null) {
+                new_total = get_cart_total();
+                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+            }
+        };
+
+        // add trash
+        var trash = document.createElement('img');
+        trash.classList.add("cart-item-trash");
+        trash.src = "../static/trash.png";
+        trash.width = 20;
+        trash.height = 20;
+        trash.style.marginBottom = "2px";
+        right_section.appendChild(trash);
+        trash.onclick = function() {
+            remove_from_cart_items(cart_item);
+            var items = document.getElementsByClassName("cart-item");
+            if (items.length == 1) {
+                document.getElementsByClassName("cart-total-line")[0].remove();
+                document.getElementsByClassName("cart-total-text")[0].remove();
+                cart_button.style.backgroundColor = "gray";
+                cart_button.style.cursor = "auto";
+                cart_button.innerHTML = "Proceed to Payment";
+                empty_cart_icon.style.display = "block";
+                body.style.display = "flex";
+                body.style.justifyContent = "center";
+                body.style.alignItems = "center";
+            }
+            total_text = document.getElementsByClassName("cart-total-text")[0];
+            if (total_text != null) {
+                new_total = get_cart_total() - cart_item.get_price();
+                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
+                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+            }
+            item.remove();
+        };
+
+    }
+
+    // remove last line
+    if (document.getElementsByClassName("cart-item-separator").length != 0) {
+        body.lastChild.remove();
+    }
+
+    // add large total line
+    if (document.getElementsByClassName("cart-item").length != 0) {
+        var total_line = document.createElement('hr');
+        total_line.classList.add("cart-total-line");
+        body.appendChild(total_line);
+    }
+
+    // add total
+    if (document.getElementsByClassName("cart-item").length != 0) {
+        var total_text = document.createElement('a');
+        total_text.classList.add("cart-total-text");
+        total_price = get_cart_total();
+        total_text.innerHTML = "Total: $" + total_price.toFixed(2);
+        body.appendChild(total_text);
+
+        // add total to button text
+        cart_button.innerHTML += " ($" + total_price.toFixed(2) + ")";
+    }
+
+}
+
+function toggle_cart() {
+    if (is_cart == false) {
+        is_cart = true;
+        update_layout();
+    }
+    else {
+        is_cart = false;
+        update_layout();
+    }
+}
+
+function preload_images()
+{
+    var img=new Image();
+    img.src="../static/empty_cart.svg";
+    img.src="../static/menu.png";
+}
+
+function check_if_closed() {
+    var accepting_orders = {{accepting_orders|tojson}};
+    if (accepting_orders == false) {
+        var screen_cover = document.createElement("div");
+        screen_cover.classList.add("closed-info-screen-cover");
+        document.body.appendChild(screen_cover);
+
+        var closed_holder = document.createElement("div");
+        closed_holder.classList.add("closed-info-holder");
+        screen_cover.appendChild(closed_holder);
+
+        var closed_info = document.createElement("a");
+        closed_info.classList.add("closed-info");
+        closed_info.innerHTML = "Sorry, we are currently not accepting online orders.";
+        closed_holder.appendChild(closed_info);
+    }
+}
+
+function set_onclicks() {
+    var popup_x = document.getElementsByClassName("close")[0];
+    popup_x.onclick = close_popup;
+
+    var toggle_button = document.getElementsByClassName("cart-menu-icon-holder")[0];
+    toggle_button.onclick = toggle_cart;
+
+    window.onclick = close_popup_if_open;
+}
+
+function run_on_load() {
+    set_onclicks();
+    initialize_layout();
+    preload_images();
+    check_if_closed();
+}
+
+class menuGroup {
+    constructor(group_name, items) {
+        this.group_name = group_name;
+        this.items = items;
+    }
+}
+
+class menuItem {
+    constructor(item_name, item_description, price, required_choice_sets, optional_choice_sets, category, in_stock) {
+        this.item_name = item_name;
+        this.item_description = item_description;
+        this.price = price;
+        this.required_choice_sets = required_choice_sets;
+        this.optional_choice_sets = optional_choice_sets;
+        this.category = category;
+        this.in_stock = in_stock;
+    }
+}
+
+class choiceSet {
+    constructor(title, choices) {
+        this.title = title;
+        this.choices = choices;
+    }
+}
+
+// null price means no additional cost
+class choice {
+    constructor(name, price, in_stock) {
+        this.name = name;
+        this.price = price;
+        this.in_stock = in_stock;
+    }
+
+    is_equal(other) {
+        return this.name == other.name && this.price == other.price;
+    }
+}
+
+// selections is a list of choices
+class cartItem {
+    constructor(item, required_selections, optional_selections, quantity, special_instructions) {
+        this.item = item;
+        this.required_selections = required_selections;
+        this.optional_selections = optional_selections;
+        this.quantity = quantity;
+        this.special_instructions = special_instructions;
+    }
+
+    is_equal(other) {
+        if (this.item != other.item || this.special_instructions != other.special_instructions) {
+                return false;
+        }
+        for (let i = 0; i < this.required_selections.length; i++) {
+            var this_choice = this.required_selections[i];
+            var other_choice = other.required_selections[i];
+
+            if (!(this_choice.is_equal(other_choice))) {
+                return false;
+            }
+        }
+        if (this.optional_selections.length != other.optional_selections.length) {
+            return false;
+        }
+        for (let i = 0; i < this.optional_selections.length; i++) {
+            var this_choice = this.optional_selections[i];
+            var other_choice = other.optional_selections[i];
+            if (!this_choice.is_equal(other_choice)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    get_price() {
+        var total = this.item.price;
+        for (const required_selection of this.required_selections) {
+            total += required_selection.price;
+        }
+        for (const optional_selection of this.optional_selections) {
+            total += optional_selection.price;
+        }
+        return (total * this.quantity).toFixed(2);
+    }
+}
+
+function getChoiceSetClass(json_parsed_choice_sets) {
+  var choice_sets_classes = [];
+  for (json_parsed_choice_set of json_parsed_choice_sets) {
+    var choices = []
+    for (json_parsed_choice of json_parsed_choice_set.choices) {
+      choices.push(new choice(json_parsed_choice.name, json_parsed_choice.price, json_parsed_choice.in_stock));
+    }
+    choice_sets_classes.push(new choiceSet(json_parsed_choice_set.title, choices));
+  }
+  return choice_sets_classes;
+}
+
+function get_menu_groups_from_menu(menu) {
+  var menu_groups = {}; // dictionary of category to list of MenuItems
+  for (const menu_item of menu["menu_items"]) {
+
+    var required_choice_sets = new getChoiceSetClass(menu_item.required_choice_sets);
+    var optional_choice_sets = new getChoiceSetClass(menu_item.optional_choice_sets);
+    menu_item_class = new menuItem(menu_item.item_name, menu_item.item_description, menu_item.price, required_choice_sets, optional_choice_sets, menu_item.category, menu_item.in_stock);
+
+    const category = menu_item_class.category;
+    if (category in menu_groups) {
+      menu_groups[category].push(menu_item_class);
+    } else {
+      menu_groups[category] = [menu_item_class];
+    }
+  }
+
+
+  var final_menu_groups = [];
+  for (const [k, v] of Object.entries(menu_groups)) {
+    final_menu_groups.push(new menuGroup(k, v));
+  }
+
+  return final_menu_groups;
+
+}
+var menu_groups = get_menu_groups_from_menu(JSON.parse({{menu|tojson}}));
+
+var current_layout = null; //overwritten on initialization - options "narrow" "medium" "wide" "extrawide" "cart"
+
+var is_cart = false;
+var cart_items = [];
+
+const width_one = 550;
+const width_two = 905;
+const width_three = 1120;
+
+window.onload = run_on_load;
+window.onresize = update_layout;
+window.document.title={{restaurant_display_name|tojson}};
+
+</script>
+
+<style>
+
+html {
+    /*position: fixed;*/
+    min-height: 100%;
+    min-width: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    /*font-family: "sohne-var","Helvetica Neue","Arial",sans-serif;*/
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/*css code*/
+.topnav {
+    height: 50px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px 0 12px;
+    top: 0px;
+    z-index: 2;
+}
+
+.store-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #5c5c5c;
+    text-transform: uppercase;
+}
+
+.cart-menu-icon-holder {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.cart-menu-icon {
+    /*positon: absolute;*/
+}
+
+.cart-number-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+}
+
+.cart-number {
+    position: absolute;
+    color: white;
+    margin-top: 1px;
+}
+
+.cart-number-circle {
+    position: absolute;
+    filter: invert(48%) sepia(93%) saturate(652%) hue-rotate(184deg) brightness(93%) contrast(88%);
+}
+
+.main-body {
+    display: flex;
+    justify-content: space-evenly;
+    height: calc(100% - 50px);
+}
+
+.cart {
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.cart-header {
+    font-size: 23px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.cart-body {
+    flex: 2;
+    overflow-y: scroll;
+    padding: 0px 0px;
+    width: 100%;
+}
+
+.empty-cart-icon {
+    position: absolute;
+    display: none;
+    height: 20%;
+    margin-right: 30px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-item-separator {
+    margin: 10px 20px;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.cart-item-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 5px 0;
+    flex-grow: 2;
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-choices {
+    font-size: 15px;
+    color: gray;
+    padding-left: 17px;
+    text-indent: -10px;
+    font-style: italic;
+}
+
+.cart-item-right-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 2;
+    min-width:
+}
+
+.cart-item-quantity-section {
+    display: flex;
+    align-items: center;
+    width: 96px;
+    justify-content: space-between;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    padding: 8px;
+}
+
+.cart-item-plus-minus-symbol {
+    cursor: pointer;
+    background-color: #4693e0;
+    border-radius: 30px;
+    width: 25px;
+    height: 25px;
+    touch-action: manipulation
+}
+
+.cart-item-quantity-count {
+}
+
+.cart-item-trash {
+    cursor: pointer;
+    color: green;
+}
+
+.cart-item-price {
+    width: 50px;
+    text-align: center;
+}
+
+.cart-total-line {
+    height: 2px;
+    border: none;
+    background-color: black;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.cart-total-text {
+    font-size: 22px;
+    font-weight: 700;
+    float: right;
+    margin-right: 35px;
+    margin-top: 5px;
+}
+
+.cart-button {
+    align-items: center;
+    font-size: 18px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 48px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 0;
+    margin: 5px;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 10px);
+}
+
+.cart-button:hover {
+    background-color: #2d5f91;
+}
+
+.food-items {
+    padding-bottom: 15px;
+    overflow-y: scroll;
+}
+
+.group-header {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    color: rgba(0,0,0,0.87);
+    margin: 18px 0 8px;
+}
+
+.group-box {
+    padding:0;
+    overflow:hidden;
+}
+
+.group-list-left, .group-list-right {
+    float: left;
+    width: 50%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.group-list-left {
+    padding-right: 6px;
+}
+
+.group-list-right {
+    padding-left: 6px;
+}
+
+.group-list {
+    padding: 0;
+}
+
+.list-item {
+    border-radius: 10px;
+    border: 2px solid rgba(0,0,0,0.12);
+    margin-bottom: 12px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.list-item-hover-class:hover {
+    border: 2px solid #914b16;
+}
+
+.link {
+    height: 100%;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.inside-box {
+    padding: 5px;
+    height: 100%;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    color: #914b16;
+    font-size: 18px;
+}
+
+.price {
+    color: #914b16;
+    font-size: 18px;
+}
+
+.description {
+    font-size: 14px;
+    color: black;
+    margin: 5px 0px;
+}
+
+/* The Popup */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2;
+    padding: 30px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Popup content */
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    width: 460px;
+    border-radius: 4px;
+    border: 0;
+}
+
+.popup-header {
+    padding: 5px 15px;
+}
+
+.popup-header-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    color: rgba(0,0,0,0.87);
+    margin: 8px 0 8px;
+}
+
+.popup-body {
+    overflow-y: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.popup-description {
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+.gray-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #f2f2f2;
+    align-items: center;
+    border-radius: 4px;
+    border: 0;
+}
+
+.choice-title {
+    font-size: 16px;
+    font-weight: 700;
+    float: left;
+}
+
+.specific-choice-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+}
+
+.specific-choice-text {
+    font-size: 16px;
+    font-weight: 400;
+    float: left;
+}
+
+.plus-minus-bar {
+    float: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.plus-minus-symbol {
+    cursor: pointer;
+    background-color: #4693e0;
+    border-radius: 30px;
+    width: 25px;
+    height: 25px;
+}
+
+.quantity-word {
+    padding: 0px 10px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.quantity-count {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.special-instructions {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 50px;
+    min-width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.popup-button {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+    font-family: verdana;
+    font-size: 16px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    min-height: 35px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 0;
+    margin: 5px;
+
+}
+
+.popup-button:hover {
+    background-color: #2d5f91;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.error-alert {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #ff8f8f;
+    z-index: 3;
+    font-weight:bold;
+    width: 100%;
+}
+
+.closed-info-screen-cover {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+}
+
+.closed-info-holder {
+    background-color: white;
+    width: 300px;
+    height: 120px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.closed-info {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<div class="topnav">
+    <p class="store-name">{{restaurant_display_name}}</p>
+    <div class=cart-menu-icon-holder>
+        <div class="cart-number-holder">
+            <img src="../static/circle.png" class="cart-number-circle" alt="" height=25>
+            <a class="cart-number">0</a>
+        </div>
+        <img src="../static/cart.jpg" class="cart-menu-icon" alt="" height=50 style="display:block;">
+        <img src="../static/menu.png" class="cart-menu-icon" alt="" height=40 style="display:none;">
+    </div>
+</div>
+
+<div class="main-body">
+    <div class="food-items">
+    </div>
+</div>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+
+    <!-- Popup content -->
+    <div class="popup-content">
+        <!-- Popup header -->
+        <div class="popup-header">
+            <span class="close">&times;</span>
+            <h2 class="popup-header-name">Default Item</h2>
+        </div>
+        <!-- Popup body -->
+        <div class="popup-body">
+            <p class=popup-description></p>
+            <div class=gray-bar>
+            </div>
+            <textarea class=special-instructions rows="4" maxlength="120" spellcheck="False" content="width=device-width, initial-scale=1, maximum-scale=1"></textarea>
+            <div class=gray-bar>
+                <div class="plus-minus-bar">
+                    <img src="../static/minus-white.png" class="plus-minus-symbol" id="minus">
+                    <a class="quantity-word">Quantity</a>
+                    <img src="../static/plus-white.png" class="plus-minus-symbol" id="plus">
+                </div>
+                <a class="quantity-count">1</a>
+            </div>
+        </div>
+        <!-- Popup button -->
+        <button class="popup-button">Add To Order</button>
+    </div>
+
+</div>
+
+<!-- Error Alert -->
+<div class="error-alert">
+</div>
+
+</body>
+
+<form method="POST", id="proceed_to_payment_form">
+  <input type="hidden" id="proceed_to_payment_order_data" name="order">
+</form>
+
+</html>

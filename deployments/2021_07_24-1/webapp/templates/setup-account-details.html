@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="../static/favicon.png">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="../static/css/account-details.css" data-rel-css="">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
+<script src="../static/js/account-details.js"></script>
+<script src="../static/js/validation.js"></script>
+
+<head>
+  <script>
+
+
+  function validate_form() {
+    // validate name
+
+    var name_text = document.getElementById("name").value;
+    if (name_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter your name";
+        return;
+    }
+
+    // validate email
+    var email_text = document.getElementById("email").value;
+    var valid_email = validateEmail(email_text);
+
+    if (!valid_email) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid email address";
+        return;
+    }
+
+    // validate phone
+    var phone_text = document.getElementById("phone").value;
+    var valid_phone = validatePhone(phone_text);
+    if (!valid_phone) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter a valid phone number of the form *** - *** - ****";
+        return;
+    }
+
+    // validate restaurant name
+    var restaurant_text = document.getElementById("restaurant_name").value;
+    if (restaurant_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant name";
+        return;
+    }
+
+    // validate restaurant address
+    var restaurant_address_text = document.getElementById("restaurant_address").value;
+    if (restaurant_address_text.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please enter restaurant address";
+        return;
+    }
+
+    // validate menu input
+    var menu_url_text = document.getElementById("menu_url").value;
+    var file_input = document.getElementById('file_upload');
+    if (menu_url_text.length == 0 && file_input.files.length == 0) {
+        var invalid_input_text = getErrorElement();
+        invalid_input_text.innerHTML = "*Please either enter a menu URL or upload a menu file";
+        return;
+    }
+
+    submit_form();
+
+  }
+
+  function run_on_load() {
+     var step = document.getElementsByClassName("step")[0];
+     if ({{paid_for_website|tojson}}) {
+        step.innerHTML = "Step 1 of 5";
+     } else {
+        step.innerHTML = "Step 1 of 4";
+     }
+  }
+
+  window.document.title="Setup Account Details";
+  window.onload = run_on_load;
+
+  </script>
+</head>
+
+<style>
+
+</style>
+
+<div class="top-half">
+  <div class="topnav">
+    <a href="/">
+    <div class="topnav-left">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+    </div>
+    </a>
+    <div class="topnav-right">
+    <a class="topnav-right-text" href="/logout">Sign out</a>
+    </div>
+  </div>
+
+<div class="center">
+        <div class="step"></div>
+        <div class="title">Enter Account Details</div>
+        <div class="cell example example1" id="example-1">
+
+        <form id="form" class="main-form", method="POST" enctype="multipart/form-data">
+          <fieldset>
+            <div class="row">
+              <label for="example1-name" data-tid="elements_examples.form.name_label">Name</label>
+              <input id="name" data-tid="elements_examples.form.name_placeholder" placeholder="Jane Doe" name="name">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact email</label>
+              <input id="email" data-tid="elements_examples.form.email_placeholder"  placeholder="janedoe@gmail.com" name="email">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Contact phone</label>
+              <input id="phone" data-tid="elements_examples.form.email_placeholder"  placeholder="888-888-8888" name="phone">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant name</label>
+              <input id="restaurant_name" data-tid="elements_examples.form.email_placeholder" placeholder="Taco Joe's" name="restaurant_name">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Restaurant address</label>
+              <input id="restaurant_address" data-tid="elements_examples.form.email_placeholder" placeholder="987 Example St" name="restaurant_address">
+            </div>
+            <div class="row">
+              <label for="example1-email" data-tid="elements_examples.form.email_label">Menu URL</label>
+              <input id="menu_url" data-tid="elements_examples.form.email_placeholder" placeholder="www.tacojoes.com/menu" name="menu_url">
+            </div>
+          </fieldset>
+
+          <div class="upload-holder">
+              <div class="horizontal-holder">
+                <a class="upload-instructions">Upload Menu:</a>
+                <label for="file_upload" class="custom-file-button">Choose File</label>
+                <input type="file" id="file_upload" hidden onchange="update_file_name()" name="menu_file">
+                <a class="uploaded-file-name" id="file_name"></a>
+              </div>
+              <span class="asterisk">*not necessary if menu URL is provided</span>
+          </div>
+
+          <button id="submit-button" class="button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Next</button>
+
+          <div class="invalid-input-text-holder">
+              <a class="invalid-input-text"></a>
+          </div>
+        </form>
+
+      </div>
+</div>
+
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+</html>

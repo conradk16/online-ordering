@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="/static/favicon.png">
+
+<link rel="stylesheet" type="text/css" href="../static/css/account-menu.css">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}}></script>
+
+<head>
+  <script>
+    function disable_button() {
+        button.style.backgroundColor = "gray";
+        button.style.display = "block";
+        button.onclick = null;
+    }
+
+    function go_to_view_orders() {
+        window.location.href = '/account/orders';
+    }
+
+    function load_content() {
+        var order_url = {{order_url|tojson}};
+        var active_subscription = {{active_subscription|tojson}};
+        var paid_for_website = {{paid_for_website|tojson}};
+        var website_url = {{website_url|tojson}};
+        var charges_enabled = {{charges_enabled|tojson}};
+
+        var button = document.getElementById("button");
+        var description = document.getElementsByClassName("description")[0];
+        if (active_subscription == false) {
+            disable_button();
+            link_title = document.getElementsByClassName("description")[0];
+            link_title.innerHTML = "You subscription is currently inactive. Go to Manage Subscription in the menu bar to re-subscribe.";
+        }
+        else if ((order_url == null && paid_for_website == false) || (website_url == null && paid_for_website == true)) {
+
+            disable_button();
+            var content_holder = document.getElementsByClassName("content-holder")[0];
+            if (paid_for_website) {
+                description.innerHTML = "We're working to create your website and your online ordering system. Please check back within 7 days and you will be provided with a link to your new website.";
+            } else {
+                description.innerHTML = "We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.";
+            }
+
+        } else if (charges_enabled == false) {
+            disable_button();
+            link_title = document.getElementsByClassName("description")[0];
+            link_title.innerHTML = "There is an issue with your Stripe account, so it is currently not able to accept charges. Go to Stripe in the menu bar to solve the issue.";
+        } else {
+            button.style.cursor = "pointer";
+            description.style.marginBottom = "20px";
+            var content_holder = document.getElementsByClassName("content-holder")[0];
+            var link_text = document.createElement("a");
+            link_text.classList.add("link-text");
+            var comment = document.createElement("a");
+            comment.classList.add("view-order-notes");
+
+            if (paid_for_website) {
+                description.innerHTML = "This is the link to your website. We recommend adding it to Google Maps so your customers can find you.";
+
+                link_text.innerHTML = website_url;
+            } else {
+                description.innerHTML = "This is the link to your online ordering website. Add it to your main website and make sure it's easily accessible to your customers.";
+
+                link_text.innerHTML = "https://m3orders.com/" + order_url;
+            }
+            content_holder.insertBefore(link_text, button);
+            content_holder.appendChild(comment);
+            comment.innerHTML = "*Orders will automatically stop being accepted at your specified closing times or when you leave the View Orders page for more than 5 minutes. You can always manually switch back to accepting orders."
+        }
+    }
+
+    function run_on_resize() {
+        var logo = document.getElementById("logo");
+        if (window.innerWidth < 450) {
+            logo.width="100";
+            logo.height="14.2";
+        } else {
+            logo.width="200";
+            logo.height="28.4";
+        }
+    }
+
+    function run_on_load() {
+        check_if_view_orders();
+        load_content();
+        run_on_resize();
+    }
+
+
+    window.onload = run_on_load;
+    window.onresize = run_on_resize;
+  </script>
+</head>
+
+<style>
+
+.link-title {
+    text-align: center;
+    color: gray;
+    margin-bottom: 20px;
+}
+
+.link-text {
+    text-align: center;
+    color: black;
+    font-size: 30px;
+    margin-bottom: 20px;
+    max-width: inherit;
+}
+
+.button {
+    align-items: center;
+    font-size: 25px;
+    line-height: 1.11;
+    letter-spacing: .3px;
+    height: 70px;
+    width: 70%;
+    min-width: 245px;
+    color: #fff;
+    background-color: #4693e0;
+    border: none;
+    border-radius: 20px;
+    border: 0;
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2), 0 0px 6px 0 rgba(0,0,0,0.2);
+}
+
+.button:hover {
+    cursor: default;
+    background-color: #2d5f91;
+}
+
+.description {
+    text-align: center;
+    color: gray;
+    margin-bottom: 30px;
+}
+
+.center {
+  max-width: 750px;
+  padding: 30px 25px;
+  box-sizing: border-box;
+}
+
+.content-holder {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    word-wrap: break-word;
+}
+
+.view-order-notes {
+    text-align: center;
+    color: gray;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+
+</style>
+
+<div class="top-half">
+
+  <div class="topnav">
+    <div class="topnav-left">
+        <a class="hidden-text">Sign Out</a>
+    </div>
+    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
+    <div class="topnav-right">
+    <a class="topnav-right-text" href="/logout">Sign out</a>
+    </div>
+  </div>
+
+  <input type="checkbox" class="openSidebarMenu" id="openSidebarMenu">
+  <label for="openSidebarMenu" class="sidebarIconToggle">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+  </label>
+  <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li class="large-li" onclick="click_link('/account')"><a>Account Home</a></li>
+      <li class="large-li" onclick="click_link('/account/orders')" id="menu_view_orders_block"><a id="menu_view_orders">View Orders</a></li>
+      <li class="large-li" onclick="click_link('/account/account-details')"><a>Account Details</a></li>
+      <li class="large-li" onclick="click_link('/account/closing-times')"><a>Closing Hours</a></li>
+      <li class="large-li" onclick="click_link('https://dashboard.stripe.com')"><a>Stripe</a></li>
+      <li class="large-li" onclick="click_link('/account/manage-subscription')"><a>Manage Subscription</a></li>
+    </ul>
+  </div>
+
+  <div class="center">
+    <div class="content-holder">
+        <a class="description"></a>
+        <button onclick="go_to_view_orders()" id="button" class="button">View Orders</button>
+    </div>
+  </div>
+
+  </div>
+
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+</html>

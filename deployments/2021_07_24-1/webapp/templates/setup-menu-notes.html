@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="/static/favicon.png">
+
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
+<head>
+  <script>
+      function submit_form() {
+        var textarea_text = document.getElementById("textarea").value;
+        var input = document.getElementById("inp");
+        input.value = textarea_text;
+        var form = document.getElementById("form");
+        form.submit();
+      }
+
+      function run_on_load() {
+         var step = document.getElementsByClassName("step")[0];
+         if ({{paid_for_website|tojson}}) {
+            step.innerHTML = "Step 3 of 5";
+         } else {
+            step.innerHTML = "Step 2 of 4";
+         }
+      }
+
+      window.onload = run_on_load;
+      window.document.title="Setup Menu Notes";
+  </script>
+</head>
+
+<style>
+.center {
+  max-width: 660px;
+}
+
+.textarea-holder {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.textarea {
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    width: 80%;
+    min-width: 290px;
+    height: 180px;
+    resize: none;
+    font-size: 15px;
+}
+
+.button {
+    width: 80%;
+    min-width: 290px;
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.center {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+</style>
+
+<div class="top-half">
+<div class="topnav">
+  <a href="/">
+  <div class="topnav-left">
+    <img src="../static/m3_logo.png" width="122.25px" height="41px">
+  </div>
+  </a>
+  <div class="topnav-right">
+  <a class="topnav-right-text" href="/logout">Sign out</a>
+  </div>
+</div>
+
+<div class="center">
+      <div class="step"></div>
+      <div class="title">Enter Menu Notes</div>
+      <div>
+      <div class="page-explanation-holder">
+        <a class="page-explanation">Please enter any necessary pricing or options information that your menu does not explicitly state. For example, if your customers have a choice of bread, and the bread options are not stated on your menu, please enter them here and note which menu items the options apply to.</a>
+      </div>
+      <div class="textarea-holder">
+        <textarea id="textarea" class="textarea"></textarea>
+      </div>
+      <div class="button-holder">
+        <button class="button" onclick="submit_form()">Next</button>
+      </div>
+</div>
+</div>
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+<form id="form", method="POST">
+    <input type="hidden" id="inp" name="menu_notes">
+</form>
+
+</html>
