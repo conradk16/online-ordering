@@ -143,9 +143,15 @@ function registerElements(elements, exampleName) {
             console.log(event.target.response);
             checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
             border.style.stroke = "#de0909";
-            result_title.innerHTML = "Sorry, orders are no longer being accepted.";
-            resetButton.style.display = "none";
 
+            if (event.target.response == "not accepting orders") {
+                result_title.innerHTML = "Sorry, orders are no longer being accepted.";
+                resetButton.style.display = "none";
+            } else if (event.target.response == "invalid email") {
+                result_title.innerHTML = "Payment failed. Sorry, we could not process the email address \"" + email_input.value + "\"";
+            } else {
+                console.log("unknown response");
+            }
         } else {
             var card = elements[0];
             stripe.confirmCardPayment(client_secret, {
