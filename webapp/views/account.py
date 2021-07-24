@@ -3,6 +3,7 @@ from flask_mail import Message
 import stripe
 from webapp import db, mail, env
 from webapp.models.db_models import User, Order
+from webapp.utils.assign_order_url import assign_order_url_to_demo_account, assign_order_url_to_live_account
 from webapp.models.order import *
 from flask_login import login_user, logout_user, current_user
 import json
@@ -31,7 +32,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('account.html', test_url=env['PROD'], order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -456,10 +457,11 @@ def admin_download_website_media():
 def admin_assign_order_url_to_account():
     if current_user.is_authenticated and current_user.email_address == env['admin_username']:
         account_email = request.form['email_address']
-        account_url = request.form['url']
-        user = User.query.filter_by(email_address=account_email).first()
-        user.order_url = account_url
-        db.session.commit()
+        order_url = request.form['url']
+        json_menu = request.form['json_menu']
+        restaurant_display_name = request.form['restaurant_display_name']
+
+        assign_order_url_to_live_account(account_email, order_url, json_menu, restaurant_display_name)
         return redirect('/account')
     else:
         abort(404)

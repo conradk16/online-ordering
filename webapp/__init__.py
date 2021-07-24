@@ -10,12 +10,10 @@ import os
 PROD = os.getenv('PROD')
 env = {}
 
-# SET TRUE IF WANT TO USE DEV ENVIRONMENT WHILE DEPLOYED TO AWS
-use_test_env_with_live_m3_url = True 
-if use_test_env_with_live_m3_url:
+# SET TRUE IF UPLOADING TO test.m3orders.com (OnlineOrdering-Test)
+uploading_to_test_env = False 
+if uploading_to_test_env:
     PROD = False
-    env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
 
 if PROD:
     env['PROD'] = True
@@ -40,12 +38,16 @@ else:
 
     env['stripe_hardware_product_price_id'] = 'price_1JG9IzLGQW192ovfYtOVi098'
     env['stripe_website_setup_product_price_id'] = 'price_1JG9KKLGQW192ovfU9F9R2Id'
-    env['stripe_monthly_with_website_price_id'] = 'price_1JG9MELGQW192ovf6LIOW1py'
+    env['stripe_monthly_with_website_price_id'] = 'price_1JGq2tLGQW192ovfY7CLkEBE'
     env['stripe_monthly_without_website_price_id'] = 'price_1JG9V9LGQW192ovfr3mdX0sX'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JG9jrLGQW192ovf9uACPHcm'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JGq3qLGQW192ovfNxMZhZzK'
     env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y1LGQW192ovfzqADppTZ'
 
-    env['DEV_charges_enabled_status'] = True # set charges_enabled to be false for connected accounts
+    env['DEV_charges_enabled_status'] = True # set charges_enabled for connected accounts
+
+if uploading_to_test_env:
+    env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
 
 stripe.api_version = '2020-08-27'
 stripe.api_key = env['stripe_secret_api_key']
@@ -95,9 +97,6 @@ app.register_blueprint(home)
 app.register_blueprint(account)
 app.register_blueprint(order)
 app.register_blueprint(webhook)
-
-# run webapp.static.menus.py to create the menus and add them to the database
-import webapp.static.menus
 
 if not env['PROD']:
     for user in User.query.all():

@@ -18,18 +18,27 @@
     <input type="submit" value="Download website media" /><br>
 </form>
 
+<br>
+<br>
 <h1>Assign an account an order url</h1>
+
+<p> Example JSON menu: '{"menu_items": [{"item_name": "#1 Chorizo Burrito", "item_description": "Mexican sausage, scrambled eggs, cheese, and potatoes.", "price": 7.99, "required_choice_sets": [], "optional_choice_sets": [], "category": "Breakfast", "in_stock": true}, {"item_name": "#14 Breakfast Plate", "item_description": "Choice of meat, eggs, cheese, rice, beans, and tortillas.", "price": 7.99, "required_choice_sets": [{"title": "Meat", "choices": [{"name": "Chicken", "price": 1.0, "in_stock": true}, {"name": "Beef", "price": 0, "in_stock": true}, {"name": "Pork", "price": 0, "in_stock": true}]}, {"title": "Egg Style", "choices": [{"name": "Scrambled", "price": 0, "in_stock": true}, {"name": "Over Easy", "price": 0, "in_stock": true}, {"name": "Over Medium", "price": 0, "in_stock": true}, {"name": "Over Hard", "price": 0, "in_stock": true}, {"name": "Sunny-Side Up", "price": 0, "in_stock": true}]}], "optional_choice_sets": [{"title": "Goodies", "choices": [{"name": "Brownies", "price": 1.0, "in_stock": true}, {"name": "Sprinkles", "price": 0, "in_stock": true}]}], "category": "Breakfast", "in_stock": true}], "order_url": "example-order-url"}'</p>
 
 <form name="form" id="form" action="/account/admin-assign-order-url-to-account" method="POST">
   <div id="email_address_label" for="email_address">Account email</div>
   <input id="email_address" name="email_address" placeholder="account email">
   <div id="url_label" for="url">Order URL (ex: 'super-cucas-micheltorena')</div>
   <input id="url" name="url" placeholder="url">
+  <div id="json_menu_label" for="json_menu">JSON menu</div>
+  <input id="json_menu" name="json_menu" placeholder="json menu">
+  <div id="display_name_label" for="display_name">Restaruant display name (ex: 'Super Cucas - Micheltorena')</div>
+  <input id="display_name" name="restaurant_display_name" placeholder="url">
 
   <input type="submit" id="submit" value="Submit" style="-webkit-appearance:none;">
 
 </form>
 
+<br>
 <br>
 
 <h1>Assign an account a website url</h1>
@@ -43,6 +52,8 @@
   <input type="submit" id="submit" value="Submit" style="-webkit-appearance:none;">
 
 </form>
+<br>
+<br>
 
 <h2 id="users-without-urls-header">Users without URLS:</h2>
 <div id="users-without-urls"></div>

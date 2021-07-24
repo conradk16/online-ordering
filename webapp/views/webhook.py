@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 import json
 import stripe
 from webapp.models.db_models import User, Order
+from webapp.utils.assign_order_url import assign_order_url_to_demo_account, assign_order_url_to_live_account
 from webapp import db, env
 import json
 
@@ -108,6 +109,10 @@ def webhook_connect_received():
             if not env['DEV_charges_enabled_status']:
                 user.currently_accepting_orders = False
             user.stripe_charges_enabled = env['DEV_charges_enabled_status']
+
+        # dev environment and just submitted Stripe details, then give them an order url right away    
+        if not env['PROD'] and data_object.details_submitted:
+            assign_order_url_to_demo_account(user.email_address)
             
         db.session.commit()
     elif event_type == "payment_intent.succeeded":
