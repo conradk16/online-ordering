@@ -13,7 +13,10 @@ env = {}
 # SET TRUE IF UPLOADING TO test.m3orders.com (OnlineOrdering-Test)
 uploading_to_test_env = False 
 if uploading_to_test_env:
+    env['uploading_to_AWS'] = True
     PROD = False
+else:
+    env['uploading_to_AWS'] = False
 
 if PROD:
     env['PROD'] = True
@@ -28,36 +31,43 @@ if PROD:
     env['stripe_monthly_without_website_price_id'] = 'price_1JG9VULGQW192ovfVgZpHGIv'
     env['stripe_yearly_with_website_price_id'] = 'price_1JG9k8LGQW192ovfETjV1N4X'
     env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y6LGQW192ovf9wEO8yby'
+
+    env['stripe_account_link_refresh_url'] = 'https://m3orders.com/account/setup-stripe'
+    env['stripe_account_link_return_url'] = 'https://m3orders.com/account'
+    env['stripe_billing_portal_return_url'] = 'https://m3orders.com/account'
+    env['stripe_checkout_session_success_url'] = 'https://m3orders.com/account/setup-account-details'
+    env['stripe_checkout_session_cancel_url'] = 'https://m3orders.com/signup/select-setup-fee'
  
 else:
     env['PROD'] = False
     env['stripe_secret_api_key'] = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
     env['stripe_publishable_api_key'] = 'pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj'
-    env['stripe_webhook_account_signing_secret'] = 'whsec_XDeJeqt7NpBy9HfWB5qmd4iO9dCrtmap'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_eKndjsZQ3ShaeMdqo5wp13gziZLI7as5'
+    env['stripe_webhook_account_signing_secret'] = 'whsec_lR3sgfoskirPFJGZFBjtBsKE6uaLJV3d'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_42WoCcMnKOeS6OvQqgo4gly1cOZyBVfX'
 
-    env['stripe_hardware_product_price_id'] = 'price_1JG9IzLGQW192ovfYtOVi098'
-    env['stripe_website_setup_product_price_id'] = 'price_1JG9KKLGQW192ovfU9F9R2Id'
-    env['stripe_monthly_with_website_price_id'] = 'price_1JGq2tLGQW192ovfY7CLkEBE'
-    env['stripe_monthly_without_website_price_id'] = 'price_1JG9V9LGQW192ovfr3mdX0sX'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JGq3qLGQW192ovfNxMZhZzK'
-    env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y1LGQW192ovfzqADppTZ'
+    env['stripe_hardware_product_price_id'] = 'price_1JGuEZLGQW192ovfvJ2Qdd0A'
+    env['stripe_website_setup_product_price_id'] = 'price_1JGuEFLGQW192ovf5eA7COHk'
+    env['stripe_monthly_with_website_price_id'] = 'price_1JGuDBLGQW192ovfLa5MkHvv'
+    env['stripe_monthly_without_website_price_id'] = 'price_1JGuDmLGQW192ovf1keSpNrm'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JGuCoLGQW192ovfstzVdxa5'
+    env['stripe_yearly_without_website_price_id'] = 'price_1JGuDSLGQW192ovfPbIHPNNE'
 
     env['DEV_charges_enabled_status'] = True # set charges_enabled for connected accounts
 
+    env['stripe_account_link_refresh_url'] = 'https://test.m3orders.com/account/setup-stripe'
+    env['stripe_account_link_return_url'] = 'https://test.m3orders.com/account'
+    env['stripe_billing_portal_return_url'] = 'https://test.m3orders.com/account'
+    env['stripe_checkout_session_success_url'] = 'https://test.m3orders.com/account/setup-account-details'
+    env['stripe_checkout_session_cancel_url'] = 'https://test.m3orders.com/signup/select-setup-fee'
+
 if uploading_to_test_env:
-    env['stripe_webhook_account_signing_secret'] = 'whsec_aPIY1jxaG09Vy0UMfK0mVIDr5utNrUwU'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_ou3eKzCLgsvLSM8CuYgirpXhatVsArlE'
+    env['stripe_webhook_account_signing_secret'] = 'whsec_f5jgqfdLRPXBvWVLE6uMzGxIMSTxWi6b'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_8gjJqKZHQ2zzm3PMq508an9He3jNFLdw'
 
 stripe.api_version = '2020-08-27'
 stripe.api_key = env['stripe_secret_api_key']
 env['admin_username'] = 'kuklinskywork@gmail.com'
 env['admin_password'] = "36e&'&4K`c4mp~#cjZZ.6q@!#3?APZ%*"
-env['stripe_account_link_refresh_url'] = 'https://m3orders.com/account/setup-stripe'
-env['stripe_account_link_return_url'] = 'https://m3orders.com/account'
-env['stripe_billing_portal_return_url'] = 'https://m3orders.com/account'
-env['stripe_checkout_session_success_url'] = 'https://m3orders.com/account/setup-account-details'
-env['stripe_checkout_session_cancel_url'] = 'https://m3orders.com/signup/select-setup-fee'
 env['email_sender_address'] = 'no-reply@m3orders.com'
 env['email_sender_password'] = 'YB\'S!#4GqUZPsP"6'
 env['accepting_orders_autoshutoff_threshold_in_seconds'] = 300 # stop accepting orders if 300 seconds go by with no queries to view orders page

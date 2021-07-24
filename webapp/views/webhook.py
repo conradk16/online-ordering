@@ -110,8 +110,8 @@ def webhook_connect_received():
                 user.currently_accepting_orders = False
             user.stripe_charges_enabled = env['DEV_charges_enabled_status']
 
-        # dev environment and just submitted Stripe details, then give them an order url right away    
-        if not env['PROD'] and data_object.details_submitted:
+        # If dev environment and just submitted Stripe details and don't already have url, give them an order url right away    
+        if not env['PROD'] and data_object.details_submitted and not user.order_url:
             assign_order_url_to_demo_account(user.email_address)
             
         db.session.commit()

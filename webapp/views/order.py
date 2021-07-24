@@ -12,6 +12,7 @@ order = Blueprint('order', __name__)
 
 @order.route('/order/<order_url>', methods=['GET', 'POST'])
 def route_handle_order_website_request(order_url):
+    print(order_url)
     user = User.query.filter_by(order_url=order_url).first()
     if not user:
         abort(404)

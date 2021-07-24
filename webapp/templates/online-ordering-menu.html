@@ -613,7 +613,7 @@ function set_list_item(list_item, item) {
 
     var price = document.createElement('span');
     price.classList.add("price");
-    price.innerHTML = item.price;
+    price.innerHTML = "$" + item.price;
     top_row.appendChild(price);
 
     var description = document.createElement('p');

@@ -32,7 +32,7 @@ def account_homepage():
     elif not current_user.stripe_connected_account_details_submitted:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', test_url=env['PROD'], order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('account.html', live_url=env['PROD'], order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
