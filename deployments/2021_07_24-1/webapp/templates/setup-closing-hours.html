@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="/static/favicon.png">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="../static/css/closing-times.css" id="closing-times-script" data-is_update="false">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
+<script src="../static/js/closing-hours.js"></script>
+
+<head>
+
+    <script>
+        function run_on_load() {
+             var step = document.getElementsByClassName("step")[0];
+             if ({{paid_for_website|tojson}}) {
+                step.innerHTML = "Step 4 of 5";
+             } else {
+                step.innerHTML = "Step 3 of 4";
+             }
+        }
+
+        window.onload = run_on_load;
+        window.document.title="Setup Closing Hours";
+    </script>
+
+</head>
+
+<style>
+
+</style>
+
+<div class="top-half">
+  <div class="topnav">
+    <a href="/">
+    <div class="topnav-left">
+      <img src="../static/m3_logo.png" width="122.25px" height="41px">
+    </div>
+    </a>
+    <div class="topnav-right">
+    <a class="topnav-right-text" href="/logout">Sign out</a>
+    </div>
+  </div>
+
+<div class="center">
+        <div class="step"></div>
+        <div class="title">Enter Closing Hours</div>
+        <div class="page-explanation-holder">
+            <a class="page-explanation">We collect your normal closing hours information to automatically prevent your customers from placing orders once your restaurant is closed. You can always manually turn online orders back on again.</a>
+        </div>
+        <div class="cell example example1" id="example-1">
+
+        <form id="form" class="main-form", method="POST">
+          <fieldset>
+            <div class="row">
+              <label class="day-label">Monday</label>
+              <input class="time" id="monday" placeholder="7:00pm" name="monday" onclick="clear_checkbox('monday_closed')">
+              <div class="checkbox-elements">
+                <label for="monday_closed" class="checkbox-label">Closed?</label>
+                <input id="monday_closed" type="checkbox" name="monday_closed" class="checkbox" onclick="update_input_text('monday', 'monday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Tuesday</label>
+              <input class="time" id="tuesday" placeholder="7:00pm" name="tuesday" onclick="clear_checkbox('tuesday_closed')">
+              <div class="checkbox-elements">
+                <label for="tuesday_closed" class="checkbox-label">Closed?</label>
+                <input id="tuesday_closed" type="checkbox" name="tuesday_closed" class="checkbox" onclick="update_input_text('tuesday', 'tuesday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Wednesday</label>
+              <input class="time" id="wednesday" placeholder="7:00pm" name="wednesday" onclick="clear_checkbox('wednesday_closed')">
+              <div class="checkbox-elements">
+                <label for="wednesday_closed" class="checkbox-label">Closed?</label>
+                <input id="wednesday_closed" type="checkbox" name="wednesday_closed" class="checkbox" onclick="update_input_text('wednesday', 'wednesday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Thursday</label>
+              <input class="time" id="thursday" placeholder="7:00pm" name="thursday" onclick="clear_checkbox('thursday_closed')">
+              <div class="checkbox-elements">
+                <label for="thursday_closed" class="checkbox-label">Closed?</label>
+                <input id="thursday_closed" type="checkbox" name="thursday_closed" class="checkbox" onclick="update_input_text('thursday', 'thursday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Friday</label>
+              <input class="time" id="friday" placeholder="7:00pm" name="friday" onclick="clear_checkbox('friday_closed')">
+              <div class="checkbox-elements">
+                <label for="friday_closed" class="checkbox-label">Closed?</label>
+                <input id="friday_closed" type="checkbox" name="friday_closed" class="checkbox" onclick="update_input_text('friday', 'friday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Saturday</label>
+              <input class="time" id="saturday" placeholder="8:30pm" name="saturday" onclick="clear_checkbox('saturday_closed')">
+              <div class="checkbox-elements">
+                <label for="saturday_closed" class="checkbox-label">Closed?</label>
+                <input id="saturday_closed" type="checkbox" name="saturday_closed" class="checkbox" onclick="update_input_text('saturday', 'saturday_closed')">
+              </div>
+            </div>
+            <div class="row">
+              <label class="day-label">Sunday</label>
+              <input class="time" id="sunday" placeholder="8:30pm" name="sunday" onclick="clear_checkbox('sunday_closed')">
+              <div class="checkbox-elements">
+                <label for="sunday_closed" class="checkbox-label">Closed?</label>
+                <input id="sunday_closed" type="checkbox" name="sunday_closed" class="checkbox" onclick="update_input_text('sunday', 'sunday_closed')">
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="multiple-closing-notes-holder">
+              <a class="multiple-closing-notes">*If your restaurant closes more than once in a day, please enter the times separated by commas, e.g., "2:00pm, 8:00pm. If your restaurant closes after midnight on a specific day, enter the closing time for the following day."</a>
+          </div>
+
+          <div class="upload-holder">
+            <a class="upload-instructions">Select Time Zone</a>
+            <select class="drop-down">
+                <option value="">No Time Zone Selected</option>
+                <option value="US/Alaska">Alaska</option>
+                <option value="US/Aleutian">Aleutian</option>
+                <option value="US/Arizona">Arizona</option>
+                <option value="US/Central">Central</option>
+                <option value="US/East-Indiana">East-Indiana</option>
+                <option value="US/Eastern">Eastern</option>
+                <option value="US/Hawaii">Hawaii</option>
+                <option value="US/Indiana-Starke">Indiana-Starke</option>
+                <option value="US/Michigan">Michigan</option>
+                <option value="US/Mountain">Mountain</option>
+                <option value="US/Pacific">Pacific</option>
+                <option value="US/Samoa">Samoa</option>
+            </select>
+          </div>
+          <div class="button-holder">
+            <button class="button" id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Next</button>
+          </div>
+          <div class="invalid-input-text-holder">
+              <a class="invalid-input-text"></a>
+          </div>
+        </form>
+
+      </div>
+</div>
+
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+<form id="closing_times_to_send", method="POST">
+    <input type="hidden" id="inp" name="closing_times">
+    <input type="hidden" id="inp-timezone" name="closing_times_timezone">
+</form>
+
+</html>

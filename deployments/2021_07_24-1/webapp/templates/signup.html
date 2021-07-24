@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="/static/favicon.png">
+
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+
+<script src="../static/js/validation.js"></script>
+
+<head>
+  <script>
+  function validateEmailAndPassword(emailInput, passwordInput) {
+
+    var validEmail = validateEmail(emailInput);
+    var validPassword = (passwordInput.length >= 8) && (passwordInput.length <= 100);
+
+    var emailBox = document.getElementsByClassName("input-box")[0];
+    var passwordBox = document.getElementsByClassName("input-box")[1];
+
+    var potential_user_already_exists_message = document.getElementById("user-already-exists-message");
+    if (potential_user_already_exists_message) {
+      potential_user_already_exists_message.remove();
+    }
+
+    if (validEmail) {
+      var potential_error_message = document.getElementById("invalid-email-message");
+      if (potential_error_message) {
+        potential_error_message.remove();
+      }
+      emailBox.style.border = "1px solid #ccc";
+    } else {
+        if (!document.getElementById("invalid-email-message")) {
+          var invalidEmailMessage = document.createElement("span");
+          var passwordLabel = document.getElementById("password-label");
+          var form = document.getElementById("form");
+
+          invalidEmailMessage.id = "invalid-email-message";
+          invalidEmailMessage.classList.add("invalid-input-text");
+          invalidEmailMessage.innerHTML = "Please enter a valid email address<br>";
+
+          form.insertBefore(invalidEmailMessage, passwordLabel);
+          emailBox.style.border = "1px solid #b92d2b";
+        }
+    }
+    if (validPassword) {
+      var potential_password_error_message = document.getElementById("invalid-password-message");
+      if (potential_password_error_message) {
+        potential_password_error_message.remove();
+      }
+      passwordBox.style.border = "1px solid #ccc";
+    } else {
+        if (!document.getElementById("invalid-password-message")) {
+          var invalidPasswordMessage = document.createElement("span");
+          var nextButton = document.getElementById("next-button");
+          var form = document.getElementById("form");
+
+
+          invalidPasswordMessage.id = "invalid-password-message";
+          invalidPasswordMessage.classList.add("invalid-input-text");
+          invalidPasswordMessage.innerHTML = "Password must be at least 8 characters<br>";
+
+          form.insertBefore(invalidPasswordMessage, nextButton);
+          passwordBox.style.border = "1px solid #b92d2b";
+        }
+    }
+    return (validEmail && validPassword);
+  }
+
+  window.document.title="Signup";
+
+  </script>
+</head>
+
+<style>
+
+.center {
+    max-width: 400px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-family:verdana;
+  font-weight: 400;
+  text-align: left;
+  margin: 8px 8px 0px 0px;
+  height:10;
+}
+
+.invalid-input-text {
+  font-size: 12px;
+}
+
+.input-box {
+  width: 100%;
+  padding: 12px 8px;
+  margin: 4px 0px 4px 0px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family:verdana;
+  outline: none;
+}
+
+.inputText {
+  font-size: 14px;
+  height: 35px;
+}
+
+.form {
+
+}
+.title {
+    margin-top: 60px;
+}
+
+</style>
+
+<div class="top-half">
+<div class="topnav">
+  <a href="/">
+  <div class="topnav-left">
+    <img src="../static/m3_logo.png" width="122.25px" height="41px">
+  </div>
+  </a>
+  <div class="topnav-right">
+  <a class="topnav-right-text" href="/login">Log in</a>
+  </div>
+</div>
+
+<div class="center">
+      <div class="title">Create an account</div>
+
+      <div>
+      <form class="form" name="form" id="form" onsubmit="return validateEmailAndPassword(document.form.email_address.value, document.form.password.value);" method="POST">
+        <div class="input-label" id="email-label" for="email_address">Email</div>
+        <input class="input-box" id="email_address" name="email_address" placeholder="Email">
+        <div class="input-label" id="password-label" for="password">Password</div>
+        <input class="input-box" type="password" id="password" name="password" placeholder="Add a password">
+
+        <input class="button" type="submit" id="next-button" value="Next" style="-webkit-appearance:none;">
+
+      </form>
+</div>
+</div>
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+<script>
+if ({{user_already_exists|tojson}} == "true") {
+  var userAlreadyExistsErrorMessage = document.createElement("span");
+  var passwordLabel = document.getElementById("password-label");
+  var form = document.getElementById("form");
+
+  userAlreadyExistsErrorMessage.id = "user-already-exists-message";
+  userAlreadyExistsErrorMessage.classList.add("invalid-input-text");
+  userAlreadyExistsErrorMessage.innerHTML = "An account with that email address already exists. <br>";
+
+  form.insertBefore(userAlreadyExistsErrorMessage, passwordLabel);
+}
+</script>
+
+</html>

@@ -1,0 +1,166 @@
+.example.example1 * {
+  font-family: Roboto, Open Sans, Segoe UI, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  overflow: visible;
+}
+
+.example.example1 fieldset {
+  margin: 0 15px 20px;
+  padding: 0;
+  border-style: none;
+  /*background-color: #d9d9d9;*/
+  background-color: #fff;
+  box-shadow: 0px 6px 9px rgba(0, 0, 0, 0.09), 0px -1px 9px rgba(0, 0, 0, 0.09);
+  border-radius: 4px;
+}
+
+.example.example1 .row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.example.example1 .row + .row {
+  border-top: 1px solid #a3a3a3;
+}
+
+.example.example1 label {
+  width: 50%;
+  min-width: 145px;
+  padding: 11px 0;
+  color: #000000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.example.example1 input, .example.example1 button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border-style: none;
+}
+
+.example.example1 input:-webkit-autofill {
+  -webkit-text-fill-color: #000000;
+  transition: background-color 100000000s;
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example1 .StripeElement--webkit-autofill {
+  background: transparent !important;
+}
+
+.example.example1 .StripeElement {
+  width: 100%;
+  padding: 11px 15px 11px 0;
+}
+
+.example.example1 input {  width: 100%;
+  padding: 11px 15px 11px 0;
+  color: #000000;
+  background-color: transparent;
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example1 input::-webkit-input-placeholder {
+  color: #787878;
+}
+
+.example.example1 input::-moz-placeholder {
+  color: #787878;
+}
+
+.example.example1 input:-ms-input-placeholder {
+  color: #787878;
+}
+
+.center {
+  max-width: 575px;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.invalid-input-text-holder {
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px 15px 10px;
+}
+
+.invalid-input-text {
+  font-weight: 400;
+  color: #b92d2b;
+  text-align: left;
+  font-size: 12px;
+}
+
+.upload-holder {
+    margin: 0px 15px;
+    padding: 7px 15px;
+    padding-bottom: 5px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0px 6px 9px rgb(0 0 0 / 9%), 0px -1px 9px rgb(0 0 0 / 9%);
+}
+
+.horizontal-holder {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.custom-file-button {
+    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.2), 0 0 4px 0 rgba(0,0,0,0.2);
+    padding: 4px 3px !important;
+    font-size: 14px !important;
+    /*border-radius: 10px;*/
+    width: auto !important;
+    margin-left: 10px;
+    min-width: 0 !important;
+}
+
+.custom-file-button:hover {
+    cursor: pointer;
+}
+
+.uploaded-file-name {
+    margin-left: 10px;
+    font-size: 14px !important;
+    padding: 0px !important;
+}
+
+.asterisk {
+    font-size: 13px !important;
+    margin-top: 5px;
+}
+
+.main-form {
+    min-width: 415px;
+    overflow-x: scroll;
+}
+
+.example.example1 {
+  margin-top: 30px;
+}
+
+.button {
+    font-family: Arial, verdana, helvetica, sans-serif !important;
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+    width: calc(100% - 30px) !important;
+}
+
+.title {
+    min-width: 415px;
+}
+
+.step {
+    min-width: 415px;
+}
+

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="../static/favicon.png">
+
+<link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+<link rel="stylesheet" type="text/css" href="../static/css/account-details.css" data-rel-css="">
+
+<script src="../static/js/account-details.js"></script>
+
+<head>
+  <script>
+      function submit_form() {
+        var textarea_text = document.getElementById("textarea").value;
+
+        if (textarea_text == "") {
+            var error_text = document.getElementsByClassName("invalid-input-text")[0];
+            error_text.innerHTML = "*Text cannot be empty";
+        } else {
+            var notes_input = document.getElementById("notes_inp");
+            notes_input.value = textarea_text;
+            var form = document.getElementById("form");
+            form.submit();
+        }
+      }
+
+      window.document.title="Setup Website Information";
+  </script>
+</head>
+
+<style>
+.center {
+  max-width: 550px;
+}
+
+.textarea-holder {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.textarea {
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    font-family: Arial, verdana, helvetica, sans-serif;
+    width: 100%;
+    min-width: 290px;
+    height: 180px;
+    resize: none;
+    font-size: 15px;
+}
+
+.button {
+    width: 80%;
+    min-width: 290px;
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.center {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 15px !important;
+}
+
+.page-explanation-holder {
+    margin: 20px 0;
+}
+
+.upload-holder {
+    border-radius: 10px;
+    padding: 7px;
+}
+
+.custom-file-button {
+    border-radius: 10px;
+}
+
+.invalid-input-text {
+    font-family: Roboto, Open Sans, Segoe UI, sans-serif;
+    font-size: 16px;
+}
+
+</style>
+
+<div class="top-half">
+<div class="topnav">
+  <a href="/">
+  <div class="topnav-left">
+    <img src="../static/m3_logo.png" width="122.25px" height="41px">
+  </div>
+  </a>
+  <div class="topnav-right">
+  <a class="topnav-right-text" href="/logout">Sign out</a>
+  </div>
+</div>
+
+<div class="center">
+      <div class="step">Step 2 of 5</div>
+      <div class="title">Enter Website Information</div>
+      <div>
+      <div class="page-explanation-holder">
+          <a class="page-explanation">Please enter the information you would like to have on your website. This includes restaurant hours, phone, email address, and an "about us" description.</a>
+      </div>
+
+      <div class="textarea-holder">
+        <textarea id="textarea" class="textarea"></textarea>
+      </div>
+      <div class="page-explanation-holder">
+          <a class="page-explanation"> Please provide us with up to 5 high resolution images compressed as a .zip file. At most one should be of your restaurant, while the rest should be of your food and drinks. The more images you provide, the better your website will look.</a>
+      </div>
+      <form id="form" method="POST" enctype="multipart/form-data">
+          <input type="hidden" id="notes_inp" name="website_notes">
+          <div class="upload-holder">
+                  <div class="horizontal-holder">
+                    <a class="upload-instructions">Upload file:</a>
+                    <label for="file_upload" class="custom-file-button">Choose File</label>
+                    <input type="file" id="file_upload" hidden onchange="update_file_name()" name="website_media">
+                    <a class="uploaded-file-name" id="file_name"></a>
+                  </div>
+              </div>
+      </form>
+
+      <div class="button-holder">
+            <button class="button" onclick="submit_form()">Next</button>
+      </div>
+
+      <div class="invalid-input-text-holder">
+          <a class="invalid-input-text"></a>
+      </div>
+</div>
+</div>
+</div>
+<div class="bottom-half">
+  <div class="questions">Questions? Call 1-805-364-2694&nbsp&nbsp•&nbsp&nbspinfo@m3orders.com</div>
+  <a href="/terms-of-use" class="terms-of-use">Terms of Use</a>
+  <a href="/privacy-policy" class="privacy">Privacy</a>
+</div>
+
+</html>
