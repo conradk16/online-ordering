@@ -148,9 +148,9 @@ function registerElements(elements, exampleName) {
                 result_title.innerHTML = "Sorry, orders are no longer being accepted.";
                 resetButton.style.display = "none";
             } else if (event.target.response == "invalid email") {
-                result_title.innerHTML = "Payment failed. Sorry, we could not process the email address \"" + email_input.value + "\"";
+                result_title.innerHTML = "Payment failed: invalid email address.";
             } else {
-                console.log("unknown response");
+                result_title.innerHTML = "Payment failed";
             }
         } else {
             var card = elements[0];
