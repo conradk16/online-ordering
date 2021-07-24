@@ -28,6 +28,7 @@
         var paid_for_website = {{paid_for_website|tojson}};
         var website_url = {{website_url|tojson}};
         var charges_enabled = {{charges_enabled|tojson}};
+        var test_url = {{test_url|tojson}};
 
         var button = document.getElementById("button");
         var description = document.getElementsByClassName("description")[0];
@@ -65,8 +66,11 @@
                 link_text.innerHTML = website_url;
             } else {
                 description.innerHTML = "This is the link to your online ordering website. Add it to your main website and make sure it's easily accessible to your customers.";
-
-                link_text.innerHTML = "https://m3orders.com/" + order_url;
+                if (!test_url) {
+                    link_text.innerHTML = "https://m3orders.com/" + order_url;
+                } else {
+                    link_text.innerHTML = "https://test.m3orders.com/" + order_url;
+                }
             }
             content_holder.insertBefore(link_text, button);
             content_holder.appendChild(comment);
