@@ -8,3 +8,5 @@ To onboard new accounts:
 6. On AWS, take M3 orders completely offline. Download the current zip file and save database.db
 7. Re-upload to AWS, making sure to use the downloaded database.db in the new upload
 8. Once online again, go to the admin panel and associate an account with the order URL
+
+Note: associate both online ordering url and website url at the same time
