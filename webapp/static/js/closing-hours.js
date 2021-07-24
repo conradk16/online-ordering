@@ -111,7 +111,7 @@
     } else {
         console.log(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
         var closing_times = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
-        var time_zone = closing_times[0]["timezone"];
+        var time_zone = {{closing_times_timezone}};
     }
 
     // validate days of the week and add them to array
@@ -151,6 +151,11 @@
 
     var input = document.getElementById("inp");
     input.value = JSON.stringify(arr);
+    var input_timezone = document.getElementById("inp-timezone");
+    
+    if (input_timezone) {
+        input_timezone.value = time_zone;
+    }
 
     /*arr = JSON.parse(input.value);
     for (const elem of arr) {

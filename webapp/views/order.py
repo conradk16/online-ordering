@@ -18,6 +18,15 @@ def super_cucas_micheltorena():
 def super_cucas_micheltorena_payment():
     return handle_order_payment_request(request, '/super-cucas-micheltorena')
 
+@order.route('/my-ballsack', methods=['GET', 'POST'])
+def my_ballsack():
+    return handle_order_website_request(request, 'test1@gmail.com', '/my-ballsack', 'My Ballsack - Nut Ave')
+
+@order.route('/my-ballsack/payment')
+def my_ballsack_payment():
+    return handle_order_payment_request(request, '/my-ballsack')
+
+
 # request = flask request obj, account_email = restaurant accoutn email, url of form: '/restaurant-name-location'
 def handle_order_website_request(request, account_email, url, restaurant_display_name):
     restaurant_user = User.query.filter_by(email_address=account_email).first()

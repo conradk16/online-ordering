@@ -1,7 +1,7 @@
 To onboard new accounts:
 
 1. Check the admin panel to see users who have an active subscription and don't yet have a URL assigned to them 
-2. Create their menu in webapp/static/menus.py and pick and order url
+2. Create their menu in webapp/static/menus.py and pick an order url
 3. In webapp/views/order.py, create 2 routes: '/order-url' and '/order-url/payment'
 4. For '/order-url' route: return handle_order_website_request(request, 'account_email', '/order_url', 'restaurant_display_name')
 5. For '/order-url/payment' route: return handle_order_payment_request(request, '/order_url')
