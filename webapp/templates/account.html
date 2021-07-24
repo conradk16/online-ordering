@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="../static/css/account-menu.css">
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}}></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}}></script>
 
 <head>
   <script>
@@ -27,6 +27,7 @@
         var active_subscription = {{active_subscription|tojson}};
         var paid_for_website = {{paid_for_website|tojson}};
         var website_url = {{website_url|tojson}};
+        var charges_enabled = {{charges_enabled|tojson}};
 
         var button = document.getElementById("button");
         var description = document.getElementsByClassName("description")[0];
@@ -45,6 +46,10 @@
                 description.innerHTML = "We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.";
             }
             
+        } else if (charges_enabled == false) {
+            disable_button();
+            link_title = document.getElementsByClassName("description")[0];
+            link_title.innerHTML = "There is an issue with your Stripe account, so it is currently not able to accept charges. Go to Stripe in the menu bar to solve the issue.";
         } else {
             button.style.cursor = "pointer";
             description.style.marginBottom = "20px";

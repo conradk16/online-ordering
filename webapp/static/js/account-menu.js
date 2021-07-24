@@ -11,20 +11,31 @@ function run_on_resize() {
     }
 }
 
-function check_if_view_orders() {
-    var orders_link = document.getElementById("account-menu-script").getAttribute('data-order_url');
-
-    //orders_link = "None";
-
+function gray_view_orders() {
     var menu_view_orders_block = document.getElementById("menu_view_orders_block");
     var menu_view_orders = document.getElementById("menu_view_orders");
-    if (orders_link == "None") {
-        //enu_view_orders_block.display = "block";
-        menu_view_orders_block.style.backgroundColor = "#fff";
-        menu_view_orders_block.style.pointerEvents = "none";
+    menu_view_orders_block.style.backgroundColor = "#fff";
+    menu_view_orders_block.style.pointerEvents = "none";
 
-        menu_view_orders.style.cursor = "default";
-        menu_view_orders.style.color = "gray";
+    menu_view_orders.style.cursor = "default";
+    menu_view_orders.style.color = "gray";
+}
+
+function check_if_view_orders() {
+    var order_url = document.getElementById("account-menu-script").getAttribute('data-order_url');
+    var active_subscription = document.getElementById("account-menu-script").getAttribute('data-active_subscription');
+    var charges_enabled = document.getElementById("account-menu-script").getAttribute('data-charges_enabled');
+    var website_url = document.getElementById("account-menu-script").getAttribute('data-website_url');
+    var paid_for_website = document.getElementById("account-menu-script").getAttribute('data-paid_for_website');
+
+    /*console.log(order_url);
+    console.log(active_subscription);
+    console.log(charges_enabled);
+    console.log(website_url);
+    console.log(paid_for_website);*/
+    
+    if (charges_enabled == "False" || active_subscription == "False" || (order_url == "None" && paid_for_website == "False") || (website_url == "None" && paid_for_website == "True")) {
+        gray_view_orders(); 
     }
 }
 
