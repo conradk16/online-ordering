@@ -272,10 +272,21 @@ body {
   background-color: #f6f9fc;
 }
 
+@media screen and (max-width: 670px) {
+  body { background-color: #787878; }
+  .example {box-shadow: none !important;}
+}
+
+@media screen and (min-width: 670px) {
+  body { background-color: #f6f9fc; }
+  .example {box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08) !important;}
+}
+
 main {
   position: relative;
   display: block;
   z-index: 1;
+  height: 100%;
 }
 
 .stripes {
@@ -389,9 +400,10 @@ main > .container-lg .example {
   align-items: center;
   border-radius: 4px;
   box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-  padding: 80px 0px 80px 0px;
+  padding: 80px 0;
   margin-left: -20px;
   margin-right: -20px;
+  height: 100%;
 }
 
 @media (min-width: 670px) {
