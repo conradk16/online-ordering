@@ -151,6 +151,11 @@
 
     var input = document.getElementById("inp");
     input.value = JSON.stringify(arr);
+    var input_timezone = document.getElementById("inp-timezone");
+    
+    if (input_timezone) {
+        input_timezone.value = time_zone;
+    }
 
     /*arr = JSON.parse(input.value);
     for (const elem of arr) {
