@@ -519,7 +519,7 @@ def is_valid_closing_times_post_request(request):
                 if closing_time['timezone'] not in tz_options:
                     return False
                 
-                return True
+            return True
     return False
 
 
@@ -531,11 +531,10 @@ def calculate_next_closing_time(closing_times):
     # closing_time is a json string containing a list of dicts: {"day": 0-6, "hour": 0-60, "minute": 0-60, "timezone": "US/Alaska"}
     for closing_time in json.loads(closing_times):
 
-        current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
-        next_closing_time = current_time_in_new_tz
+        next_closing_time = current_time.astimezone(pytz.timezone(closing_time['timezone']))
 
         # If current time day, hour, minute match the closing time, go find the next instance where they match since this closing time has already passed
-        if closing_time['minute'] == next_closing_time.minute and closing_time['hour'] == next_closing_time.hour and closing_time['day'] == next_closing_time.weekday:
+        if closing_time['minute'] == next_closing_time.minute and closing_time['hour'] == next_closing_time.hour and closing_time['day'] == next_closing_time.weekday():
             next_closing_time += datetime.timedelta(minutes=1)
 
         while next_closing_time.minute != closing_time['minute']:

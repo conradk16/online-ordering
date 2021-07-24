@@ -9,8 +9,8 @@
 <link rel="stylesheet" type="text/css" href="../static/css/closing-times.css">
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
 
-<script src="../static/js/closing-hours.js" id="closing-times-script" data-closing_times={{closing_times}} data-is_update="true"></script>
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}} data-timezone={{closing_times_timezone}}></script>
+<script src="../static/js/closing-hours.js" id="closing-times-script" data-closing_times={{closing_times}} data-is_update="true" data-timezone={{closing_times_timezone}}></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}}></script>
 
 <head>
   <script>
@@ -197,6 +197,7 @@
 
 <form id="closing_times_to_send", method="POST">
     <input type="hidden" id="inp" name="closing_times">
+    <input type="hidden" id="inp-timezone" name="closing_times_timezone">
 </form>
 
 </html>

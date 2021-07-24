@@ -58,12 +58,6 @@
         else if (day_of_week == "Saturday") { var day = 5; }
         else if (day_of_week == "Sunday") { var day = 6; }
 
-        // deal with late closings (after midnight)
-        if (ampm == "am" && hr < 6) {
-            day += 1;
-            day %= 6;
-        }
-
         // convert to 24-hr
         if (ampm == "pm" && hr != 12) {
             hr += 12;
@@ -109,9 +103,8 @@
             return;
         }
     } else {
-        console.log(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
         var closing_times = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
-        var time_zone = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-timezone'));
+        var time_zone = document.getElementById("closing-times-script").getAttribute('data-timezone');
     }
 
     // validate days of the week and add them to array
