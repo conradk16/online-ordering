@@ -29,8 +29,7 @@
         var phone = account_details["phone"];
         var menu_url = account_details["menu_url"];
         var file_name = {{menu_filename|tojson}};
-        console.log(file_name);
-        
+
         var name_inp = document.getElementById("name");
         name_inp.value = name;
         var email_inp = document.getElementById("email");
@@ -102,7 +101,9 @@
 .center {
     margin-top: 15px;
 }
-    
+
+const safariRenderHack = { opacity: count % 2 ? 1 : 0.99 };
+
 </style>
 
 <div class="top-half">
@@ -126,14 +127,14 @@
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
       <li><a  href="/account" style="display:block;">Account Home</a></li>
-      <li id="menu_view_orders_block"><a  href="/account/orders" style="display:block;" id="menu_view_orders">View Orders</a></li>
+      <li id="menu_view_orders_block" style="display:block;"> <a href="/account/orders" id="menu_view_orders">View Orders</a></li>
       <li><a  href="/account/account-details" style="display:block;">Account Details</a></li>
       <li><a  href="/account/closing-times" style="display:block;">Closing Hours</a></li>
       <li><a  href="https://dashboard.stripe.com" style="display:block;">Stripe</a></li>
       <li><a  href="/account/manage-subscription" style="display:block;">Manage Subscription</a></li>
     </ul>
   </div>
-  
+
   <div class="center">
         <div class="title">Update Account Details</div>
         <div class="cell example example1" id="example-1">
@@ -170,7 +171,7 @@
           </div>
 
           <button class="button" id="submit-button" type="button" data-tid="elements_examples.form.pay_button" onclick="validate_form()">Update</button>
-          
+
           <div class="invalid-input-text-holder">
               <a class="invalid-input-text"></a>
           </div>
