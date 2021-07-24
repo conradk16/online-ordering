@@ -59,6 +59,7 @@ env['stripe_checkout_session_cancel_url'] = 'https://m3orders.com/signup/select-
 env['email_sender_address'] = 'no-reply@m3orders.com'
 env['email_sender_password'] = 'YB\'S!#4GqUZPsP"6'
 env['accepting_orders_autoshutoff_threshold_in_seconds'] = 300 # stop accepting orders if 300 seconds go by with no queries to view orders page
+env['archived_orders_display_limit'] = 100 # Don't show more than 100 orders in the archived tab
 
     
 app = Flask(__name__)

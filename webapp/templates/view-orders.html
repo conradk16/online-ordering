@@ -389,7 +389,7 @@ function load_selections(tab_name) {
     else {
         var dict = options;
     }
-    
+
     let entries = Object.entries(dict);
 
     // clear rows
@@ -403,7 +403,7 @@ function load_selections(tab_name) {
     // create rows
     for (const entry of entries) {
         const item_name = entry[0];
-        
+
         var row = document.createElement("div");
         row.classList.add("menu-edit-row");
         popup_body.appendChild(row);
@@ -426,11 +426,10 @@ function load_selections(tab_name) {
     // update the first row
     var first_row = popup_body.firstElementChild;
     first_row.classList.add("menu-edit-first-row");
-    
+
 }
 
 function edit_menu_availability() {
-    stock_statusus = JSON.parse({{json_stock_status|tojson}});
     menu_items = stock_statusus["menu_items"];
     options = stock_statusus["options"];
 
@@ -474,7 +473,7 @@ function update_menu_availability() {
     var to_send = new Array();
     let menu_items_entries = Object.entries(menu_items);
     let options_entries = Object.entries(options);
-    
+
     for (const entry of menu_items_entries) {
         var name = entry[0];
         var stock_status = entry[1];
@@ -499,20 +498,16 @@ function update_menu_availability() {
 
     input.value = JSON.stringify(to_send);
 
-    /*var sent = JSON.parse(input.value);
-    for (const dict of sent) {
-        console.log(dict["name"] + ", " + dict["item_or_option"] + ", " + dict["stock_status"]);
-    }*/
+    // send post request with order_info form
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/account/update-menu-availability");
+    xhr.onload = function(event) {
+      stock_statusus = JSON.parse(event.target.response);
+      close_menu_popup();
+    };
 
-    form.submit();
-    
-}
-
-function close_menu_popup_if_open(event) {
-    var popup = document.getElementById("menu-edit-popup");
-    if (event.target == popup) {
-        close_menu_popup();
-    }
+    var formData = new FormData(form);
+    xhr.send(formData);
 }
 
 function close_menu_popup() {
@@ -523,6 +518,7 @@ function close_menu_popup() {
 
 
 function setup() {
+    stock_statusus = JSON.parse({{json_stock_status|tojson}});
     var popup_x = document.getElementsByClassName("menu-edit-close")[0];
     popup_x.onclick = close_menu_popup;
 }
@@ -1040,7 +1036,7 @@ tr:nth-child(even) {
 }
 
 .menu-edit-popup-header {
-    
+
 }
 
 .menu-edit-tabs {
@@ -1212,7 +1208,7 @@ tr:nth-child(even) {
       <li class="large-li" onclick="click_link('/account/account-details')"><a>Account Details</a></li>
       <li class="large-li" onclick="click_link('/account/closing-times')"><a>Closing Hours</a></li>
       <li class="large-li" onclick="click_link('https://dashboard.stripe.com')"><a>Stripe</a></li>
-      <li class="large-li" onclick="click_link('/account/closing-times')"><a>Manage Subscription</a></li>
+      <li class="large-li" onclick="click_link('/account/manage-subscription')"><a>Manage Subscription</a></li>
     </ul>
   </div>
 
@@ -1273,8 +1269,8 @@ setInterval(function() {
 <form id="reload-orders-form">
 </form>
 
-<form id="menu-availability-form" action="/account/update-menu-availability" method="POST">
-    <input id="menu-availability-inp" name="update_items">
+<form id="menu-availability-form">
+    <input type="hidden" id="menu-availability-inp" name="update_items">
 </form>
 
 </html>

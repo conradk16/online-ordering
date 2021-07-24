@@ -192,6 +192,9 @@ def edit_account_details():
     if not current_user.is_authenticated:
         return redirect('/login')
 
+    if not current_user.stripe_connected_account_details_submitted:
+        return redirect('/account/setup-stripe')
+
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
             return redirect('/account/setup-stripe')
@@ -221,6 +224,9 @@ def edit_account_details():
 def edit_closing_times():
     if not current_user.is_authenticated:
         return redirect('/login')
+
+    if not current_user.stripe_connected_account_details_submitted:
+        return redirect('/account/setup-stripe')
 
     if request.method == 'GET':
         if not current_user.stripe_connected_account_details_submitted:
@@ -269,7 +275,7 @@ def view_orders():
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
@@ -279,7 +285,7 @@ def view_orders():
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
         elif ((current_time - current_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
-            restaurant_user.currently_accepting_orders = False
+            current_user.currently_accepting_orders = False
         current_user.most_recent_time_orders_queried = current_time
         db.session.commit()
 
@@ -306,7 +312,7 @@ def get_updated_orders():
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
@@ -316,7 +322,7 @@ def get_updated_orders():
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
         elif ((current_time - current_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
-            restaurant_user.currently_accepting_orders = False
+            current_user.currently_accepting_orders = False
         current_user.most_recent_time_orders_queried = current_time
         db.session.commit()
 
@@ -352,7 +358,7 @@ def update_menu_availability():
         update_items = json.loads(request.form['update_items'])
         for update_item in update_items:
             item_or_option, name, stock_status = update_item['item_or_option'], update_item['name'], update_item['stock_status']
-            menu.change_stock_status(item_or_option, item, stock_status)
+            menu.change_stock_status(item_or_option, name, stock_status)
 
         current_user.json_menu = json.dumps(menu, default=lambda x:x.__dict__)
         db.session.commit()
@@ -548,3 +554,7 @@ def send_order_refunded_email(customer_email, rejection_description, customer_na
     msg = Message(subject='Order Could Not be Fulfilled', sender=env['email_sender_address'], recipients=[customer_email])
     msg.html = render_template('order-rejected-email.html', rejection_description=rejection_description, customer_name=customer_name, restaurant_name=restaurant_name)
     mail.send(msg)
+
+def did_user_finish_setup(user):
+    if user.stripe_customer_id and user.account_details and (user.website_notes or not user.paid_for_website) and user.menu_notes and user.closing_times and user.stripe_connected_account_details_submitted:
+        return True
