@@ -111,7 +111,7 @@
     } else {
         console.log(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
         var closing_times = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-closing_times'));
-        var time_zone = {{closing_times_timezone}};
+        var time_zone = JSON.parse(document.getElementById("closing-times-script").getAttribute('data-timezone'));
     }
 
     // validate days of the week and add them to array
