@@ -533,6 +533,10 @@ def calculate_next_closing_time(closing_times):
         current_time_in_new_tz = current_time.astimezone(pytz.timezone(closing_time['timezone']))
         next_closing_time = current_time_in_new_tz
 
+        # If current time day, hour, minute match the closing time, go find the next instance where they match since this closing time has already passed
+        if closing_time['minute'] == next_closing_time.minute and closing_time['hour'] == next_closing_time.hour and closing_time['day'] == next_closing_time.weekday:
+            next_closing_time += datetime.timedelta(minutes=1)
+
         while next_closing_time.minute != closing_time['minute']:
             next_closing_time += datetime.timedelta(minutes=1)
         while next_closing_time.hour != closing_time['hour']:
