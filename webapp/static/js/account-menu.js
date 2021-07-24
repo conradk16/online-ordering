@@ -19,7 +19,7 @@ function check_if_view_orders() {
     var menu_view_orders_block = document.getElementById("menu_view_orders_block");
     var menu_view_orders = document.getElementById("menu_view_orders");
     if (orders_link == "None") {
-        menu_view_orders_block.display = "block";
+        //enu_view_orders_block.display = "block";
         menu_view_orders_block.style.backgroundColor = "#fff";
         menu_view_orders_block.style.pointerEvents = "none";
 

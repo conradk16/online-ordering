@@ -2,10 +2,11 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 from webapp.models.order import *
 from webapp.models.db_models import User, Order
 from webapp import db, env
+from webapp.views.account import calculate_next_closing_time
 import stripe
 import json
 import datetime
-from webapp.views.account import calculate_next_closing_time
+import re
 
 order = Blueprint('order', __name__)
 
@@ -86,12 +87,22 @@ def update_order_details():
     payment_intent_id = request.form['payment_intent_id']
     connected_account = request.form['connected_account']
 
-    # update payment intent to include an email for receipts
-    stripe.PaymentIntent.modify(
-        payment_intent_id,
-        stripe_account=connected_account,
-        receipt_email=customer_email,
-    )
+    if not True:
+        return 'invalid email'
+
+    try:
+        # update payment intent to include an email for receipts
+        stripe.PaymentIntent.modify(
+            payment_intent_id,
+            stripe_account=connected_account,
+            receipt_email=customer_email,
+        )
+    except stripe.error.InvalidRequestError as e:
+        if 'Invalid email address' in str(e):
+            return 'invalid email'
+        else:
+            return 'failed to modify payment intent'
+        
 
     order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
     order.customer_name = customer_name[:50]
