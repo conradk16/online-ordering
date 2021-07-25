@@ -2,7 +2,8 @@
 
 function run_on_resize() {
     var logo = document.getElementById("logo");
-    if (window.innerWidth < 450) {
+    var topnav = document.getElementsByClassName("topnav")[0];
+    if (topnav.clientWidth < 450) {
         logo.width="100";
         logo.height="14.2";
     } else {

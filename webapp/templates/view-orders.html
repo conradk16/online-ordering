@@ -523,8 +523,14 @@ function setup() {
     popup_x.onclick = close_menu_popup;
 }
 
+function run_on_load() {
+    setup();
+    run_on_resize();
+}
+
 window.document.title="View Orders";
-window.onload = setup;
+window.onload = run_on_load;
+window.onresize = run_on_resize;
 
 stock_statusus = null;
 menu_items = null;
@@ -543,6 +549,7 @@ options = null;
   max-width: 500px;
   padding: 10px 10px 4px 10px;
   text-align: center;
+  min-width: var(--minwidth);
 }
 
 * {
@@ -726,6 +733,7 @@ options = null;
   border-style: solid;
   border-radius: 10px;
   flex: 1;
+  min-width: var(--minwidth);
 }
 
 .bottom-half-archived {
@@ -738,6 +746,7 @@ options = null;
   border-radius: 10px;
   flex: 1;
   display:none;
+  min-width: var(--minwidth);
 }
 
 .order {
@@ -813,6 +822,7 @@ options = null;
   display:flex;
   width:320px;
   border-width: 0;
+  min-width: var(--minwidth);
 }
 
 .pending-tab {
@@ -1138,6 +1148,9 @@ tr:nth-child(even) {
     font-size: 20px;
 }
 
+:root {
+    --minwidth: 500px;
+}
 
 </style>
 
@@ -1213,34 +1226,36 @@ tr:nth-child(even) {
     </ul>
   </div>
 
-<div class="meta-buttons">
-<div class="switch-button">
-    <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onclick="toggleAcceptingOrdersStatus(this);"></input>
-    <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
-</div>
+  <div class="center">
+    <div class="meta-buttons">
+        <div class="switch-button">
+            <input class="switch-button-checkbox" id="switch-button-checkbox" type="checkbox" onclick="toggleAcceptingOrdersStatus(this);"></input>
+            <label class="switch-button-label" for=""><span class="switch-button-label-span">Not accepting orders</span></label>
+        </div>
 
-<a onclick="edit_menu_availability()" class="edit-menu-availability-button">Update menu availability</a>
-<br>
-</div>
-</div>
-
-<div class="tab-holder">
-  <div class="pending-tab" id="pending-tab" onclick="showTab('bottom-half-pending')">
-    <div class="tab-text">
-      Pending Orders
+        <a onclick="edit_menu_availability()" class="edit-menu-availability-button">Update menu availability</a>
+        <br>
     </div>
-  </div>
-  <div class="archived-tab" id="archived-tab" onclick="showTab('bottom-half-archived')">
-    <div class="tab-text">
-      Archived Orders
+
+    <div class="tab-holder">
+        <div class="pending-tab" id="pending-tab" onclick="showTab('bottom-half-pending')">
+            <div class="tab-text">Pending Orders</div>
+        </div>
+        <div class="archived-tab" id="archived-tab" onclick="showTab('bottom-half-archived')">
+            <div class="tab-text">Archived Orders</div>
+        </div>
     </div>
+
+    <div class="bottom-half-pending" id="bottom-half-pending">
+    </div>
+    <div class="bottom-half-archived" id="bottom-half-archived">
+    </div>
+    
+
   </div>
+
 </div>
 
-<div class="bottom-half-pending" id="bottom-half-pending">
-</div>
-<div class="bottom-half-archived" id="bottom-half-archived">
-</div>
 
 <script>
 setAcceptingOrdersToggleStatus({{currently_accepting_orders|tojson}} == "true");
