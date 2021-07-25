@@ -110,7 +110,10 @@ def logout():
 def signup():
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return redirect('/account')
+            if current_user.stripe_customer_id:
+                return redirect('/account')
+            else:
+                return redirect('/signup/select-website')
         else:
             return render_template('signup.html', user_already_exists="false")
     elif request.method == 'POST':
@@ -136,6 +139,8 @@ def signup_select_website():
     if request.method == 'GET':
         if not current_user.is_authenticated:
             return redirect('/login')
+        elif current_user.stripe_customer_id:
+            return redirect('/account')
         else:
             return render_template('signup-select-website.html')
     elif request.method == 'POST':
@@ -151,6 +156,8 @@ def signup_select_plan():
     if request.method == 'GET':
         if not current_user.is_authenticated:
             return redirect('/login')
+        elif current_user.stripe_customer_id:
+            return redirect('/account')
         else:
             return render_template('signup-select-plan.html')
     elif request.method == 'POST':
@@ -166,6 +173,8 @@ def signup_select_setup_fee():
     if request.method == 'GET':
         if not current_user.is_authenticated:
             return redirect('/login')
+        elif current_user.stripe_customer_id:
+            return redirect('/account')
         else:
             return render_template('signup-select-fee.html')
     else:

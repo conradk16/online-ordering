@@ -11,7 +11,7 @@ PROD = os.getenv('PROD')
 env = {}
 
 # SET TRUE IF UPLOADING TO test.m3orders.com (OnlineOrdering-Test)
-uploading_to_test_env = False 
+uploading_to_test_env = True 
 if uploading_to_test_env:
     env['uploading_to_AWS'] = True
     PROD = False

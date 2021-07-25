@@ -9,7 +9,7 @@ def assign_order_url_to_demo_account(account_email):
     # DEMO MENU
 
     if env['uploading_to_AWS']:
-        f = open('/utils/sample_menu.json')
+        f = open('/var/app/current/webapp/utils/sample_menu.json')
     else:
         f = open('./webapp/utils/sample_menu.json')
 
