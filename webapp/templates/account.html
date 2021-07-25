@@ -50,7 +50,7 @@
         } else if (charges_enabled == false) {
             disable_button();
             link_title = document.getElementsByClassName("description")[0];
-            link_title.innerHTML = "There is an issue with your Stripe account, so it is currently not able to accept charges. Go to Stripe in the menu bar to solve the issue.";
+            link_title.innerHTML = "There's an issue with your Stripe account and charges are currently disabled. Navigate to Stripe in the menu bar to solve the issue. If your account was recently created, Stripe may be in the process of verifying your account.";
         } else {
             button.style.cursor = "pointer";
             description.style.marginBottom = "20px";

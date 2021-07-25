@@ -27,7 +27,7 @@ def webhook_account_received():
 
     # If test data being sent to a production webhook, ignore it
     if not event['livemode'] and env['PROD']:
-        return
+        return jsonify({'status': 'ignoring webhook, receiving test webhook in prod env'})
     
     if event_type == 'checkout.session.completed':
         # Payment is successful and the subscription is created.
@@ -102,7 +102,7 @@ def webhook_connect_received():
 
     # If test event being sent to a production webhook, ignore it
     if not event['livemode'] and env['PROD']:
-        return
+        return jsonify({'status': 'ignoring webhook, receiving test webhook in prod env'})
     
     if event_type == 'account.updated':
         account_id = data_object.id
