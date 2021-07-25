@@ -20,7 +20,7 @@ def webhook_account_received():
             payload=request.data, sig_header=signature, secret=webhook_secret)
         data = event['data']
     except Exception as e:
-        return e
+        return jsonify({'status': 'invalid webhook signature'})
 
     event_type = event['type']
     data_object = data['object']
@@ -44,6 +44,10 @@ def webhook_account_received():
         client_reference_id = data_object.client_reference_id
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(email_address=client_reference_id).first()
+
+        if not user:
+            return jsonify({'status': 'No user exists for the checkout session\'s client_reference_id. Possibly caused by test/localhost webhooks being lumped together'})
+
         user.paid_for_hardware = paid_for_hardware
         user.paid_for_website = paid_for_website
         if data_object.shipping:
@@ -68,6 +72,10 @@ def webhook_account_received():
         # The customer cancelled the subscription and it has now ended
         stripe_customer_id = data_object.customer
         user = User.query.filter_by(stripe_customer_id=stripe_customer_id).first()
+
+        if not user:
+            return jsonify({'status': 'No user exists for the stripe_customer_id. Possibly caused by test/localhost webhooks being lumped together'})
+
         user.active_subscription = False
         db.session.commit()
     else:
@@ -87,7 +95,7 @@ def webhook_connect_received():
             payload=request.data, sig_header=signature, secret=webhook_secret)
         data = event['data']
     except Exception as e:
-        return e
+        return jsonify({'status': 'invalid webhook signature'})
 
     event_type = event['type']
     data_object = data['object']
@@ -99,6 +107,10 @@ def webhook_connect_received():
     if event_type == 'account.updated':
         account_id = data_object.id
         user = User.query.filter_by(stripe_connected_account_id=account_id).first()
+
+        if not user:
+            return jsonify({'status': 'No user exists for the stripe_connected_account_id. Possibly caused by test/localhost webhooks being lumped together'})
+
         user.stripe_connected_account_details_submitted = data_object.details_submitted
         
         if env['PROD']:
@@ -118,6 +130,9 @@ def webhook_connect_received():
     elif event_type == "payment_intent.succeeded":
         payment_intent = data_object
         order = Order.query.filter_by(payment_intent_id=payment_intent.id).first()
+
+        if not order:
+            return jsonify({'status': 'No order exists for the payment_intent_id. Possibly caused by test/localhost webhooks being lumped together'})
         order.paid = True
         db.session.commit() 
     else:

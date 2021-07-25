@@ -42,8 +42,8 @@ else:
     env['PROD'] = False
     env['stripe_secret_api_key'] = 'sk_test_51J8elwLGQW192ovfZdXa5R8KnXuzvceiy9kCV7wojYHBG3L4Y0H0W4MjpXFTgZhUEw9Qzn1naBr5mR2MXUCnczOo00nsenWbzL'
     env['stripe_publishable_api_key'] = 'pk_test_51J8elwLGQW192ovfOXJfdSNVRLnM2WeeTF0Mk1KaInlzDqvlXk8Em97iK5Xj3zvCGwhfDL7HQqk3Ur5MPdvUKSh5008yyI3tSj'
-    env['stripe_webhook_account_signing_secret'] = 'whsec_lR3sgfoskirPFJGZFBjtBsKE6uaLJV3d'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_42WoCcMnKOeS6OvQqgo4gly1cOZyBVfX'
+    env['stripe_webhook_account_signing_secret'] = 'whsec_676LYWw0BdfpPuddk3D85Pkp5IrezG9q'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_bd5x6nD0fCoMlP9mm4EjUh8gjDuQcZax'
 
     env['stripe_hardware_product_price_id'] = 'price_1JGuEZLGQW192ovfvJ2Qdd0A'
     env['stripe_website_setup_product_price_id'] = 'price_1JGuEFLGQW192ovf5eA7COHk'
@@ -61,8 +61,8 @@ else:
     env['stripe_checkout_session_cancel_url'] = 'https://test.m3orders.com/signup/select-setup-fee'
 
 if uploading_to_test_env:
-    env['stripe_webhook_account_signing_secret'] = 'whsec_f5jgqfdLRPXBvWVLE6uMzGxIMSTxWi6b'
-    env['stripe_webhook_connect_signing_secret'] = 'whsec_8gjJqKZHQ2zzm3PMq508an9He3jNFLdw'
+    env['stripe_webhook_account_signing_secret'] = 'whsec_TNx0YjO2nwm6082XvjLXv9HLfS06LQgy'
+    env['stripe_webhook_connect_signing_secret'] = 'whsec_Pjy6LIPe2iMbQCmcLvcqQZWym4IvN5w6'
 
 stripe.api_version = '2020-08-27'
 stripe.api_key = env['stripe_secret_api_key']

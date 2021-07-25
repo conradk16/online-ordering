@@ -707,29 +707,34 @@ async function load_menu_wide() {
             set_list_item(list_item, item);
         }
 
-        await sleep(1);
-        // move items back to right stack
-
-        while (true) {
-            // move bottom left to top right
-            left_children = group_list_left.children;
-            moving_elem = left_children[left_children.length - 1];
+        // split items evenly on left and right. If uneven, extra elem goes on left side. For each row, make elems the height of the larger one
+        if (group_list_left.children.length == 1) {
+          return;
+        } else if (group_list_left.children.length == 2) {
+          var moving_elem = group_list_left.children[1];
+          group_list_left.removeChild(moving_elem);
+          group_list_right.appendChild(moving_elem);
+        } else {
+          var iter_count = Math.floor(group_list_left.children.length / 2);
+          var i = 0;
+          while (i < iter_count) {
+            var moving_elem = group_list_left.children[group_list_left.children.length - 1];
             group_list_left.removeChild(moving_elem);
             group_list_right.prepend(moving_elem);
-
-            // check if need to move it back
-            if (group_list_left.clientHeight < group_list_right.clientHeight) {
-                group_list_right.removeChild(moving_elem);
-                group_list_left.append(moving_elem);
-                break;
-            }
+            i += 1;
+          }
         }
-
+        var iter_count = Math.min(group_list_left.children.length, group_list_right.children.length);
+        var i = 0;
+        while (i < iter_count) {
+          var left_child = group_list_left.children[i];
+          var right_child = group_list_right.children[i];
+          max_height = Math.max(left_child.clientHeight, right_child.clientHeight);
+          left_child.style.height = String(max_height) + "px";
+          right_child.style.height = String(max_height) + "px";
+          i += 1;
+        }
     }
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function remove_from_cart_items(to_remove) {
@@ -1780,5 +1785,9 @@ body {
 <form method="POST", id="proceed_to_payment_form">
   <input type="hidden" id="proceed_to_payment_order_data" name="order">
 </form>
+
+<script>
+update_layout();
+</script>
 
 </html>
