@@ -27,7 +27,7 @@ def route_handle_order_payment_request(order_url):
     return handle_order_payment_request(request, user)
 
 def handle_order_website_request(request, user):
-    current_time = datetime.datetime.now()
+    current_time = datetime.datetime.utcnow()
     if current_time > user.next_closing_time:
         user.currently_accepting_orders = False
         user.next_closing_time = calculate_next_closing_time(user.closing_times)
@@ -117,7 +117,7 @@ def update_order_details():
     db.session.commit()
 
     restaurant_user = User.query.filter_by(order_url=order.order_url).first()
-    current_time = datetime.datetime.now()
+    current_time = datetime.datetime.utcnow()
     if current_time > restaurant_user.next_closing_time:
         restaurant_user.currently_accepting_orders = False
         restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)

@@ -282,7 +282,7 @@ def view_orders():
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
-        current_time = datetime.datetime.now()
+        current_time = datetime.datetime.utcnow()
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
@@ -319,7 +319,7 @@ def get_updated_orders():
         if len(archived_orders) == 0:
             archived_orders = "No orders"
 
-        current_time = datetime.datetime.now()
+        current_time = datetime.datetime.utcnow()
         if current_time > current_user.next_closing_time:
             current_user.currently_accepting_orders = False
             current_user.next_closing_time = calculate_next_closing_time(current_user.closing_times)
@@ -551,7 +551,7 @@ def calculate_next_closing_time(closing_times):
     if len(next_closing_times) == 0:
         return datetime.datetime.max
     else:
-        return min(next_closing_times)
+        return min(next_closing_times).astimezone(pytz.UTC) # always convert closing time to UTC since TZ info gets cleared when stored
 
 def convertTimeToSpecificTimezone(time, timezone):
     return timezone.localize(datetime.combine(datetime.today(), t)).timetz()
