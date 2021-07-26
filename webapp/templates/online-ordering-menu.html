@@ -763,6 +763,24 @@ function get_cart_total() {
     return total_price;
 }
 
+// updates total prices and the submit button
+function update_totals(new_subtotal_price_value) {
+    var subtotal_price = document.getElementById("subtotal_price");
+    subtotal_price.innerHTML = "$" + new_subtotal_price_value.toFixed(2);
+
+    var tax_price = document.getElementById("tax_price");
+    var tax_rate = {{tax_rate|tojson}};
+    var new_tax_value = new_subtotal_price_value * tax_rate;
+    tax_price.innerHTML = "$" + new_tax_value.toFixed(2);
+
+    var final_total_price = document.getElementById("final_total_price");
+    var new_final_total_value = new_subtotal_price_value + new_tax_value;
+    final_total_price.innerHTML = "$" + new_final_total_value.toFixed(2);
+
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    cart_button.innerHTML = "Proceed to Payment ($" + new_final_total_value.toFixed(2) + ")";
+}
+
 // makes use of global `cart_items` variable
 // assumes cart exists
 function load_cart() {
@@ -936,12 +954,7 @@ function load_cart() {
                     minus_symbol.style.cursor = "auto";
                 }
 
-                var total_text = document.getElementsByClassName("cart-total-text")[0];
-                if (total_text != null) {
-                    var new_total = get_cart_total();
-                    total_text.innerHTML = "Total: $" + new_total.toFixed(2);
-                    cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
-                }
+                update_totals(get_cart_total());
             }
         };
 
@@ -953,12 +966,7 @@ function load_cart() {
             minus_symbol.style.backgroundColor = "#4693e0";
             minus_symbol.style.cursor = "pointer";
 
-            total_text = document.getElementsByClassName("cart-total-text")[0];
-            if (total_text != null) {
-                new_total = get_cart_total();
-                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
-                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
-            }
+            update_totals(get_cart_total());
         };
 
         // add trash
@@ -973,8 +981,18 @@ function load_cart() {
             remove_from_cart_items(cart_item);
             var items = document.getElementsByClassName("cart-item");
             if (items.length == 1) {
-                document.getElementsByClassName("cart-total-line")[0].remove();
-                document.getElementsByClassName("cart-total-text")[0].remove();
+                var total_boxes = document.getElementsByClassName("cart-total-box");
+                const num_total_boxes = total_boxes.length;
+                for (let i = 0; i < num_total_boxes; i++) {
+                    total_boxes[0].remove();
+                }
+
+                var total_lines = document.getElementsByClassName("cart-total-line");
+                const num_total_lines = total_lines.length;
+                for (let i = 0; i < num_total_lines; i++) {
+                    total_lines[0].remove();
+                }
+
                 cart_button.style.backgroundColor = "gray";
                 cart_button.style.cursor = "auto";
                 cart_button.innerHTML = "Proceed to Payment";
@@ -984,12 +1002,12 @@ function load_cart() {
                 body.style.justifyContent = "center";
                 body.style.alignItems = "center";
             }
-            total_text = document.getElementsByClassName("cart-total-text")[0];
-            if (total_text != null) {
-                new_total = get_cart_total() - cart_item.get_price();
-                total_text.innerHTML = "Total: $" + new_total.toFixed(2);
-                cart_button.innerHTML = "Proceed to Payment ($" + new_total.toFixed(2) + ")";
+        
+            var subtotal_price = document.getElementById("subtotal_price");
+            if (subtotal_price != null) {
+                update_totals(get_cart_total() - cart_item.get_price());
             }
+
             item.remove();
         };
 
@@ -1000,23 +1018,93 @@ function load_cart() {
         body.lastChild.remove();
     }
 
-    // add large total line
     if (document.getElementsByClassName("cart-item").length != 0) {
+        // add subtotal line
+        var subtotal_line = document.createElement('hr');
+        subtotal_line.classList.add("cart-total-line");
+        subtotal_line.classList.add("cart-subtotal-line");
+        body.appendChild(subtotal_line);
+
+        // add subtotal box
+        var subtotal_box = document.createElement('div');
+        subtotal_box.classList.add("cart-total-box");
+        body.appendChild(subtotal_box);
+
+        // add subtotal text
+        var subtotal_name = document.createElement('a');
+        subtotal_name.classList.add("cart-total-name");
+        subtotal_name.classList.add("cart-total-text");
+        subtotal_name.classList.add("cart-subtotal-text");
+        subtotal_name.innerHTML = "Subtotal:";
+        subtotal_box.appendChild(subtotal_name);
+
+        // add subtotal price
+        var subtotal_price_value = get_cart_total();
+        var subtotal_price = document.createElement('a');
+        subtotal_price.classList.add("cart-total-price");
+        subtotal_price.classList.add("cart-total-text");
+        subtotal_price.classList.add("cart-subtotal-text");
+        subtotal_price.innerHTML = "$" + subtotal_price_value.toFixed(2);
+        subtotal_price.id = "subtotal_price";
+        subtotal_box.appendChild(subtotal_price);
+        
+
+        // add tax box
+        var tax_box = document.createElement('div');
+        tax_box.classList.add("cart-total-box");
+        body.appendChild(tax_box);
+
+        // add tax text
+        var tax_name = document.createElement('a');
+        tax_name.classList.add("cart-total-name");
+        tax_name.classList.add("cart-total-text");
+        tax_name.classList.add("cart-subtotal-text");
+        tax_name.innerHTML = "Tax:";
+        tax_box.appendChild(tax_name);
+
+        // add tax price
+        var tax_rate = {{tax_rate|tojson}};
+        var tax_amt = (subtotal_price_value * tax_rate);
+
+        var tax_price = document.createElement('a');
+        tax_price.classList.add("cart-total-price");
+        tax_price.classList.add("cart-total-text");
+        tax_price.classList.add("cart-subtotal-text");
+        tax_price.innerHTML = "$" + tax_amt.toFixed(2);
+        tax_price.id = "tax_price";
+        tax_box.appendChild(tax_price);
+
+        // add large total line
         var total_line = document.createElement('hr');
         total_line.classList.add("cart-total-line");
+        total_line.classList.add("cart-final-total-line");
         body.appendChild(total_line);
-    }
 
-    // add total
-    if (document.getElementsByClassName("cart-item").length != 0) {
-        var total_text = document.createElement('a');
-        total_text.classList.add("cart-total-text");
-        total_price = get_cart_total();
-        total_text.innerHTML = "Total: $" + total_price.toFixed(2);
-        body.appendChild(total_text);
+        // add final total box
+        var final_total_box = document.createElement('div');
+        final_total_box.classList.add("cart-total-box");
+        body.appendChild(final_total_box);
+
+        // add final total text
+        var final_total_text = document.createElement('a');
+        final_total_text.classList.add("cart-total-name");
+        final_total_text.classList.add("cart-total-text");
+        final_total_text.classList.add("cart-final-total-text");
+        final_total_text.innerHTML = "Total:";
+        final_total_box.appendChild(final_total_text);
+
+        // add final total price
+        var final_total_price_value = subtotal_price_value + tax_amt;
+        var final_total_price = document.createElement('a');
+        final_total_price.classList.add("cart-total-price");
+        final_total_price.classList.add("cart-total-text");
+        final_total_price.classList.add("cart-final-total-text");
+        final_total_price.innerHTML = "$" + final_total_price_value.toFixed(2);
+        final_total_price.id = "final_total_price";
+        final_total_box.appendChild(final_total_price);
 
         // add total to button text
-        cart_button.innerHTML += " ($" + total_price.toFixed(2) + ")";
+        cart_button.innerHTML += " ($" + final_total_price_value.toFixed(2) + ")";
     }
 
 }
@@ -1396,20 +1484,53 @@ body {
 }
 
 .cart-total-line {
-    height: 2px;
     border: none;
-    background-color: black;
-    margin-top: 10px;
     margin-left: 20px;
     margin-right: 20px;
 }
 
+.cart-final-total-line {
+    background-color: black;
+    height: 2px;
+    margin-top: 5px;
+}
+
+.cart-subtotal-line {
+    margin-top: 10px;
+    height: 1px;
+    background-color: gray;
+}
+
+.cart-total-box {
+    display: flex;
+    text-align: right;
+    margin-right: 40px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.cart-total-name {
+    width: 80px;
+}
+
+.cart-total-price {
+    width: 95px;
+}
+
 .cart-total-text {
+    text-align: right;
+}
+
+.cart-final-total-text {
     font-size: 22px;
     font-weight: 700;
-    float: right;
-    margin-right: 35px;
-    margin-top: 5px;
+    color: black;
+}
+
+.cart-subtotal-text {
+    font-size: 18px;
+    font-weight: 300;
+    color: gray;
 }
 
 .cart-button {
