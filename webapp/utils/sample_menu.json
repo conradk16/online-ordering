@@ -258,32 +258,6 @@
         "category": "Sandwiches", 
         "in_stock": true},
 
-    {"item_name": "Sunday House Club", 
-        "item_description": "Turkey, ham, bacon jam, pimento cheese, red onion, mayo, leaf lettuce, tomato ", 
-        "price": 13.00, 
-        "required_choice_sets": [], 
-        "optional_choice_sets": [
-            {
-                "title": "Additions",
-                "choices": [
-                    {
-                        "name": "Egg",
-                        "price": 2.00,
-                        "in_stock": true},
-                    {
-                        "name": "Bacon",
-                        "price": 2.00,
-                        "in_stock": true},
-                    {
-                        "name": "Avocado",
-                        "price": 2.00,
-                        "in_stock": true}
-                ]
-            }
-        ], 
-        "category": "Sandwiches", 
-        "in_stock": true},
-
     {"item_name": "Applewood Smoked Thick-Cut Bacon", 
         "item_description": "", 
         "price": 6.00, 
