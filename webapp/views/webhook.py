@@ -34,7 +34,7 @@ def webhook_account_received():
 
         # Check if paid for hardware
         paid_for_hardware, paid_for_website = False, False
-        line_items = stripe.checkout.Session.list_line_items(data_object.id, limit=2).data
+        line_items = stripe.checkout.Session.list_line_items(data_object.id, limit=10).data
         for line_item in line_items:
             if line_item.price.id == env['stripe_hardware_product_price_id']:
                 paid_for_hardware = True
