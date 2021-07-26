@@ -1,6 +1,6 @@
 'use strict';
 
-function run_on_resize() {
+function resize_logo() {
     var logo = document.getElementById("logo");
     var topnav = document.getElementsByClassName("topnav")[0];
     if (topnav.clientWidth < 450) {
@@ -10,6 +10,10 @@ function run_on_resize() {
         logo.width="200";
         logo.height="28.4";
     }
+}
+
+function run_on_resize() {
+    resize_logo();
 }
 
 function gray_view_orders() {

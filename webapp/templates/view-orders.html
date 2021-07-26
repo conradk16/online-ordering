@@ -528,6 +528,13 @@ function run_on_load() {
     run_on_resize();
 }
 
+function run_on_resize() {
+    resize_logo();
+    var topnav_height = document.getElementsByClassName("topnav")[0].clientHeight;
+    var center = document.getElementsByClassName("center")[0];
+    center.style.height = (window.innerHeight - topnav_height) + "px";
+}
+
 window.document.title="View Orders";
 window.onload = run_on_load;
 window.onresize = run_on_resize;
@@ -728,7 +735,6 @@ options = null;
   min-height:300px;
   overflow-y:auto;
   background-color: #f3f3f3;
-  margin: 0px 10px 10px 10px;
   border-width: 1px;
   border-style: solid;
   border-radius: 10px;
@@ -740,7 +746,6 @@ options = null;
   min-height:300px;
   overflow-y:auto;
   background-color: #f3f3f3;
-  margin: 0px 10px 10px 10px;
   border-width: 1px;
   border-style: solid;
   border-radius: 10px;
@@ -820,9 +825,8 @@ options = null;
   margin: 12px 0px 0px 20px;
   flex: 0;
   display:flex;
-  width:320px;
   border-width: 0;
-  min-width: var(--minwidth);
+  min-width: calc(var(--minwidth) - 20px);
 }
 
 .pending-tab {
@@ -1151,6 +1155,10 @@ tr:nth-child(even) {
 :root {
     --minwidth: 500px;
 }
+
+.center {
+    display: flex;
+    flex-direction: column;
 
 </style>
 
