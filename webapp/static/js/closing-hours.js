@@ -34,7 +34,7 @@
             return null;
         }
         var hr = parseInt(halves[0]);
-        if (isNaN(hr) || hr < 0 || hr > 12) {
+        if (isNaN(hr) || hr < 1 || hr > 12) {
             return null;
         }
         const minutes_and_ampm = halves[1];
