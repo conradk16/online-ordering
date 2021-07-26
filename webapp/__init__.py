@@ -29,8 +29,8 @@ if PROD:
     env['stripe_website_setup_product_price_id'] = 'price_1JG9U0LGQW192ovfwlmQmLSM'
     env['stripe_monthly_with_website_price_id'] = 'price_1JG9WaLGQW192ovfb3orKoLz'
     env['stripe_monthly_without_website_price_id'] = 'price_1JG9VULGQW192ovfVgZpHGIv'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JG9k8LGQW192ovfETjV1N4X'
-    env['stripe_yearly_without_website_price_id'] = 'price_1JG9Y6LGQW192ovf9wEO8yby'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JHXzCLGQW192ovfxBn11KLn'
+    env['stripe_yearly_without_website_price_id'] = 'price_1JHXxrLGQW192ovfVNFKCAad'
 
     env['stripe_account_link_refresh_url'] = 'https://m3orders.com/account/setup-stripe'
     env['stripe_account_link_return_url'] = 'https://m3orders.com/account'
@@ -49,8 +49,8 @@ else:
     env['stripe_website_setup_product_price_id'] = 'price_1JGuEFLGQW192ovf5eA7COHk'
     env['stripe_monthly_with_website_price_id'] = 'price_1JGuDBLGQW192ovfLa5MkHvv'
     env['stripe_monthly_without_website_price_id'] = 'price_1JGuDmLGQW192ovf1keSpNrm'
-    env['stripe_yearly_with_website_price_id'] = 'price_1JGuCoLGQW192ovfstzVdxa5'
-    env['stripe_yearly_without_website_price_id'] = 'price_1JGuDSLGQW192ovfPbIHPNNE'
+    env['stripe_yearly_with_website_price_id'] = 'price_1JHXtfLGQW192ovf0TNYsZaL'
+    env['stripe_yearly_without_website_price_id'] = 'price_1JHXqVLGQW192ovfi7ls2PeY'
 
     env['DEV_charges_enabled_status'] = True # set charges_enabled for connected accounts
 
