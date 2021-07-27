@@ -8,7 +8,7 @@ import os
 def assign_order_url_to_demo_account(account_email):
     # DEMO MENU
 
-    if env['uploading_to_AWS']:
+    if env['uploading_to_AWS_test_env']:
         f = open('/var/app/current/webapp/utils/sample_menu.json')
     else:
         f = open('./webapp/utils/sample_menu.json')

@@ -43,13 +43,12 @@ class OrderClass():
 
     def description(self):
         desc = ""
-        i = 0
         for order_item in self.order_items:
-            desc += order_item.menu_item.item_name + " x" + str(order_item.quantity) + ": $" + str(order_item.price())
+            desc += order_item.menu_item.item_name + " x" + str(order_item.quantity) + ": $" + str(order_item.price()) + "\n"
 
-            i += 1
-            if i < len(self.order_items):
-                desc += "\n"
+        tax_rate = float(User.query.filter_by(order_url=self.order_url).first().tax_rate)
+        tax_val = round(self.price()*tax_rate, 2)
+        desc += "Tax: $" + "{:0.2f}".format(tax_val)
         return desc
             
 

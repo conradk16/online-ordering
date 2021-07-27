@@ -13,10 +13,10 @@ env = {}
 # SET TRUE IF UPLOADING TO test.m3orders.com (OnlineOrdering-Test)
 uploading_to_test_env = False 
 if uploading_to_test_env:
-    env['uploading_to_AWS'] = True
+    env['uploading_to_AWS_test_env'] = True
     PROD = False
 else:
-    env['uploading_to_AWS'] = False
+    env['uploading_to_AWS_test_env'] = False
 
 if PROD:
     env['PROD'] = True
