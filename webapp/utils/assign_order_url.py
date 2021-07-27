@@ -21,7 +21,7 @@ def assign_order_url_to_demo_account(account_email):
     user = User.query.filter_by(email_address=account_email).first()
     user.order_url = order_url
     user.restaurant_display_name = "Demo Restaurant"
-    user.tax_rate = 0.0875 # demo account has tax rate of 8.75%
+    user.tax_rate = "0.0875" # demo account has tax rate of 8.75%
     user.json_menu = json.dumps(demo_menu)
     db.session.commit()
 

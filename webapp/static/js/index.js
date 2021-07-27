@@ -226,6 +226,7 @@ function registerElements(elements, exampleName) {
 });
   var price = document.getElementById("helper").getAttribute('data-price');
   price = price / 100;
+  price = price.toFixed(2);
   var submit_button = document.getElementById("submit-button");
   submit_button.innerHTML = "Pay $" + price;
 }

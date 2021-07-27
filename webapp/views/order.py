@@ -53,7 +53,7 @@ def handle_order_website_request(request, user):
         # price in cents
         payment_intent = stripe.PaymentIntent.create(
             payment_method_types=['card'],
-            amount=round(order.price()*100*(1 + user.tax_rate)),
+            amount=round(order.price()*100*(1 + float(user.tax_rate))),
             currency='usd',
             application_fee_amount=0,
             stripe_account=user.stripe_connected_account_id,
