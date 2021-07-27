@@ -22,7 +22,11 @@ function createOrderElement(metaOrder, isPendingTab) {
   if (hours == 0) {
     hours = 12;
   }
-  var date_string = hours + ":" + date.getMinutes() + am_or_pm + "\n" + date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+  var minutes = date.getMinutes() + '';
+  if (minutes.length == 1) {
+    minutes = '0' + minutes;
+  }
+  var date_string = hours + ":" + minutes + am_or_pm + " " + date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
 
   var orderElement = document.createElement("div");
   orderElement.classList.add("order");
@@ -1258,7 +1262,7 @@ tr:nth-child(even) {
     </div>
     <div class="bottom-half-archived" id="bottom-half-archived">
     </div>
-    
+
 
   </div>
 
