@@ -39,7 +39,7 @@ def handle_order_website_request(request, user):
     currently_accepting_orders = user.currently_accepting_orders and user.active_subscription and user.stripe_charges_enabled
 
     if request.method == 'GET':
-        return render_template('online-ordering-menu.html', menu=user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=user.restaurant_display_name)
+        return render_template('online-ordering-menu.html', menu=user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=user.restaurant_display_name, tax_rate=user.tax_rate)
     elif request.method == 'POST':
         if not currently_accepting_orders:
             return redirect('/order/' + user.order_url)
@@ -53,7 +53,7 @@ def handle_order_website_request(request, user):
         # price in cents
         payment_intent = stripe.PaymentIntent.create(
             payment_method_types=['card'],
-            amount=int(order.price()*100),
+            amount=round(order.price()*100*(1 + user.tax_rate)),
             currency='usd',
             application_fee_amount=0,
             stripe_account=user.stripe_connected_account_id,

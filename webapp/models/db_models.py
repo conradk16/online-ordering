@@ -47,6 +47,7 @@ class User(db.Model, UserMixin):
     # fields assigned
     order_url = db.Column(db.String)
     website_url = db.Column(db.String)
+    tax_rate = db.Column(db.Numeric)
     json_menu = db.Column(db.String)
     restaurant_display_name = db.Column(db.String)
 

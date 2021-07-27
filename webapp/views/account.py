@@ -460,6 +460,7 @@ def admin_assign_order_url_to_account():
         order_url = request.form['url']
         json_menu = request.form['json_menu']
         restaurant_display_name = request.form['restaurant_display_name']
+        tax_rate = float(request.form['tax_rate'])
 
         assign_order_url_to_live_account(account_email, order_url, json_menu, restaurant_display_name)
         return redirect('/account')
