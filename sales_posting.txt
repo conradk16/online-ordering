@@ -1,9 +1,16 @@
-Commision-based Sales: Selling Software to Restaurants - $200/Sale
+Field Sales Job: Selling Software to Restaurants - $200/Sale
 
-No experience needed. We're looking for salespeople to get restaurants to sign up for our online ordering software. The software enables the restaurant's customers to place online orders for pickup. We will pay you $200 for every restaurant that you get signed up.
+We're looking for salespeople to sell our online ordering software to restaurants. The software enables the restaurant's customers to place online orders for pickup. The job is fully commission-based and we pay $200 for every restaurant that you get signed up.
 
-The selling process involves finding restaurants without online ordering, talking to owners, and getting them to sign up through our website. Our product costs anywhere from $39/month to $63/month depending on a few factors. Most restaurants without online ordering want it and are willing to pay for it!
+The selling process involves finding restaurants without online ordering and getting them to sign up through our website. Feel free to take whichever approach works best for you, whether that's cold calling restaurants or going in person and talking face to face with owners. 
 
-If you are interested, send us an email with your phone number, your name, and times you are available for a quick call where we can go through the details.
+There are many restaurants that don't already have online ordering. Even if they already use Grubhub and DoorDash they can still benefit from our product. Grubhub and DoorDash focus on delivery and take 20-30% commission, whereas our software enables customers who are browsing the restaurant's website to place a pickup order online instead of calling in their order. This improves the customer experience and enables restaurants to handle more orders at any given time. Our product costs around $50/month and does not take commission. We also offer website creation and hosting for restaurants that want online ordering but don't yet have any online presence.
 
-$200 Per Sign-up
+Our company is M3 Orders (m3orders.com). To see a demo of our product, visit test.m3orders.com and log in with the following credentials:
+username: m3orderspublicdemo@gmail.com
+password: publicdemopassword
+
+You can place test orders using this test credit card: 
+number: 4242 4242 4242 4242; expiration: 4/24; CVC: 242; zip code: 42424;
+
+If you're interested in selling our product, send us an email with your phone number and some times you'd be available for a call where we can go over some details and answer any questions you might have.
