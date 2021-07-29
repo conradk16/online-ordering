@@ -539,6 +539,10 @@ function run_on_resize() {
     center.style.height = (window.innerHeight - topnav_height) + "px";
 }
 
+function goToAccountHome() {
+  window.location.href = "/account";
+}
+
 window.document.title="View Orders";
 window.onload = run_on_load;
 window.onresize = run_on_resize;
@@ -762,16 +766,14 @@ options = null;
   display: flex;
   background-color: white;
   margin: 12px 12px;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 10px 0px 0px 10px;
   align-items: stretch;
+  border-radius: 10px 0px 0px 10px;
 }
 
 .table-holder {
   overflow-y: auto;
   overflow-x: auto;
-  margin: -1px -1px -1px 0px;
+  margin: 0px;
   align-self: stretch;
   flex: 1;
   z-index: 2;
@@ -782,7 +784,9 @@ options = null;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  border-right: 1px solid black;
+  border: solid black 1px;
+  border-right: 0px;
+  border-radius: 10px 0px 0px 10px;
 }
 
 .metadata-elements {
@@ -1215,7 +1219,7 @@ tr:nth-child(even) {
     <div class="topnav-left">
         <a class="hidden-text">Sign Out</a>
     </div>
-    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px">
+    <img id="logo" class="logo" src="../static/m3_logo_text.png" width="200px" height="28.4px" onclick="goToAccountHome();" style="cursor:pointer;">
     <div class="topnav-right">
     <a class="topnav-right-text" href="/logout">Sign out</a>
     </div>

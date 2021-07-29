@@ -209,11 +209,6 @@ def signup_select_setup_fee():
                     return redirect('/login')
 
                 # Add line items for one-time fees
-                if session.get('need_website') == 'true':
-                    line_items.append({
-                        'price': env['stripe_website_setup_product_price_id'],
-                        'quantity': 1
-                    })
                 if request.form['need_hardware'] == 'true':
                     line_items.append({
                         'price': env['stripe_hardware_product_price_id'],

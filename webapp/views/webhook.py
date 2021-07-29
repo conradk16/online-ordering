@@ -38,7 +38,7 @@ def webhook_account_received():
         for line_item in line_items:
             if line_item.price.id == env['stripe_hardware_product_price_id']:
                 paid_for_hardware = True
-            if line_item.price.id == env['stripe_website_setup_product_price_id']:
+            if line_item.price.id == env['stripe_monthly_with_website_price_id'] or line_item.price.id == env['stripe_yearly_with_website_price_id']:
                 paid_for_website = True
 
         client_reference_id = data_object.client_reference_id

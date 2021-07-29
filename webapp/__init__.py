@@ -25,8 +25,7 @@ if PROD:
     env['stripe_webhook_account_signing_secret'] = 'whsec_5fk3ps0nQqpEHiSRFIVTXMfunysdzOTg'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_w90BqL9nSa8at3kwalBAmi7UUEa37WPt'
 
-    env['stripe_hardware_product_price_id'] = 'price_1JFrYYLGQW192ovfqc3fdxV9'
-    env['stripe_website_setup_product_price_id'] = 'price_1JG9U0LGQW192ovfwlmQmLSM'
+    env['stripe_hardware_product_price_id'] = 'price_1JIcFpLGQW192ovf2euwXo5h'
     env['stripe_monthly_with_website_price_id'] = 'price_1JG9WaLGQW192ovfb3orKoLz'
     env['stripe_monthly_without_website_price_id'] = 'price_1JG9VULGQW192ovfVgZpHGIv'
     env['stripe_yearly_with_website_price_id'] = 'price_1JHXzCLGQW192ovfxBn11KLn'
@@ -45,8 +44,7 @@ else:
     env['stripe_webhook_account_signing_secret'] = 'whsec_676LYWw0BdfpPuddk3D85Pkp5IrezG9q'
     env['stripe_webhook_connect_signing_secret'] = 'whsec_bd5x6nD0fCoMlP9mm4EjUh8gjDuQcZax'
 
-    env['stripe_hardware_product_price_id'] = 'price_1JGuEZLGQW192ovfvJ2Qdd0A'
-    env['stripe_website_setup_product_price_id'] = 'price_1JGuEFLGQW192ovf5eA7COHk'
+    env['stripe_hardware_product_price_id'] = 'price_1JIcFKLGQW192ovftRJV12En'
     env['stripe_monthly_with_website_price_id'] = 'price_1JGuDBLGQW192ovfLa5MkHvv'
     env['stripe_monthly_without_website_price_id'] = 'price_1JGuDmLGQW192ovf1keSpNrm'
     env['stripe_yearly_with_website_price_id'] = 'price_1JHXtfLGQW192ovf0TNYsZaL'
