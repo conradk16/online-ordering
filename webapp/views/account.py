@@ -41,7 +41,7 @@ def enter_account_details():
 
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-website')
 
         return render_template('setup-account-details.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
@@ -73,7 +73,7 @@ def enter_website_info():
 
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-website')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
 
@@ -102,7 +102,7 @@ def setup_menu_notes():
 
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-website')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif current_user.paid_for_website and not current_user.website_notes:
@@ -128,7 +128,7 @@ def setup_closing_hours():
 
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-website')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif current_user.paid_for_website and not current_user.website_notes:
@@ -155,7 +155,7 @@ def setup_stripe():
 
     if request.method == 'GET':
         if not current_user.stripe_customer_id:
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-website')
         elif not current_user.account_details:
             return redirect('/account/setup-account-details')
         elif current_user.paid_for_website and not current_user.website_notes:
@@ -250,7 +250,7 @@ def manage_subcription():
     if not current_user.is_authenticated:
         return redirect('/login')
     if not current_user.stripe_customer_id:
-        return redirect('/signup/select-plan')
+        return redirect('/signup/select-website')
     
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,

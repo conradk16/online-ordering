@@ -148,8 +148,9 @@ def signup_select_website():
             return redirect('/login')
         else:
             session['need_website'] = request.form['need_website']
-            return redirect('/signup/select-plan')
+            return redirect('/signup/select-setup-fee')
 
+"""
 # select plan page, also a POST endpoint for choosing a plan
 @home.route('/signup/select-plan', methods=['GET', 'POST'])
 def signup_select_plan():
@@ -166,6 +167,7 @@ def signup_select_plan():
         else:
             session['monthly_or_yearly'] = request.form['monthly_or_yearly']
             return redirect('/signup/select-setup-fee')
+"""
 
 # select setup fee page, also a POST endpoint for choosing a setup fee and being redirected to Stripe checkout
 @home.route('/signup/select-setup-fee', methods=['GET', 'POST'])
@@ -185,28 +187,16 @@ def signup_select_setup_fee():
                 line_items, shipping_address_collection = [], None
 
                 # Set line item for subscription
-                if session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'monthly':
+                if session.get('need_website') == 'true':
                     line_items.append({
                         'price': env['stripe_monthly_with_website_price_id'],
                         'quantity': 1
                     })
-                elif session.get('need_website') == 'true' and session.get('monthly_or_yearly') == 'yearly':
-                    line_items.append({
-                        'price': env['stripe_yearly_with_website_price_id'],
-                        'quantity': 1
-                    })
-                elif session.get('need_website') == 'false' and session.get('monthly_or_yearly') == 'monthly':
+                else:
                     line_items.append({
                         'price': env['stripe_monthly_without_website_price_id'],
                         'quantity': 1
                     })
-                elif session.get('need_website') == 'false' and session.get('monthly_or_yearly') == 'yearly':
-                    line_items.append({
-                        'price': env['stripe_yearly_without_website_price_id'],
-                        'quantity': 1
-                    })
-                else:
-                    return redirect('/login')
 
                 # Add line items for one-time fees
                 if request.form['need_hardware'] == 'true':
@@ -259,7 +249,7 @@ def is_valid_signup_select_plan_post_request(request):
 
 def is_valid_signup_select_fee_post_request(request):
     if request.form:
-        if ('need_hardware' in request.form) and session.get('need_website') and session.get('monthly_or_yearly'):
+        if ('need_hardware' in request.form) and session.get('need_website'):
             return True
     return False
 
