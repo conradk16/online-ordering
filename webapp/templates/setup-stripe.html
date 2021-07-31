@@ -6,56 +6,49 @@
 <link rel="icon" href="/static/favicon.png">
 
 <link rel="stylesheet" type="text/css" href="../static/css/signup-setup.css">
+<link rel="stylesheet" type="text/css" href="../static/css/signup-select-box.css">
 
-<head>
-  <script>
-  function submit_form() {
-    var form = document.getElementById("form");
-    form.submit();
-  }
+<script>window.document.title="Setup Payment Processor";</script>
 
-  function run_on_load() {
-     var step = document.getElementsByClassName("step")[0];
-     if ({{paid_for_website|tojson}}) {
-        step.innerHTML = "Step 5 of 5";
-     } else {
-        step.innerHTML = "Step 4 of 4";
-     }
-  }
+<script>
+    function submit_form(chose_online) {
+        var form = document.getElementById("form");
+        var inp = document.getElementById("inp");
+        if (chose_online) {
+            inp.value = "online";
+        } else {
+            inp.value = "in-person";
+        }
+        form.submit();
+    }
 
-  window.onload = run_on_load;
 
-  window.document.title="Setup Stripe";
+    function run_on_load() {
+        var step = document.getElementsByClassName("step")[0];
+        if ({{paid_for_website|tojson}}true) {
+            step.innerHTML = "Step 5 of 5";
+        } else {
+            step.innerHTML = "Step 4 of 4";
+        }
+    }
 
-  </script>
-</head>
+    window.onload = run_on_load;
+</script>
 
 <style>
 
-.center {
-  max-width: 575px;
+.img-orange {
+    filter: invert(61%) sepia(34%) saturate(751%) hue-rotate(335deg) brightness(90%) contrast(97%);
+}
+
+.img-red {
+    filter: invert(12%) sepia(58%) saturate(6815%) hue-rotate(351deg) brightness(84%) contrast(99%);
 }
 
 .title {
-    margin-bottom: 20px;
+    margin-top: 8px;
 }
 
-.content-holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.stripe-description {
-    text-align: center;
-    color: gray;
-}
-
-.button {
-    margin-top: 25px;
-    width: 80%;
-}
 
 </style>
 
@@ -72,14 +65,36 @@
   </div>
 
 <div class="center">
-    <div class="step"></div>
-    <div class="title">Enable Payments</div>
-    <div class="page-explanation-holder">
-        <a class="page-explanation">Our platform uses Stripe for payment processing. Signing up for Stripe will allow you to receive direct payments from your customers. Please note that Stripe requires you to enter a website url, so if you don't already have a primary website (you are purchasing one from us), feel free to use www.m3orders.com.</a>
-    </div>
-    <div class="button-holder">
-        <button class="button" onclick="submit_form()">Connect with Stripe</button>
-    </div>
+        <div class="step"></div>
+        <div class="title">Select Payment Processor</div>
+        <div class="plans">
+            <div class="plan" name="plan1" onclick="submit_form('in-person')">
+                <div class="plan-title" style="color: #e38552">In-Person Payment</div>
+                <div class="plan-caption">No additional cost</div>
+                <img src="../static/in-person-payment.png" class="img-orange plan-img"></img>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                    <div class="plan-bullet-text">Customers pay in-person</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-orange"></img>
+                    <div class="plan-bullet-text">No need to get set up with an additional payment processor</div>
+                </div>
+            </div>
+            <div class="plan" name="plan2" onclick="submit_form('online')">
+                <div class="plan-title img-red">Online Payment</div>
+                <div class="plan-caption">2.9% + $0.30 per order</div>
+                <img src="../static/online-payment.png" class="img-red plan-img"></img>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                    <div class="plan-bullet-text">Create an account with our payment processor, Stripe, to receive payments</div>
+                </div>
+                <div class="plan-bullet-container">
+                    <img src="../static/circle.png" class="plan-bullet img-red"></img>
+                    <div class="plan-bullet-text">Customers pay online</div>
+                </div>
+            </div>
+        </div>
 </div>
 
 </div>
@@ -90,6 +105,7 @@
 </div>
 
 <form id="form" method="POST">
+    <input type="hidden" id="inp" name="payment-processor">
 </form>
 
 </html>
