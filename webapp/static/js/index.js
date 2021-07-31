@@ -158,16 +158,9 @@ function registerElements(elements, exampleName) {
     email_input.type = "hidden";
     email_input.name = "customer_email";
     email_input.value = email_element.value;
-    form.appendChild(name_input);
+    form.appendChild(email_input);
 
     if (!customers_pay_online) {
-        var payment_intent_id = document.getElementById("helper").getAttribute('data-payment_intent_id');
-        var payment_intent_id_input = document.createElement("input");
-        payment_intent_id_input.type = "hidden";
-        payment_intent_id_input.name = "payment_intent_id";
-        payment_intent_id_input.value = payment_intent_id;
-        form.appendChild(payment_intent_id_input);
-
         var order_id = document.getElementById("helper").getAttribute('data-order_id');
         var order_id_input = document.createElement("input");
         order_id_input.type = "hidden";
@@ -213,10 +206,14 @@ function registerElements(elements, exampleName) {
                 result_title.innerHTML = "Thank you, your order has been placed.";
                 resetButton.style.display = "none";
             } else if (event.target.response == "not accepting orders") {
+                checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
+                border.style.stroke = "#de0909";
                 result_title.innerHTML = "Sorry, orders are no longer being accepted.";
                 resetButton.style.display = "none";
             } else {
-                result_title.innerHTML = "Payment failed";
+                checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
+                border.style.stroke = "#de0909";
+                result_title.innerHTML = "Order failed.";
             }
 
         } else {
