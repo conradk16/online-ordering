@@ -92,7 +92,7 @@ def handle_order_payment_request(request, user):
             if payment_intent.status == "succeeded":
                 return redirect('/order/' + user.order_url)
 
-            return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'], restaurant_display_name=user.restaurant_display_name)
+            return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'], restaurant_display_name=user.restaurant_display_name, order_id='none')
         else:
             return redirect('/order/' + user.order_url)
     else:
@@ -107,7 +107,7 @@ def handle_order_payment_request(request, user):
             elif order.submitted:
                 return redirect('/order/' + user.order_url)
 
-            return render_template('order-payment.html', restaurant_display_name=user.restaurant_display_name, order_id=session['order_id'])
+            return render_template('order-payment.html', stripe_client_secret='none', stripe_payment_intent_id='none', stripe_publishable_api_key=env['stripe_publishable_api_key'], price='none', stripe_connected_account_id='none', restaurant_display_name=user.restaurant_display_name, order_id=session['order_id'])
         else:
             return redirect('/order/' + user.order_url)
 

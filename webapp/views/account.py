@@ -206,7 +206,7 @@ def edit_account_details():
         return redirect('/account/setup-stripe')
 
     if request.method == 'GET':
-        return render_template('edit-account-details.html', account_details=current_user.account_details, menu_filename=current_user.menu_file_filename, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('edit-account-details.html', account_details=current_user.account_details, menu_filename=current_user.menu_file_filename, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled, customers_pay_online=current_user.customers_pay_online)
     elif request.method == 'POST':
         if not is_valid_edit_account_details_post_request(request):
             return redirect('/account/account-details')
@@ -237,7 +237,7 @@ def edit_closing_times():
         return redirect('/account/setup-stripe')
 
     if request.method == 'GET':
-        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, closing_times_timezone=current_user.closing_times_timezone, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, closing_times_timezone=current_user.closing_times_timezone, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled, customers_pay_online=current_user.customers_pay_online)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account/closing-times')

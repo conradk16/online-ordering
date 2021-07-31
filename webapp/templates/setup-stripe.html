@@ -15,9 +15,9 @@
         var form = document.getElementById("form");
         var inp = document.getElementById("inp");
         if (chose_online) {
-            inp.value = "online";
+            inp.value = "true";
         } else {
-            inp.value = "in-person";
+            inp.value = "false";
         }
         form.submit();
     }
@@ -68,7 +68,7 @@
         <div class="step"></div>
         <div class="title">Select Payment Processor</div>
         <div class="plans">
-            <div class="plan" name="plan1" onclick="submit_form('in-person')">
+            <div class="plan" name="plan1" onclick="submit_form(false)">
                 <div class="plan-title" style="color: #e38552">In-Person Payment</div>
                 <div class="plan-caption">No additional cost</div>
                 <img src="../static/in-person-payment.png" class="img-orange plan-img"></img>
@@ -81,7 +81,7 @@
                     <div class="plan-bullet-text">No need to get set up with an additional payment processor</div>
                 </div>
             </div>
-            <div class="plan" name="plan2" onclick="submit_form('online')">
+            <div class="plan" name="plan2" onclick="submit_form(true)">
                 <div class="plan-title img-red">Online Payment</div>
                 <div class="plan-caption">2.9% + $0.30 per order</div>
                 <img src="../static/online-payment.png" class="img-red plan-img"></img>
@@ -105,7 +105,7 @@
 </div>
 
 <form id="form" method="POST">
-    <input type="hidden" id="inp" name="payment-processor">
+    <input type="hidden" id="inp" name="customers_pay_online">
 </form>
 
 </html>
