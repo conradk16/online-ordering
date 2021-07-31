@@ -1,0 +1,7 @@
+To onboard new accounts:
+
+1. Check the admin panel to see users who have an active subscription and don't yet have a URL assigned to them
+2. Create their menu in json format
+3. Go to the admin panel and associate the account with an order_url, the json menu, and the other necessary details
+
+Note: associate both online ordering url and website url at the same time

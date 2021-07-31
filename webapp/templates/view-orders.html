@@ -72,8 +72,8 @@ function createOrderElement(metaOrder, isPendingTab) {
     completeButton.onclick = function() {
       var order_completed_status_input = document.getElementById("order-completed-status");
       order_completed_status_input.value = isPendingTab;
-      var payment_intent_id_input = document.getElementById("change-order-completed-payment_intent_id");
-      payment_intent_id_input.value = metaOrder['payment_intent_id'];
+      var id_input = document.getElementById("change-order-completed-id");
+      id_input.value = metaOrder['id'];
       var xhr = new XMLHttpRequest();
       xhr.open("POST", "/account/update-order-marked-as-complete-status");
       xhr.onload = function(event) {
@@ -87,7 +87,7 @@ function createOrderElement(metaOrder, isPendingTab) {
 
     rejectButton.onclick = function() {
       var popup = document.getElementById("reject-order-popup");
-      popup.setAttribute("data-payment_intent_id", metaOrder['payment_intent_id']);
+      popup.setAttribute("data-id", metaOrder['id']);
       popup.style.visibility = "visible";
     }
 
@@ -97,7 +97,10 @@ function createOrderElement(metaOrder, isPendingTab) {
   }
 
   completeRejectButtonsElement.appendChild(completeButton);
-  completeRejectButtonsElement.appendChild(rejectButton);
+
+  if ({{customers_pay_online|tojson}}) {
+    completeRejectButtonsElement.appendChild(rejectButton);
+  }
 
   nonTableElement.appendChild(completeRejectButtonsElement);
 
@@ -115,7 +118,9 @@ function createOrderElement(metaOrder, isPendingTab) {
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
 
-  metadataElements.appendChild(metadataPaymentStatus);
+  if ({{customers_pay_online|tojson}}) {
+    metadataElements.appendChild(metadataPaymentStatus);
+  }
   metadataElements.appendChild(metadataDateTime);
   metadataElements.appendChild(metadataCustomerName);
 
@@ -366,8 +371,8 @@ function rejectOrderClicked() {
     return;
   }
 
-  var reject_order_payment_intent_id_input = document.getElementById("reject-order-payment-intent-id");
-  reject_order_payment_intent_id_input.value = document.getElementById("reject-order-popup").getAttribute("data-payment_intent_id");
+  var reject_order_id_input = document.getElementById("reject-order-id");
+  reject_order_id_input.value = document.getElementById("reject-order-popup").getAttribute("data-id");
   var reject_order_description_input = document.getElementById("reject-order-description");
   reject_order_description_input.value = rejectionReason;
 
@@ -1290,11 +1295,11 @@ setInterval(function() {
 
 <form id="change-order-completed-status">
     <input type="hidden" id="order-completed-status" name="order_completed_status">
-    <input type="hidden" id="change-order-completed-payment_intent_id" name="payment_intent_id">
+    <input type="hidden" id="change-order-completed-id" name="id">
 </form>
 
 <form id="reject-order-form">
-    <input type="hidden" id="reject-order-payment-intent-id" name="payment_intent_id">
+    <input type="hidden" id="reject-order-id" name="id">
     <input type="hidden" id="reject-order-description" name="reject_order_description">
 </form>
 

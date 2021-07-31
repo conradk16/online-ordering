@@ -10,7 +10,7 @@ Our company is M3 Orders (m3orders.com). To see a demo of our product, visit tes
 username: m3orderspublicdemo@gmail.com
 password: publicdemopassword
 
-You can place test orders using this test credit card: 
+You can place test orders by going to the test account's Order URL and using this test credit card: 
 number: 4242 4242 4242 4242; expiration: 4/24; CVC: 242; zip code: 42424;
 
 If you're interested in selling our product, send us an email with your phone number and some times you'd be available for a call where we can go over some details and answer any questions you might have.
