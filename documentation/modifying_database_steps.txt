@@ -1,0 +1,12 @@
+To add columns to the database:
+
+1. Download the live database
+2. Type "sqlite3 database.db" to open a connection
+3. Add a column to user table: "alter table user add column {{COL_NAME}} type {{COL_TYPE}};
+4. Add a column to order table: "alter table [order] add column {{COL_NAME}} type {{COL_TYPE}};
+5. For {{COL_TYPE}}, select an option from the "Affinity Name Examples" here: https://www.sqlite.org/datatype3.html#affinity_name_examples
+5. Quit sqlite3 with control-d (saves automatically). The database now has new columns
+6. Add the columns to db_models.py
+7. Optionally configure the values of the new columns in __init__.py
+8. If the new values were supposed to be configured, run "flask run" so that they get set
+9. The new database will be saved with the new columns under the same name "database.db"

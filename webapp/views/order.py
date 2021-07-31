@@ -71,9 +71,12 @@ def handle_order_website_request(request, user):
 
             return redirect('/payment/' + user.order_url)
         else:
-            db_order = Order(payment_intent_id="payment_in_person", json_order=request.form['order'], paid=False, order_url=user.order_url, submitted=True)
+            db_order = Order(payment_intent_id="payment_in_person", json_order=request.form['order'], paid=False, order_url=user.order_url)
             db_order.add_to_db()
-            return "order submitted"
+
+            session['order_id'] = db_order.id
+
+            return redirect('/payment/' + user.order_url)
 
 def handle_order_payment_request(request, user):
     if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
@@ -86,52 +89,96 @@ def handle_order_payment_request(request, user):
         if payment_intent.status == "succeeded":
             return redirect('/order/' + user.order_url)
 
-        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'])
+        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'], restaurant_display_name=user.restaurant_display_name)
+    elif session.get('order_id'):
+        order = Order.query.get(session['order_id'])
+
+        # order should exist
+        if not order:
+            return redirect('/order/' + user.order_url)
+
+        # order should not be submitted
+        elif order.submitted:
+            return redirect('/order/' + user.order_url)
+
+        return render_template('order-payment.html', restaurant_display_name=user.restaurant_display_name, order_id=session['order_id'])
     else:
         return redirect('/order/' + user.order_url)
 
 # POST endpoint for receiving the customer's name and setting the timestamp for the order
 @order.route('/update-order-details', methods=['POST'])
 def update_order_details():
-    customer_name = request.form['customer_name']
-    customer_email = request.form['customer_email']
-    payment_intent_id = request.form['payment_intent_id']
-    connected_account = request.form['connected_account']
 
-    if not True:
-        return 'invalid email'
+    if 'order_id' in request.form:
+        order_id = request.form['order_id']
+        customer_name = request.form['customer_name']
+        customer_email = request.form['customer_email']
 
-    try:
-        # update payment intent to include an email for receipts
-        stripe.PaymentIntent.modify(
-            payment_intent_id,
-            stripe_account=connected_account,
-            receipt_email=customer_email,
-        )
-    except stripe.error.InvalidRequestError as e:
-        if 'Invalid email address' in str(e):
-            return 'invalid email'
+        order = Order.query.get(order_id)
+
+        # This program flow lets order.submitted be True without a Stripe payment. It better only occur if the order is associated with a restaurant where it's not the case that customers pay online
+        if not (User.query.filter_by(order_url=order.order_url).first().customers_pay_online == False):
+            return
+
+        order.customer_name = customer_name[:50]
+        order.customer_email = customer_email[:100]
+        order.datetime = datetime.datetime.utcnow()
+        db.session.commit()
+
+        restaurant_user = User.query.filter_by(order_url=order.order_url).first()
+        current_time = datetime.datetime.utcnow()
+        if current_time > restaurant_user.next_closing_time:
+            restaurant_user.currently_accepting_orders = False
+            restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)
+            db.session.commit()
+        elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
+            restaurant_user.currently_accepting_orders = False
+            db.session.commit()
+
+        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
+            order.submitted = True
+            db.session.commit()
+            return 'accepting orders'
         else:
-            return 'failed to modify payment intent'
+            return 'not accepting orders'
 
-
-    order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
-    order.customer_name = customer_name[:50]
-    order.customer_email = customer_email[:100]
-    order.datetime = datetime.datetime.utcnow()
-    db.session.commit()
-
-    restaurant_user = User.query.filter_by(order_url=order.order_url).first()
-    current_time = datetime.datetime.utcnow()
-    if current_time > restaurant_user.next_closing_time:
-        restaurant_user.currently_accepting_orders = False
-        restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)
-        db.session.commit()
-    elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
-        restaurant_user.currently_accepting_orders = False
-        db.session.commit()
-
-    if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
-        return 'accepting orders'
     else:
-        return 'not accepting orders'
+        customer_name = request.form['customer_name']
+        customer_email = request.form['customer_email']
+        payment_intent_id = request.form['payment_intent_id']
+        connected_account = request.form['connected_account']
+
+        try:
+            # update payment intent to include an email for receipts
+            stripe.PaymentIntent.modify(
+                payment_intent_id,
+                stripe_account=connected_account,
+                receipt_email=customer_email,
+            )
+        except stripe.error.InvalidRequestError as e:
+            if 'Invalid email address' in str(e):
+                return 'invalid email'
+            else:
+                return 'failed to modify payment intent'
+
+
+        order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
+        order.customer_name = customer_name[:50]
+        order.customer_email = customer_email[:100]
+        order.datetime = datetime.datetime.utcnow()
+        db.session.commit()
+
+        restaurant_user = User.query.filter_by(order_url=order.order_url).first()
+        current_time = datetime.datetime.utcnow()
+        if current_time > restaurant_user.next_closing_time:
+            restaurant_user.currently_accepting_orders = False
+            restaurant_user.next_closing_time = calculate_next_closing_time(restaurant_user.closing_times)
+            db.session.commit()
+        elif ((current_time - restaurant_user.most_recent_time_orders_queried).total_seconds() > env['accepting_orders_autoshutoff_threshold_in_seconds']):
+            restaurant_user.currently_accepting_orders = False
+            db.session.commit()
+
+        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
+            return 'accepting orders'
+        else:
+            return 'not accepting orders'

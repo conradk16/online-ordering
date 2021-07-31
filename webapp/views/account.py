@@ -275,13 +275,13 @@ def view_orders():
             db.session.commit()
 
         pending_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
+        for order in Order.query.filter_by(order_url=current_user.order_url, submitted=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
             pending_orders.append(order.serialize())
         if len(pending_orders) == 0:
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
+        for order in Order.query.filter_by(order_url=current_user.order_url, submitted=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
@@ -312,13 +312,13 @@ def get_updated_orders():
             db.session.commit()
 
         pending_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
+        for order in Order.query.filter_by(order_url=current_user.order_url, submitted=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
             pending_orders.append(order.serialize())
         if len(pending_orders) == 0:
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
+        for order in Order.query.filter_by(order_url=current_user.order_url, submitted=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"

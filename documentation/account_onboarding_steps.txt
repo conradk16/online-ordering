@@ -5,13 +5,3 @@ To onboard new accounts:
 3. Go to the admin panel and associate the account with an order_url, the json menu, and the other necessary details
 
 Note: associate both online ordering url and website url at the same time
-
-To add columns to the database:
-
-1. Download the live database
-2. Type "sqlite3 database.db" to open a connection
-3. Add a column to user table: "alter table user add column {{COL_NAME}} type {{COL_TYPE}};
-4. Add a column to order table: "alter table [order] add column {{COL_NAME}} type {{COL_TYPE}};
-5. For {{COL_TYPE}}, select an option from the "Affinity Name Examples" here: https://www.sqlite.org/datatype3.html#affinity_name_examples
-5. Quit sqlite3 with control-d (saves automatically)
-6. Now the database has the new columns
