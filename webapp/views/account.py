@@ -194,6 +194,12 @@ def setup_stripe():
             return redirect(account_link_object.url)
         else:
             current_user.customers_pay_online = False
+
+            # If dev environment and don't already have url, give them an order url right away
+            if not env['PROD'] and not current_user.order_url:
+                assign_order_url_to_demo_account(current_user.email_address)
+
+
             db.session.commit()
             return redirect('/account')
 
