@@ -15,7 +15,7 @@
 
 
 <script src="../static/js/account-details.js"></script>
-<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}}></script>
+<script src="../static/js/account-menu.js" id="account-menu-script" data-order_url={{order_url}} data-active_subscription={{active_subscription}} data-paid_for_website={{paid_for_website}} data-website_url={{website_url}} data-charges_enabled={{charges_enabled}} data-customers_pay_online={{customers_pay_online}}></script>
 
 <script src="../static/js/validation.js"></script>
 
@@ -134,7 +134,7 @@ const safariRenderHack = { opacity: count % 2 ? 1 : 0.99 };
       <li class="large-li" onclick="click_link('/account/orders')" id="menu_view_orders_block"><a id="menu_view_orders">View Orders</a></li>
       <li class="large-li" onclick="click_link('/account/account-details')"><a>Account Details</a></li>
       <li class="large-li" onclick="click_link('/account/closing-times')"><a>Closing Hours</a></li>
-      <li class="large-li" onclick="click_link('https://dashboard.stripe.com')"><a>Stripe</a></li>
+      <li class="large-li" onclick="click_link('https://dashboard.stripe.com')" id="menu_stripe_block"><a id="menu_stripe">Stripe</a></li>
       <li class="large-li" onclick="click_link('/account/manage-subscription')"><a>Manage Subscription</a></li>
     </ul>
   </div>
