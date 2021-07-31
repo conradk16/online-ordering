@@ -348,7 +348,7 @@ def get_updated_orders():
 @account.route('/account/update-accepting-orders-status', methods=['POST'])
 def update_accepting_orders_status():
     if current_user.is_authenticated:
-        if (not current_user.active_subscription) or (not current_user.stripe_charges_enabled):
+        if (not current_user.active_subscription) or (not current_user.stripe_charges_enabled and current_user.customers_pay_online):
             return "not accepting orders"
 
         if request.form['currently_accepting_orders'] == 'true':

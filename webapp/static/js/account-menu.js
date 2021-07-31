@@ -42,8 +42,9 @@ function check_if_view_orders() {
     var charges_enabled = document.getElementById("account-menu-script").getAttribute('data-charges_enabled');
     var website_url = document.getElementById("account-menu-script").getAttribute('data-website_url');
     var paid_for_website = document.getElementById("account-menu-script").getAttribute('data-paid_for_website');
+    var customers_pay_online = document.getElementById("account-menu-script").getAttribute('data-customers_pay_online');
 
-    if (charges_enabled == "False" || active_subscription == "False" || (order_url == "None" && paid_for_website == "False") || (website_url == "None" && paid_for_website == "True")) {
+    if ((charges_enabled == "False" && customers_pay_online == "True") || active_subscription == "False" || (order_url == "None" && paid_for_website == "False") || (website_url == "None" && paid_for_website == "True")) {
         clear_view_orders();
     }
 

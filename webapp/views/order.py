@@ -36,7 +36,7 @@ def handle_order_website_request(request, user):
         user.currently_accepting_orders = False
         db.session.commit()
 
-    currently_accepting_orders = user.currently_accepting_orders and user.active_subscription and user.stripe_charges_enabled
+    currently_accepting_orders = user.currently_accepting_orders and user.active_subscription and (user.stripe_charges_enabled or not user.customers_pay_online)
 
     if request.method == 'GET':
         return render_template('online-ordering-menu.html', menu=user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=user.restaurant_display_name, tax_rate=user.tax_rate, customers_pay_online=user.customers_pay_online)
@@ -139,7 +139,7 @@ def update_order_details():
             restaurant_user.currently_accepting_orders = False
             db.session.commit()
 
-        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
+        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and (restaurant_user.stripe_charges_enabled or not restaurant_user.customers_pay_online):
             order.submitted = True
             db.session.commit()
             return 'accepting orders'
@@ -182,7 +182,7 @@ def update_order_details():
             restaurant_user.currently_accepting_orders = False
             db.session.commit()
 
-        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and restaurant_user.stripe_charges_enabled:
+        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and (restaurant_user.stripe_charges_enabled or not restaurant_user.customers_pay_online):
             return 'accepting orders'
         else:
             return 'not accepting orders'
