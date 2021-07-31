@@ -1,14 +1,16 @@
 'use strict';
 
-var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
-var stripe_publishable_api_key = document.getElementById("helper").getAttribute('data-stripe_publishable_api_key');
-var stripe = Stripe(stripe_publishable_api_key, {
-    stripeAccount: stripe_account_id
-  });
-//var customers_pay_online = document.getElementById("helper").getAttribute('data-customers_pay_online') == "True";
-var customers_pay_online = false;
-//var restaurant_display_name = document.getElementById("helper").getAttribute('data-restaurant_display_name');
-var restaurant_display_name = "Demo Restaurant";
+var customers_pay_online = document.getElementById("helper").getAttribute('data-customers_pay_online') == "True";
+
+if (customers_pay_online) {
+    var stripe_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
+    var stripe_publishable_api_key = document.getElementById("helper").getAttribute('data-stripe_publishable_api_key');
+    var stripe = Stripe(stripe_publishable_api_key, {
+        stripeAccount: stripe_account_id
+      });
+}
+
+var restaurant_display_name = document.getElementById("helper").getAttribute('data-restaurant_display_name');
 
 
 function registerElements(elements, exampleName) {
@@ -182,9 +184,9 @@ function registerElements(elements, exampleName) {
         connected_account_id_input.name = "connected_account";
         connected_account_id_input.value = connected_account_id
         form.appendChild(connected_account_id_input);
-    }
 
-    var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
+        var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
+    }
 
     // send post request with order_info form
     var xhr = new XMLHttpRequest();
