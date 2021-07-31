@@ -5,9 +5,9 @@ import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return OldUser.query.get(int(user_id))
 
-class User(db.Model, UserMixin):
+class OldUser(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
 
     # login info
@@ -20,8 +20,6 @@ class User(db.Model, UserMixin):
     stripe_connected_account_details_submitted = db.Column(db.Boolean, default=False)
     stripe_charges_enabled = db.Column(db.Boolean, default=False)
     active_subscription = db.Column(db.Boolean, nullable=False, default=False)
-
-    customers_pay_online = db.Column(db.Boolean)
 
     # plan details
     paid_for_website = db.Column(db.Boolean, nullable=False, default=False)
@@ -102,7 +100,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
 
-class Order(db.Model):
+class OldOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # order details
@@ -111,7 +109,6 @@ class Order(db.Model):
     json_order = db.Column(db.String)
 
     paid = db.Column(db.Boolean, default=False)
-    submitted = db.Column(db.Boolean, default=False)
     refunded = db.Column(db.Boolean, default=False)
     marked_as_complete_by_restaurant = db.Column(db.Boolean, default=False)
  

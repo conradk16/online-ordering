@@ -20,7 +20,7 @@ def account_homepage():
     elif current_user.email_address == env['admin_username']:
         return get_admin_page()
     elif not current_user.stripe_customer_id:
-        return redirect('/signup/select-website')  
+        return redirect('/signup/select-website')
     elif not current_user.account_details:
         return redirect('/account/setup-account-details')
     elif current_user.paid_for_website and not current_user.website_notes:
@@ -29,10 +29,10 @@ def account_homepage():
         return redirect('/account/setup-menu-notes')
     elif current_user.closing_times == None:
         return redirect('/account/setup-closing-times')
-    elif not current_user.stripe_connected_account_details_submitted:
+    elif current_user.customers_pay_online == None:
         return redirect('/account/setup-stripe')
     else:
-        return render_template('account.html', live_url=env['PROD'], order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
+        return render_template('account.html', live_url=env['PROD'], order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled, customers_pay_online=current_user.customers_pay_online)
 
 @account.route('/account/setup-account-details', methods=['GET', 'POST'])
 def enter_account_details():
@@ -47,7 +47,7 @@ def enter_account_details():
     elif request.method == 'POST':
         if not is_valid_setup_account_details_post_request(request):
             return redirect('/account')
-        
+
         account_details = {}
         account_details['name'] = request.form['name']
         account_details['email'] = request.form['email']
@@ -112,7 +112,7 @@ def setup_menu_notes():
     elif request.method == 'POST':
         if not is_valid_menu_notes_post_request(request):
             return redirect('/account')
-        
+
         if len(request.form['menu_notes']) == 0:
             current_user.menu_notes = 'No menu notes'
         else:
@@ -140,12 +140,12 @@ def setup_closing_hours():
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
             return redirect('/account')
-        
+
         current_user.closing_times = request.form['closing_times']
         current_user.closing_times_timezone = request.form['closing_times_timezone']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
-        
+
         return redirect('/account/setup-stripe')
 
 @account.route('/account/setup-stripe', methods=['GET', 'POST'])
@@ -164,47 +164,53 @@ def setup_stripe():
             return redirect('/account/setup-menu-notes')
         elif current_user.closing_times == None:
             return redirect('/account/setup-closing-times')
-        elif current_user.stripe_connected_account_details_submitted:
+        elif current_user.customers_pay_online != None:
             return redirect('/account')
         else:
             return render_template('setup-stripe.html', paid_for_website=current_user.paid_for_website)
     elif request.method == 'POST':
-        # Use existing connected account if they have one, otherwise create account and store account.id in the Users table
-        account_id = current_user.stripe_connected_account_id
-        if not account_id:
-            account = stripe.Account.create(
-                type='standard',
+        if not is_valid_setup_stripe_post_request(request):
+            return redirect('/account')
+
+        if request.form['customers_pay_online'] == 'true':
+            # Use existing connected account if they have one, otherwise create account and store account.id in the Users table
+            account_id = current_user.stripe_connected_account_id
+            if not account_id:
+                account = stripe.Account.create(
+                    type='standard',
+                )
+                account_id = account.id
+                current_user.stripe_connected_account_id = account_id
+                db.session.commit()
+
+            # create account link (a Stripe URL) where the user can onboard with Stripe
+            account_link_object = stripe.AccountLink.create(
+                account=account_id,
+                refresh_url=env['stripe_account_link_refresh_url'],
+                return_url=env['stripe_account_link_return_url'],
+                type='account_onboarding',
             )
-            account_id = account.id
-            current_user.stripe_connected_account_id = account_id
+
+            return redirect(account_link_object.url)
+        else:
+            current_user.customers_pay_online = False
             db.session.commit()
-
-        # create account link (a Stripe URL) where the user can onboard with Stripe
-        account_link_object = stripe.AccountLink.create(
-            account=account_id,
-            refresh_url=env['stripe_account_link_refresh_url'],
-            return_url=env['stripe_account_link_return_url'],
-            type='account_onboarding',
-        )
-
-        return redirect(account_link_object.url)
+            return redirect('/account')
 
 @account.route('/account/account-details', methods=['GET', 'POST'])
 def edit_account_details():
     if not current_user.is_authenticated:
         return redirect('/login')
 
-    if not current_user.stripe_connected_account_details_submitted:
+    if current_user.customers_pay_online == None:
         return redirect('/account/setup-stripe')
 
     if request.method == 'GET':
-        if not current_user.stripe_connected_account_details_submitted:
-            return redirect('/account/setup-stripe')
         return render_template('edit-account-details.html', account_details=current_user.account_details, menu_filename=current_user.menu_file_filename, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
     elif request.method == 'POST':
         if not is_valid_edit_account_details_post_request(request):
             return redirect('/account/account-details')
-        
+
         current_account_details = json.loads(current_user.account_details)
 
         current_account_details['name'] = request.form['name']
@@ -227,12 +233,10 @@ def edit_closing_times():
     if not current_user.is_authenticated:
         return redirect('/login')
 
-    if not current_user.stripe_connected_account_details_submitted:
+    if current_user.customers_pay_online == None:
         return redirect('/account/setup-stripe')
 
     if request.method == 'GET':
-        if not current_user.stripe_connected_account_details_submitted:
-            return redirect('/account/setup-stripe')
         return render_template('edit-closing-hours.html', closing_times=current_user.closing_times, closing_times_timezone=current_user.closing_times_timezone, order_url=current_user.order_url, active_subscription=current_user.active_subscription, paid_for_website=current_user.paid_for_website, website_url=current_user.website_url, charges_enabled=current_user.stripe_charges_enabled)
     elif request.method == 'POST':
         if not is_valid_closing_times_post_request(request):
@@ -241,7 +245,7 @@ def edit_closing_times():
         current_user.closing_times = request.form['closing_times']
         current_user.next_closing_time = calculate_next_closing_time(request.form['closing_times'])
         db.session.commit()
-        
+
         return redirect('/account')
 
 # GET endpoint that redirects customers to manage their billing
@@ -251,7 +255,7 @@ def manage_subcription():
         return redirect('/login')
     if not current_user.stripe_customer_id:
         return redirect('/signup/select-website')
-    
+
     session = stripe.billing_portal.Session.create(
         customer=current_user.stripe_customer_id,
         return_url=env['stripe_billing_portal_return_url'])
@@ -263,7 +267,7 @@ def manage_subcription():
 def view_orders():
     if current_user.is_authenticated:
 
-        if not current_user.stripe_connected_account_details_submitted:
+        if current_user.customers_pay_online == None:
             return redirect('/account/setup-stripe')
 
         if not current_user.active_subscription:
@@ -277,7 +281,7 @@ def view_orders():
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()).limit(env['archived_orders_display_limit']):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
@@ -294,7 +298,7 @@ def view_orders():
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
         json_stock_status = ConvertJsonToMenu(json.loads(current_user.json_menu), current_user.order_url).menu().get_json_stock_status()
 
-        return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders, order_url=current_user.order_url, json_stock_status=json_stock_status)
+        return render_template('view-orders.html', pending_orders=pending_orders, archived_orders=archived_orders, currently_accepting_orders=currently_accepting_orders, order_url=current_user.order_url, json_stock_status=json_stock_status, customers_pay_online=current_user.customers_pay_online)
     else:
         return redirect('/login')
 
@@ -306,7 +310,7 @@ def get_updated_orders():
         if not current_user.active_subscription:
             current_user.currently_accepting_orders = False
             db.session.commit()
-        
+
         pending_orders = []
         for order in Order.query.filter_by(order_url=current_user.order_url, paid=True, marked_as_complete_by_restaurant=False, refunded=False).order_by(Order.datetime.desc()):
             pending_orders.append(order.serialize())
@@ -314,7 +318,7 @@ def get_updated_orders():
             pending_orders = "No orders"
 
         archived_orders = []
-        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.asc()).limit(env['archived_orders_display_limit']):
+        for order in Order.query.filter_by(order_url=current_user.order_url, paid=True).filter((Order.marked_as_complete_by_restaurant == True) | (Order.refunded == True)).order_by(Order.datetime.desc()).limit(env['archived_orders_display_limit']):
             archived_orders.append(order.serialize())
         if len(archived_orders) == 0:
             archived_orders = "No orders"
@@ -329,7 +333,7 @@ def get_updated_orders():
         db.session.commit()
 
         currently_accepting_orders = "true" if current_user.currently_accepting_orders else "false"
- 
+
         return jsonify([pending_orders, archived_orders, currently_accepting_orders])
     else:
         return redirect('/login')
@@ -373,7 +377,7 @@ def update_menu_availability():
 @account.route('/account/update-order-marked-as-complete-status', methods=['POST'])
 def update_order_marked_as_complete_status():
     if current_user.is_authenticated:
-        order = Order.query.filter_by(payment_intent_id=request.form['payment_intent_id']).first()
+        order = Order.query.get(request.form['id'])
         if request.form['order_completed_status'] == 'true':
             order.marked_as_complete_by_restaurant = True
         else:
@@ -387,7 +391,7 @@ def update_order_marked_as_complete_status():
 @account.route('/account/refund-order', methods=['POST'])
 def refund_order():
     if current_user.is_authenticated:
-        payment_intent_id = request.form['payment_intent_id']
+        payment_intent_id = Order.query.get(request.form['id']).payment_intent_id
         rejection_description = request.form['reject_order_description']
 
         refund = stripe.Refund.create(
@@ -521,7 +525,13 @@ def is_valid_closing_times_post_request(request):
                 tz_options = ['US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Indiana-Starke', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa']
                 if closing_time['timezone'] not in tz_options:
                     return False
-                
+
+            return True
+    return False
+
+def is_valid_setup_stripe_post_request(request):
+    if request.form:
+        if 'customers_pay_online' in request.form:
             return True
     return False
 

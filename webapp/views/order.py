@@ -39,36 +39,41 @@ def handle_order_website_request(request, user):
     currently_accepting_orders = user.currently_accepting_orders and user.active_subscription and user.stripe_charges_enabled
 
     if request.method == 'GET':
-        return render_template('online-ordering-menu.html', menu=user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=user.restaurant_display_name, tax_rate=user.tax_rate)
+        return render_template('online-ordering-menu.html', menu=user.json_menu, accepting_orders=currently_accepting_orders, restaurant_display_name=user.restaurant_display_name, tax_rate=user.tax_rate, customers_pay_online=user.customers_pay_online)
     elif request.method == 'POST':
         if not currently_accepting_orders:
             return redirect('/order/' + user.order_url)
-        
+
         order = ConvertJsonToOrder(json.loads(request.form['order']), user.order_url).order() # order being placed
         menu = ConvertJsonToMenu(json.loads(user.json_menu), user.order_url).menu() # restaurant's menu to check against for validity
 
         if not order.is_valid_order(menu):
             return jsonify({'error': {'message': "Order invalid"}}), 400
 
-        # price in cents
-        payment_intent = stripe.PaymentIntent.create(
-            payment_method_types=['card'],
-            amount=round(order.price()*100*(1 + float(user.tax_rate))),
-            currency='usd',
-            application_fee_amount=0,
-            stripe_account=user.stripe_connected_account_id,
-            description=order.description(),
-        )
+        if user.customers_pay_online:
+            # price in cents
+            payment_intent = stripe.PaymentIntent.create(
+                payment_method_types=['card'],
+                amount=round(order.price()*100*(1 + float(user.tax_rate))),
+                currency='usd',
+                application_fee_amount=0,
+                stripe_account=user.stripe_connected_account_id,
+                description=order.description(),
+            )
 
-        db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=user.order_url)
-        db_order.add_to_db()
+            db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=user.order_url)
+            db_order.add_to_db()
 
-        session['stripe_client_secret'] = payment_intent.client_secret
-        session['payment_intent_id'] = payment_intent.id
-        session['order_price'] = payment_intent.amount
-        session['stripe_connected_account_id'] = payment_intent.stripe_account
+            session['stripe_client_secret'] = payment_intent.client_secret
+            session['payment_intent_id'] = payment_intent.id
+            session['order_price'] = payment_intent.amount
+            session['stripe_connected_account_id'] = payment_intent.stripe_account
 
-        return redirect('/payment/' + user.order_url)
+            return redirect('/payment/' + user.order_url)
+        else:
+            db_order = Order(payment_intent_id="payment_in_person", json_order=request.form['order'], paid=False, order_url=user.order_url, submitted=True)
+            db_order.add_to_db()
+            return "order submitted"
 
 def handle_order_payment_request(request, user):
     if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
@@ -108,7 +113,7 @@ def update_order_details():
             return 'invalid email'
         else:
             return 'failed to modify payment intent'
-        
+
 
     order = Order.query.filter_by(payment_intent_id=payment_intent_id).first()
     order.customer_name = customer_name[:50]

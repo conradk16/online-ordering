@@ -92,7 +92,6 @@ from .views.account import account
 from .views.order import order
 from .views.webhook import webhook
 from .models.db_models import User, Order
-
 db.create_all()
 db.session.commit()
 
