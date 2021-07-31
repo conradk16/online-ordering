@@ -8,6 +8,9 @@ if (customers_pay_online) {
     var stripe = Stripe(stripe_publishable_api_key, {
         stripeAccount: stripe_account_id
       });
+} else {
+  var stripe_publishable_api_key = document.getElementById("helper").getAttribute('data-stripe_publishable_api_key');
+  var stripe = Stripe(stripe_publishable_api_key);
 }
 
 var restaurant_display_name = document.getElementById("helper").getAttribute('data-restaurant_display_name');
@@ -22,12 +25,12 @@ function registerElements(elements, exampleName) {
   var error = form.querySelector('.error');
   var errorMessage = error.querySelector('.message');
 
-  
+
   if (!customers_pay_online) {
     // change title
     var title = document.getElementsByClassName("title")[0];
     title.innerHTML = "Confirm Order"
-  
+
     // remove card input
     var card_input = document.getElementById("example1-card");
     var card_row = document.getElementById("card-row");
@@ -38,7 +41,7 @@ function registerElements(elements, exampleName) {
 
     // set button text
     var button = document.getElementById("submit-button");
-    button.innerHTML = "Place Pickup Order at " + restaurant_display_name;
+    button.innerHTML = "Place Pickup Order";
   } else {
     // set button text
     var price = document.getElementById("helper").getAttribute('data-price');
@@ -48,7 +51,7 @@ function registerElements(elements, exampleName) {
     submit_button.innerHTML = "Pay $" + price;
   }
 
-  
+
 
   function enableInputs() {
     Array.prototype.forEach.call(
@@ -145,7 +148,7 @@ function registerElements(elements, exampleName) {
     disableInputs();
 
     // set order_info form data
-    
+
     var name_element = document.getElementById("example1-name");
     var email_element = document.getElementById("example1-email");
 
@@ -169,7 +172,7 @@ function registerElements(elements, exampleName) {
         order_id_input.name = "order_id";
         order_id_input.value = order_id;
         form.appendChild(order_id_input);
-        
+
     } else {
         var payment_intent_id = document.getElementById("helper").getAttribute('data-payment_intent_id');
         var payment_intent_id_input = document.createElement("input");
@@ -198,7 +201,7 @@ function registerElements(elements, exampleName) {
         var result_title = document.getElementsByClassName("result-title")[0];
 
         if (!customers_pay_online) {
-            
+
             // Stop loading!
             example.classList.remove('submitting');
             example.classList.add('submitted');
@@ -226,7 +229,7 @@ function registerElements(elements, exampleName) {
                 example.classList.add('submitted');
 
                 console.log(event.target.response);
-                
+
 
                 if (event.target.response == "not accepting orders") {
                     result_title.innerHTML = "Sorry, orders are no longer being accepted.";

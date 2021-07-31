@@ -26,7 +26,8 @@ function createOrderElement(metaOrder, isPendingTab) {
   if (minutes.length == 1) {
     minutes = '0' + minutes;
   }
-  var date_string = hours + ":" + minutes + am_or_pm + " " + date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+
+  var date_string = hours + ":" + minutes + am_or_pm + " " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
 
   var orderElement = document.createElement("div");
   orderElement.classList.add("order");
