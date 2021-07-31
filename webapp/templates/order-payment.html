@@ -8,7 +8,7 @@
   <meta data-tid="elements_examples.meta.description" name="description" content="Build beautiful, smart checkout flows.">
 
   <script src="https://js.stripe.com/v3/"></script>
-  <script id="helper" src="../static/js/index.js" data-rel-js="" data-stripe_client_secret={{stripe_client_secret|tojson}} data-stripe_account_id={{stripe_connected_account_id}} data-stripe_publishable_api_key={{stripe_publishable_api_key}} data-price={{price}} data-payment_intent_id={{stripe_payment_intent_id}}></script>
+  <script id="helper" src="../static/js/index.js" data-rel-js="" data-stripe_client_secret={{stripe_client_secret|tojson}} data-stripe_account_id={{stripe_connected_account_id}} data-stripe_publishable_api_key={{stripe_publishable_api_key}} data-price={{price}} data-payment_intent_id={{stripe_payment_intent_id}} data-customers_pay_online={{customers_pay_online}} data-restaurant_display_name={{restaurant_display_name}} data-order_id={{order_id}}></script>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
@@ -61,8 +61,8 @@
               <input id="example1-email" data-tid="elements_examples.form.email_placeholder" type="email" placeholder="janedoe@gmail.com" required autocomplete="email">
             </div>
           </fieldset>
-          <fieldset>
-            <div class="row">
+          <fieldset id="card-fieldset">
+            <div class="row" id="card-row">
               <div id="example1-card"></div>
             </div>
           </fieldset>
@@ -108,10 +108,6 @@
 </body>
 
 <form id="order_info">
-    <input type="hidden" id="name_inp" name="customer_name">
-    <input type="hidden" id="email_inp" name="customer_email">
-    <input type="hidden" id="payment_intent_id_inp" name="payment_intent_id">
-    <input type="hidden" id="connected_account_id_inp" name="connected_account">
 </form>
 
 </html>
