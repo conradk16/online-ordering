@@ -95,6 +95,10 @@ from .models.db_models import User, Order
 db.create_all()
 db.session.commit()
 
+for u in User.query.all():
+    u.customers_pay_online = False
+db.session.commit()
+
 if not User.query.filter_by(email_address="kuklinskywork@gmail.com").first():
     admin_user = User(email_address=env['admin_username'], password=bcrypt.generate_password_hash(env['admin_password']).decode('utf-8'))
     admin_user.add_to_db()
