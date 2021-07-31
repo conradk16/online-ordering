@@ -64,6 +64,7 @@ def handle_order_website_request(request, user):
             db_order = Order(payment_intent_id=payment_intent.id, json_order=request.form['order'], paid=False, order_url=user.order_url)
             db_order.add_to_db()
 
+            session['customers_pay_online'] = True
             session['stripe_client_secret'] = payment_intent.client_secret
             session['payment_intent_id'] = payment_intent.id
             session['order_price'] = payment_intent.amount
@@ -74,36 +75,41 @@ def handle_order_website_request(request, user):
             db_order = Order(payment_intent_id="payment_in_person", json_order=request.form['order'], paid=False, order_url=user.order_url)
             db_order.add_to_db()
 
+            session['customers_pay_online'] = False
             session['order_id'] = db_order.id
 
             return redirect('/payment/' + user.order_url)
 
 def handle_order_payment_request(request, user):
-    if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
+    if session['customers_pay_online']:
+        if session.get('stripe_client_secret') and session.get('payment_intent_id') and session.get('order_price') and session.get('stripe_connected_account_id'):
 
-        # Don't allow loading of payments page if session's payment_intent_id has already been paid for
-        payment_intent = stripe.PaymentIntent.retrieve(
-            session.get('payment_intent_id'),
-            stripe_account=session.get('stripe_connected_account_id'),
-        )
-        if payment_intent.status == "succeeded":
+            # Don't allow loading of payments page if session's payment_intent_id has already been paid for
+            payment_intent = stripe.PaymentIntent.retrieve(
+                session.get('payment_intent_id'),
+                stripe_account=session.get('stripe_connected_account_id'),
+            )
+            if payment_intent.status == "succeeded":
+                return redirect('/order/' + user.order_url)
+
+            return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'], restaurant_display_name=user.restaurant_display_name)
+        else:
             return redirect('/order/' + user.order_url)
-
-        return render_template('order-payment.html', stripe_client_secret=session['stripe_client_secret'], stripe_payment_intent_id=session['payment_intent_id'], stripe_publishable_api_key=env['stripe_publishable_api_key'], price=session['order_price'], stripe_connected_account_id=session['stripe_connected_account_id'], restaurant_display_name=user.restaurant_display_name)
-    elif session.get('order_id'):
-        order = Order.query.get(session['order_id'])
-
-        # order should exist
-        if not order:
-            return redirect('/order/' + user.order_url)
-
-        # order should not be submitted
-        elif order.submitted:
-            return redirect('/order/' + user.order_url)
-
-        return render_template('order-payment.html', restaurant_display_name=user.restaurant_display_name, order_id=session['order_id'])
     else:
-        return redirect('/order/' + user.order_url)
+        if session.get('order_id'):
+            order = Order.query.get(session['order_id'])
+
+            # order should exist
+            if not order:
+                return redirect('/order/' + user.order_url)
+
+            # order should not be submitted
+            elif order.submitted:
+                return redirect('/order/' + user.order_url)
+
+            return render_template('order-payment.html', restaurant_display_name=user.restaurant_display_name, order_id=session['order_id'])
+        else:
+            return redirect('/order/' + user.order_url)
 
 # POST endpoint for receiving the customer's name and setting the timestamp for the order
 @order.route('/update-order-details', methods=['POST'])
