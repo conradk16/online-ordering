@@ -763,6 +763,40 @@ function get_cart_total() {
     return total_price;
 }
 
+// function should not be called on a grayed button
+function set_cart_button_text(price_str) {
+    var customers_pay_online = false;
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    if (customers_pay_online) {
+        cart_button.innerHTML = "Proceed to Payment";
+    } else {
+        cart_button.innerHTML = "Confirm Order";
+    }
+    cart_button.innerHTML = cart_button.innerHTML + " ($" + price_str + ")";
+}
+
+function setup_empty_cart() {
+    var customers_pay_online = false;
+    
+    var cart_button = document.getElementsByClassName("cart-button")[0];
+    var empty_cart_icon = document.getElementsByClassName("empty-cart-icon")[0];
+    var body = document.getElementsByClassName("cart-body")[0];
+    cart_button.style.backgroundColor = "gray";
+    cart_button.style.cursor = "auto";
+    cart_button.style.pointerEvents = "none";
+    cart_button.disabled = true;
+    empty_cart_icon.style.display = "block";
+    body.style.display = "flex";
+    body.style.justifyContent = "center";
+    body.style.alignItems = "center";
+
+    if (customers_pay_online) {
+        cart_button.innerHTML = "Proceed to Payment";
+    } else {
+        cart_button.innerHTML = "Confirm Order";
+    }
+}
+
 // updates total prices and the submit button
 function update_totals(new_subtotal_price_value) {
     var subtotal_price = document.getElementById("subtotal_price");
@@ -777,9 +811,16 @@ function update_totals(new_subtotal_price_value) {
     var new_final_total_value = new_subtotal_price_value + new_tax_value;
     final_total_price.innerHTML = "$" + new_final_total_value.toFixed(2);
 
-    var cart_button = document.getElementsByClassName("cart-button")[0];
-    cart_button.innerHTML = "Proceed to Payment ($" + new_final_total_value.toFixed(2) + ")";
+    set_cart_button_text(new_final_total_value.toFixed(2));
 }
+
+function submit_form() {
+    form = document.getElementById("proceed_to_payment_form");
+    input = document.getElementById("proceed_to_payment_order_data");
+    input.value = JSON.stringify(cart_items);
+    form.submit();
+}
+
 
 // makes use of global `cart_items` variable
 // assumes cart exists
@@ -812,14 +853,9 @@ function load_cart() {
     // add button
     var cart_button = document.createElement('button');
     cart_button.classList.add("cart-button");
-    cart_button.innerHTML = "Proceed to Payment";
     cart_button.style.pointerEvents = "auto";
-    cart_button.onclick = function() {
-      form = document.getElementById("proceed_to_payment_form");
-      input = document.getElementById("proceed_to_payment_order_data");
-      input.value = JSON.stringify(cart_items);
-      form.submit();
-    }
+    cart_button.onclick = submit_form;
+    
     cart.appendChild(cart_button);
 
     // add body
@@ -837,13 +873,7 @@ function load_cart() {
 
     // if empty, gray payment button and show cart icon
     if (cart_items.length == 0) {
-        cart_button.style.backgroundColor = "gray";
-        cart_button.style.cursor = "auto";
-        cart_button.style.pointerEvents = "none";
-        empty_cart_icon.style.display = "block";
-        body.style.display = "flex";
-        body.style.justifyContent = "center";
-        body.style.alignItems = "center";
+        setup_empty_cart();
     }
 
     // to avoid confusion: 'item' is the div, 'cart_item' is the js object
@@ -993,14 +1023,7 @@ function load_cart() {
                     total_lines[0].remove();
                 }
 
-                cart_button.style.backgroundColor = "gray";
-                cart_button.style.cursor = "auto";
-                cart_button.innerHTML = "Proceed to Payment";
-                cart_button.disabled = true;
-                empty_cart_icon.style.display = "block";
-                body.style.display = "flex";
-                body.style.justifyContent = "center";
-                body.style.alignItems = "center";
+                setup_empty_cart();
             }
         
             var subtotal_price = document.getElementById("subtotal_price");
@@ -1104,7 +1127,7 @@ function load_cart() {
         final_total_box.appendChild(final_total_price);
 
         // add total to button text
-        cart_button.innerHTML += " ($" + final_total_price_value.toFixed(2) + ")";
+        set_cart_button_text(final_total_price_value.toFixed(2));
     }
 
 }
@@ -1147,7 +1170,7 @@ function check_if_closed() {
 
 function set_onclicks() {
     var popup_x = document.getElementsByClassName("close")[0];
-    popup_x.onclick = close_popup;
+    popup_x.onclick = close_popup; 
 
     var toggle_button = document.getElementsByClassName("cart-menu-icon-holder")[0];
     toggle_button.onclick = toggle_cart;
@@ -1767,7 +1790,6 @@ body {
     flex: 2;
     justify-content: center;
     align-items: center;
-    font-family: verdana;
     font-size: 16px;
     line-height: 1.11;
     letter-spacing: .3px;
