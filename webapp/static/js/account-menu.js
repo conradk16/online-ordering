@@ -31,6 +31,11 @@ function clear_view_orders() {
     menu_view_orders_block.remove();
 }
 
+function clear_stripe() {
+    var menu_stripe_block = document.getElementById("menu_stripe_block");
+    menu_stripe_block.remove();
+}
+
 function check_if_view_orders() {
     var order_url = document.getElementById("account-menu-script").getAttribute('data-order_url');
     var active_subscription = document.getElementById("account-menu-script").getAttribute('data-active_subscription');
@@ -40,6 +45,11 @@ function check_if_view_orders() {
     
     if (charges_enabled == "False" || active_subscription == "False" || (order_url == "None" && paid_for_website == "False") || (website_url == "None" && paid_for_website == "True")) {
         clear_view_orders(); 
+    }
+
+    var customers_pay_online = document.getElementById("account-menu-script").getAttribute('data-customers_pay_online');
+    if (!customers_pay_online) {
+        clear_stripe();
     }
 }
 

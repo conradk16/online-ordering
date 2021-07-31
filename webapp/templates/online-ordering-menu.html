@@ -765,7 +765,7 @@ function get_cart_total() {
 
 // function should not be called on a grayed button
 function set_cart_button_text(price_str) {
-    var customers_pay_online = false;
+    var customers_pay_online = {{customers_pay_online|tojson}};
     var cart_button = document.getElementsByClassName("cart-button")[0];
     if (customers_pay_online) {
         cart_button.innerHTML = "Proceed to Payment";
@@ -776,7 +776,7 @@ function set_cart_button_text(price_str) {
 }
 
 function setup_empty_cart() {
-    var customers_pay_online = false;
+    var customers_pay_online = {{customers_pay_online|tojson}};
     
     var cart_button = document.getElementsByClassName("cart-button")[0];
     var empty_cart_icon = document.getElementsByClassName("empty-cart-icon")[0];
