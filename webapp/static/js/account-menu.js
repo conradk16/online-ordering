@@ -47,7 +47,7 @@ function check_if_view_orders() {
         clear_view_orders(); 
     }
 
-    var customers_pay_online = document.getElementById("account-menu-script").getAttribute('data-website_url');
+    var customers_pay_online = document.getElementById("account-menu-script").getAttribute('data-customers_pay_online');
     if (!customers_pay_online) {
         clear_stripe();
     }
