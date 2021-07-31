@@ -152,18 +152,18 @@ function registerElements(elements, exampleName) {
     var name_element = document.getElementById("example1-name");
     var email_element = document.getElementById("example1-email");
 
-    var form = document.getElementById("order_info");
+    var order_info_form = document.getElementById("order_info");
     var name_input = document.createElement("input");
     name_input.type = "hidden";
     name_input.name = "customer_name";
     name_input.value = name_element.value;
-    form.appendChild(name_input);
+    order_info_form.appendChild(name_input);
 
     var email_input = document.createElement("input");
     email_input.type = "hidden";
     email_input.name = "customer_email";
     email_input.value = email_element.value;
-    form.appendChild(email_input);
+    order_info_form.appendChild(email_input);
 
     if (!customers_pay_online) {
         var order_id = document.getElementById("helper").getAttribute('data-order_id');
@@ -171,7 +171,7 @@ function registerElements(elements, exampleName) {
         order_id_input.type = "hidden";
         order_id_input.name = "order_id";
         order_id_input.value = order_id;
-        form.appendChild(order_id_input);
+        order_info_form.appendChild(order_id_input);
 
     } else {
         var payment_intent_id = document.getElementById("helper").getAttribute('data-payment_intent_id');
@@ -179,14 +179,14 @@ function registerElements(elements, exampleName) {
         payment_intent_id_input.type = "hidden";
         payment_intent_id_input.name = "payment_intent_id";
         payment_intent_id_input.value = payment_intent_id;
-        form.appendChild(payment_intent_id_input);
+        order_info_form.appendChild(payment_intent_id_input);
 
         var connected_account_id = document.getElementById("helper").getAttribute('data-stripe_account_id');
         var connected_account_id_input = document.createElement("input");
         connected_account_id_input.type = "hidden";
         connected_account_id_input.name = "connected_account";
         connected_account_id_input.value = connected_account_id
-        form.appendChild(connected_account_id_input);
+        order_info_form.appendChild(connected_account_id_input);
 
         var client_secret = document.getElementById("helper").getAttribute('data-stripe_client_secret');
     }
@@ -261,7 +261,6 @@ function registerElements(elements, exampleName) {
                         if (result.paymentIntent.status == 'succeeded') {
                             console.log("success");
                             checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
-                            var email_input = document.getElementById("email_inp");
                             result_title.innerHTML = "Thank you, your order has been placed.";
                             var caption = document.getElementById("caption");
                             caption.innerHTML = "An email receipt has been sent to " + email_input.value + "."
@@ -273,8 +272,8 @@ function registerElements(elements, exampleName) {
         }
     };
 
-    var formData = new FormData(document.getElementById("order_info"));
-    xhr.send(formData);
+    var order_info_formData = new FormData(document.getElementById("order_info"));
+    xhr.send(order_info_formData);
 
 
   resetButton.addEventListener('click', function(e) {

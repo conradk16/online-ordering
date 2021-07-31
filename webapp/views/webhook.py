@@ -112,7 +112,9 @@ def webhook_connect_received():
             return jsonify({'status': 'No user exists for the stripe_connected_account_id. Possibly caused by test/localhost webhooks being lumped together'})
 
         user.stripe_connected_account_details_submitted = data_object.details_submitted
-        user.customers_pay_online = True
+
+        if data_object.details_submitted:
+            user.customers_pay_online = True
         
         if env['PROD']:
             if not data_object.charges_enabled:

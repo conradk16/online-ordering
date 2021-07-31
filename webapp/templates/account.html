@@ -51,7 +51,7 @@
                 description.innerHTML = "We're working to set up your ordering website. Please check back within 24-48 hours and you will be provided with a link to add to your website.";
             }
 
-        } else if (charges_enabled == false && customers_pay_online == false) {
+        } else if (charges_enabled == false && customers_pay_online == true) {
             disable_button();
             link_title = document.getElementsByClassName("description")[0];
             link_title.innerHTML = "There's an issue with your Stripe account and charges are currently disabled. Navigate to Stripe in the menu bar to solve the issue. If your account was recently created, Stripe may be in the process of verifying your account.";
