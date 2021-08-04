@@ -1,11 +1,19 @@
 const MAX_MOBILE_WIDTH = 450;
 
-function load_mobile_view() {
+function load_mobile_navbar() {
     
 }
 
+function load_desktop_navbar() {
+
+}
+
+function load_mobile_view() {
+    load_mobile_navbar();
+}
+
 function load_desktop_view() {
-    
+    load_desktop_navbar(); 
 }
 
 function run_on_load() {
