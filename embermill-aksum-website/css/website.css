@@ -1,0 +1,77 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 20px;
+    align-items: center;
+    height: 120px;
+}
+
+.restaurant-name {
+    font-family: Apple Chancery, cursive;
+    font-size: 50px;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.link {
+    font-size: 14px;
+    color: black;
+    text-decoration: none;
+    cursor: default;
+    margin-left: 20px;
+    font-family: sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+}
+
+.link:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+.desktop-home-first-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.desktop-home-left-pic {
+}
+
+.desktop-home-main-content {
+    margin: 0;
+}
+
+.desktop-home-about-us-container {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 40px;
+}
+
+.desktop-home-about-us-title {
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+.desktop-home-about-us-content {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.desktop-home-bottom-pic {
+    width: 100%;
+}

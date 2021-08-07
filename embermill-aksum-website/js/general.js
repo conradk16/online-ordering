@@ -8,12 +8,9 @@ function load_desktop_navbar() {
 
 }
 
-function load_mobile_view() {
-    load_mobile_navbar();
-}
-
-function load_desktop_view() {
-    load_desktop_navbar(); 
+function clear_main_content() {
+    var main_content = document.getElementById("main-content");
+    while(main_content.firstChild && main_content.removeChild(main_content.firstChild));
 }
 
 function run_on_load() {
@@ -23,8 +20,12 @@ function run_on_load() {
 function run_on_resize() {
     const width = window.innerWidth;
     if (width <= MAX_MOBILE_WIDTH) {
+        load_mobile_navbar();
+        clear_main_content();
         load_mobile_view();
     } else {
+        load_desktop_navbar();
+        clear_main_content();
         load_desktop_view();
     }
 }
