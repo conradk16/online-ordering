@@ -1,6 +1,23 @@
+var about_us_text = "Aksum is a city in northern Ethiopia. It's known for its tall, carved obelisks, relics of the ancient Kingdom of Aksum. Most are in the northern Stelae Park, including a huge fallen pillar, now in pieces. Centuries-old St. Mary of Zion is a Christian church and pilgrimage site believed to have housed the biblical Ark of the Covenant. The neighboring Chapel of the Tablet is said to contain the Ark today.";
+
 function load_mobile_view() {
+    var welcome_side_bar_link = document.getElementsByClassName("side-menu-link")[0];
+    welcome_side_bar_link.style.fontWeight = "700";
+
+    var main_content = document.getElementById("main-content");
     
+    var top_container = create_element("div", main_content, "mobile-home-top-container", null, null, null);
+    create_element("img", top_container, "mobile-home-top-pic", null, null, "./media/restaurant-home-1.jpeg");
+    create_element("button", top_container, "mobile-home-online-ordering-button", "Order Online", null, null);
+
+    var about_us_container = create_element("div", main_content, "mobile-home-about-us-container", null, null, null);
+    
+    create_element("a", about_us_container, "mobile-home-about-us-title", "Welcome", null, null);
+    create_element("a", about_us_container, "mobile-home-about-us-content", about_us_text, null, null);
+
+    create_element("img", main_content, "mobile-home-bottom-pic", null, null, "./media/restaurant-home-2.jpeg");
 }
+
 
 function load_desktop_view() {
     var main_content = document.getElementById("main-content");
@@ -20,12 +37,12 @@ function load_desktop_view() {
     first_row.appendChild(about_us_container);
     
     var about_us_title = document.createElement("a");
-    about_us_title.innerHTML = "About Us";
+    about_us_title.innerHTML = "Welcome";
     about_us_title.classList.add("desktop-home-about-us-title");
     about_us_container.appendChild(about_us_title);
 
     var about_us_content = document.createElement("a");
-    about_us_content.innerHTML = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+    about_us_content.innerHTML = about_us_text;
     about_us_content.classList.add("desktop-home-about-us-content");
     about_us_container.appendChild(about_us_content);
 

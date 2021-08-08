@@ -6,14 +6,13 @@ body {
 .navbar {
     display: flex;
     justify-content: space-between;
-    margin: 0px 20px;
+    margin: 0px;
+    padding: 0px 20px;
     align-items: center;
-    height: 120px;
 }
 
 .restaurant-name {
     font-family: Apple Chancery, cursive;
-    font-size: 50px;
 }
 
 .links {
@@ -23,55 +22,74 @@ body {
 
 }
 
-.link {
+.desktop-links-holder {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 65%;
+    max-width: 600px;
+}
+
+.desktop-link {
     font-size: 14px;
     color: black;
     text-decoration: none;
     cursor: default;
-    margin-left: 20px;
     font-family: sans-serif;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     -webkit-font-smoothing: antialiased;
 }
 
-.link:hover {
+.desktop-link:hover {
     color: gray;
     cursor: pointer;
 }
 
-.desktop-home-first-row {
-    display: flex;
-    width: 100%;
-    margin-bottom: 30px;
-    align-items: center;
+.menu-icon:hover {
+    cursor: pointer;
 }
 
-.desktop-home-left-pic {
+.side-menu {
+  height: 100%; /* 100% Full-height */
+  width: 250px; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: -1;
+  top: 0; /* Stay at the top */
+  right: 0;
+  background-color: white;
+  overflow-x: hidden; /* Disable horizontal scroll */
 }
 
-.desktop-home-main-content {
-    margin: 0;
+.side-menu-link-holder {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 20px 0px;
 }
 
-.desktop-home-about-us-container {
-    width: 45%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px 40px;
+.side-menu-link {
+  padding: 0;
+  text-align: center;
+  display: block;
+  font-size: 14px;
+  color: black;
+  text-decoration: none;
+  cursor: default;
+  font-family: sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
 }
 
-.desktop-home-about-us-title {
-    margin-bottom: 20px;
-    font-size: 25px;
+.side-menu-link:hover {
+  color: #474747;
+  cursor: pointer;
 }
 
-.desktop-home-about-us-content {
-    text-align: center;
-    line-height: 1.5;
-}
-
-.desktop-home-bottom-pic {
-    width: 100%;
+#non-sidebar-container {
+  transition: margin 0.2s ease-in-out;
+  z-index: 2;
+  min-height: 200px;
+  background-color: white;
+  height: 100vh;
 }
