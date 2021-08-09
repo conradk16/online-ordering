@@ -1,0 +1,95 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px;
+    padding: 0px 20px;
+    align-items: center;
+}
+
+.restaurant-name {
+    font-family: Apple Chancery, cursive;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.desktop-links-holder {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 65%;
+    max-width: 600px;
+}
+
+.desktop-link {
+    font-size: 14px;
+    color: black;
+    text-decoration: none;
+    cursor: default;
+    font-family: sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+}
+
+.desktop-link:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+.menu-icon:hover {
+    cursor: pointer;
+}
+
+.side-menu {
+  height: 100%; /* 100% Full-height */
+  width: 250px; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: -1;
+  top: 0; /* Stay at the top */
+  right: 0;
+  background-color: white;
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+.side-menu-link-holder {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 20px 0px;
+}
+
+.side-menu-link {
+  padding: 0;
+  text-align: center;
+  display: block;
+  font-size: 14px;
+  color: black;
+  text-decoration: none;
+  cursor: default;
+  font-family: sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+}
+
+.side-menu-link:hover {
+  color: #474747;
+  cursor: pointer;
+}
+
+#non-sidebar-container {
+  transition: margin 0.2s ease-in-out;
+  z-index: 2;
+  min-height: 200px;
+  background-color: white;
+  height: 100vh;
+}

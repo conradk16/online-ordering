@@ -1,0 +1,87 @@
+.desktop-home-first-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.desktop-home-left-pic {
+}
+
+.desktop-home-main-content {
+    margin: 0;
+}
+
+.desktop-home-about-us-container {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 40px;
+}
+
+.desktop-home-about-us-title {
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+.desktop-home-about-us-content {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.desktop-home-bottom-pic {
+    width: 100%;
+}
+
+.mobile-home-top-container {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+
+.mobile-home-top-pic {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.mobile-home-online-ordering-button {
+    position: absolute;
+    color: black;
+    background-color: white;
+    font-size: 23px;
+    font: sans-serif;
+    z-index: 5;
+    margin-top: 25px;
+    border-radius: 10px;
+    border: 4px solid black;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px
+}
+
+.mobile-home-online-ordering-button:hover {
+    cursor: pointer;
+}
+
+.mobile-home-about-us-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px 40px;
+}
+
+.mobile-home-about-us-title {
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+.mobile-home-about-us-content {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.mobile-home-bottom-pic {
+    width: 100%;
+}
