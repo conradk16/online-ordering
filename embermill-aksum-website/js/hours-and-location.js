@@ -27,5 +27,8 @@ function load_mobile_view() {
 }
 
 function load_desktop_view() {
+    var hours_desktop_link = document.getElementsByClassName("desktop-link")[3];
+    hours_desktop_link.style.fontWeight = "700";
+
     load_content();
 }
