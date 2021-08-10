@@ -20,6 +20,9 @@ function load_mobile_view() {
 
 
 function load_desktop_view() {
+    var home_desktop_link = document.getElementsByClassName("desktop-link")[0];
+    home_desktop_link.style.fontWeight = "700";
+
     var main_content = document.getElementById("main-content");
     var first_row = document.createElement("div");
     first_row.classList.add("desktop-home-first-row");
