@@ -8,7 +8,10 @@ function load_mobile_view() {
 
     var top_container = create_element("div", main_content, "mobile-home-top-container", null, null, null);
     create_element("img", top_container, "mobile-home-top-pic", null, null, "../static/media/restaurant-home-1.jpeg");
-    create_element("button", top_container, "mobile-home-online-ordering-button", "Order Online", null, null);
+    var btn = create_element("button", top_container, "mobile-home-online-ordering-button", "Order Online", null, null);
+    btn.onclick = function () {
+      window.location.href = "https://m3orders.com/order/embermill-aksum";
+    }
 
     var about_us_container = create_element("div", main_content, "mobile-home-about-us-container", null, null, null);
 

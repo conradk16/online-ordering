@@ -1,5 +1,6 @@
 const MAX_MOBILE_WIDTH = 800;
 const TITLE_RESIZE_WIDTH = 1050;
+var old_width = window.innerWidth;
 
 function open_side_menu() {
   var non_sidebar_container = document.getElementById("non-sidebar-container");
@@ -10,6 +11,7 @@ function open_side_menu() {
   var side_menu = document.getElementById("side-menu");
   side_menu.style.transition = "z-index .7s ease-in-out";
   side_menu.style.zIndex = 3;
+  side_menu.style.visibility = "visible";
 
   var menu_img = document.getElementById("menu-img");
   menu_img.onclick = close_side_menu;
@@ -25,6 +27,7 @@ function close_side_menu() {
   var side_menu = document.getElementById("side-menu");
   side_menu.style.transition = "z-index 0s ease-in-out";
   side_menu.style.zIndex = -1;
+  side_menu.style.visibility = "hidden";
 
   var menu_img = document.getElementById("menu-img");
   menu_img.onclick = open_side_menu;
@@ -65,16 +68,33 @@ function clear_element(element) {
 }
 
 function run_on_load() {
-    run_on_resize();
+  const width = window.innerWidth;
+  if (width <= MAX_MOBILE_WIDTH) {
+      clear_element(document.getElementById("main-content"));
+      clear_element(document.getElementById("navbar"));
+      load_mobile_navbar();
+      load_mobile_view();
+  } else {
+      if (document.getElementById("menu-img") != null) {
+          close_side_menu();
+      }
+      clear_element(document.getElementById("main-content"));
+      clear_element(document.getElementById("navbar"));
+      load_desktop_navbar(900);
+      load_desktop_view();
+  }
 }
 
 function run_on_resize() {
+
     const width = window.innerWidth;
     if (width <= MAX_MOBILE_WIDTH) {
+      if (old_width > MAX_MOBILE_WIDTH) {
         clear_element(document.getElementById("main-content"));
         clear_element(document.getElementById("navbar"));
         load_mobile_navbar();
         load_mobile_view();
+      }
     } else {
         if (document.getElementById("menu-img") != null) {
             close_side_menu();
@@ -84,6 +104,7 @@ function run_on_resize() {
         load_desktop_navbar(900);
         load_desktop_view();
     }
+    old_width = width;
 }
 
 window.onresize = run_on_resize;

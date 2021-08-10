@@ -59,6 +59,7 @@ body {
   top: 0; /* Stay at the top */
   right: 0;
   background-color: white;
+  visibility:hidden;
   overflow-x: hidden; /* Disable horizontal scroll */
 }
 
