@@ -17,7 +17,7 @@ function load_content() {
     create_element("a", location_lines, "text-line", "Santa Barbara, CA 93101", null, null);
     create_element("a", location_lines, "text-line", "805-452-3377", null, null);
 
-    create_element("img", main_content, "img", null, null, "./media/restaurant-hours-1.jpg");
+    create_element("img", main_content, "img", null, null, "../static/media/restaurant-hours-1.jpg");
 }
 
 function load_mobile_view() {

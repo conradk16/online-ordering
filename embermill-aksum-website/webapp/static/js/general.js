@@ -10,10 +10,10 @@ function open_side_menu() {
   var side_menu = document.getElementById("side-menu");
   side_menu.style.transition = "z-index .7s ease-in-out";
   side_menu.style.zIndex = 3;
-    
+
   var menu_img = document.getElementById("menu-img");
   menu_img.onclick = close_side_menu;
-  
+
 }
 
 function close_side_menu() {
@@ -35,7 +35,7 @@ function load_mobile_navbar() {
     navbar.style.height = "80px";
     var restaurant_name = create_element("a", navbar, "restaurant-name", "Embermill Aksum", null, null);
     restaurant_name.style.fontSize = "30px";
-    var menu_img = create_element("img", navbar, "menu-icon", null, null, "./media/menu.png");
+    var menu_img = create_element("img", navbar, "menu-icon", null, null, "../static/media/menu.png");
     menu_img.id = "menu-img";
     menu_img.height = 30;
     menu_img.width = 30;
@@ -55,9 +55,9 @@ function load_desktop_navbar() {
     var desktop_links_holder = create_element("div", navbar, "desktop-links-holder", null, null, null);
 
     create_element("a", desktop_links_holder, "desktop-link", "Welcome", "/", null);
-    create_element("a", desktop_links_holder, "desktop-link", "Order Online", "/", null);
-    create_element("a", desktop_links_holder, "desktop-link", "Menu", "/", null);
-    create_element("a", desktop_links_holder, "desktop-link", "Location & Hours", "/", null);
+    create_element("a", desktop_links_holder, "desktop-link", "Order Online", "https://m3orders.com/order/embermill-aksum", null);
+    create_element("a", desktop_links_holder, "desktop-link", "Menu", "/menu", null);
+    create_element("a", desktop_links_holder, "desktop-link", "Location & Hours", "/hours-and-location", null);
 }
 
 function clear_element(element) {

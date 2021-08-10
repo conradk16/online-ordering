@@ -5,17 +5,17 @@ function load_mobile_view() {
     welcome_side_bar_link.style.fontWeight = "700";
 
     var main_content = document.getElementById("main-content");
-    
+
     var top_container = create_element("div", main_content, "mobile-home-top-container", null, null, null);
-    create_element("img", top_container, "mobile-home-top-pic", null, null, "./media/restaurant-home-1.jpeg");
+    create_element("img", top_container, "mobile-home-top-pic", null, null, "../static/media/restaurant-home-1.jpeg");
     create_element("button", top_container, "mobile-home-online-ordering-button", "Order Online", null, null);
 
     var about_us_container = create_element("div", main_content, "mobile-home-about-us-container", null, null, null);
-    
+
     create_element("a", about_us_container, "mobile-home-about-us-title", "Welcome", null, null);
     create_element("a", about_us_container, "mobile-home-about-us-content", about_us_text, null, null);
 
-    create_element("img", main_content, "mobile-home-bottom-pic", null, null, "./media/restaurant-home-2.jpeg");
+    create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-2.jpeg");
 }
 
 
@@ -29,7 +29,7 @@ function load_desktop_view() {
     main_content.appendChild(first_row);
 
     var left_pic = document.createElement("img");
-    left_pic.setAttribute('src', './media/restaurant-home-1.jpeg');
+    left_pic.setAttribute('src', '../static/media/restaurant-home-1.jpeg');
     left_pic.classList.add("desktop-home-left-pic");
     left_pic.width = window.innerWidth * 0.55;
     left_pic.height = window.innerWidth * 0.55 * 183 / 275;
@@ -38,7 +38,7 @@ function load_desktop_view() {
     var about_us_container = document.createElement("div");
     about_us_container.classList.add("desktop-home-about-us-container");
     first_row.appendChild(about_us_container);
-    
+
     var about_us_title = document.createElement("a");
     about_us_title.innerHTML = "Welcome";
     about_us_title.classList.add("desktop-home-about-us-title");
@@ -50,7 +50,7 @@ function load_desktop_view() {
     about_us_container.appendChild(about_us_content);
 
     var bottom_pic = document.createElement("img");
-    bottom_pic.setAttribute('src', './media/restaurant-home-2.jpeg');
+    bottom_pic.setAttribute('src', '../static/media/restaurant-home-2.jpeg');
     bottom_pic.classList.add("desktop-home-bottom-pic");
     main_content.appendChild(bottom_pic);
 }

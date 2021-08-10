@@ -24,7 +24,7 @@ function get_num_columns() {
         return 1;
     } else if (window.innerWidth < two_column_max_width) {
         return 2;
-    } 
+    }
     return 3;
 }
 
@@ -37,7 +37,7 @@ function load_menu() {
         if (current_column_index == 0) { // create a new row
             var menu_row = create_element("div", main_content, "menu-row", null, null, null);
         }
-        
+
         var menu_item = menuItems[i];
         var name = menu_item.item_name;
         var descrip = menu_item.item_description;
@@ -52,7 +52,7 @@ function load_menu() {
         current_column_index += 1;
         current_column_index %= num_columns;
     }
-    
+
     // finish the row
     if (current_column_index != 0) {
         while (current_column_index < num_columns) {
@@ -68,7 +68,7 @@ function load_mobile_view() {
 
     var main_content = document.getElementById("main-content");
     var top_container = create_element("div", main_content, "top-container", null, null, null);
-    var top_pic = create_element("img", top_container, "top-pic-mobile", null, null, "./media/restaurant-menu-1.jpg");
+    var top_pic = create_element("img", top_container, "top-pic-mobile", null, null, "../static/media/restaurant-menu-1.jpg");
     var menu_title = create_element("a", top_container, "menu-title-mobile", "Our Menu", null, null);
 
     create_element("br", main_content, null, null, null, null);
@@ -83,7 +83,7 @@ function load_desktop_view() {
 
     var main_content = document.getElementById("main-content");
     var top_container = create_element("div", main_content, "top-container", null, null, null);
-    var top_pic = create_element("img", top_container, "top-pic", null, null, "./media/restaurant-menu-1.jpg");
+    var top_pic = create_element("img", top_container, "top-pic", null, null, "../static/media/restaurant-menu-1.jpg");
     var menu_title = create_element("a", top_container, "menu-title", "Our Menu", null, null);
     create_element("br", main_content, null, null, null, null);
     create_element("br", main_content, null, null, null, null);
