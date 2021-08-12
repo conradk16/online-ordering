@@ -12,11 +12,8 @@ class menuItem {
 var menuItems = Array();
 menuItems.push(new menuItem("Yedero Wot", "Tender chicken cooked with Ethiopian spices, barbecue sauce, onion, garlic, and gluten free bread injera.", "$19.00"));
 menuItems.push(new menuItem("Yebeg Siga Wot", "Tender pieces of lamb braised in Ethiopian special barbecue sauce served with bread injera gluten free.", "$21.00"));
-menuItems.push(new menuItem("Meat Combination", "Yebeg siga wot(Mild spicy lamb), and yebeg alicha wot(None spicy lamb). Served with side of gluten free bread injera with chicken and beef.", "$23.00"));
+menuItems.push(new menuItem("Meat Combination", "Yebeg siga wot (mild spicy lamb) and yebeg alicha wot (non spicy lamb). Served with side of gluten free bread injera with chicken and beef.", "$23.00"));
 menuItems.push(new menuItem("Vegetarian Combination", "Split lentil, split peas, shio, green beans, cabbage, carrot, potato, collared green.", "$16.00"));
-menuItems.push(new menuItem("Miser Wot", "Lentil and red pepper sauce seasoned with assorted psices and tomatoes. Served with side of bread injera.", "$12.00"));
-menuItems.push(new menuItem("Yemeser Wot", "Served with red lentils, cabbage, potato, and carrots.", "$13.00"));
-menuItems.push(new menuItem("Atakilt Wat", "Served with red lentils, cabbage, potato, and carrots.", "$12.00"));
 
 
 function get_num_columns() {

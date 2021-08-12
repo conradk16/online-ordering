@@ -12,9 +12,9 @@ function load_content() {
     var location_title = create_element("a", location_section, "title", "Location", null, null);
 
     var location_lines = create_element("div", location_section, "location-lines", null, null, null);
-    create_element("a", location_lines, "text-line", "Embermill Aksum", null, null);
-    create_element("a", location_lines, "text-line", "1031 State Street", null, null);
-    create_element("a", location_lines, "text-line", "Santa Barbara, CA 93101", null, null);
+    //create_element("a", location_lines, "text-line", "Embermill Aksum", null, null);
+    create_element("a", location_lines, "text-line", "1031 State Street, Santa Barbara, CA", null, null);
+    //create_element("a", location_lines, "text-line", "Santa Barbara, CA 93101", null, null);
     create_element("a", location_lines, "text-line", "805-452-3377", null, null);
 
     create_element("img", main_content, "img", null, null, "../static/media/restaurant-hours-1.jpg");
