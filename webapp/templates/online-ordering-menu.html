@@ -770,7 +770,7 @@ function set_cart_button_text(price_str) {
     if (customers_pay_online) {
         cart_button.innerHTML = "Proceed to Payment";
     } else {
-        cart_button.innerHTML = "Confirm Order";
+        cart_button.innerHTML = "Proceed to Confirmation";
     }
     cart_button.innerHTML = cart_button.innerHTML + " ($" + price_str + ")";
 }
@@ -793,7 +793,7 @@ function setup_empty_cart() {
     if (customers_pay_online) {
         cart_button.innerHTML = "Proceed to Payment";
     } else {
-        cart_button.innerHTML = "Confirm Order";
+        cart_button.innerHTML = "Proceed to Confirmation";
     }
 }
 
