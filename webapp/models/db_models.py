@@ -127,6 +127,7 @@ class Order(db.Model):
         d['datetime'] = self.datetime
         d['id'] = self.id
         d['customer_name'] = self.customer_name.split()[0][:20] # get first name, 20 characters max
+        #d['discount_str'] = self.discount
         return d
 
     def __repr__(self):
