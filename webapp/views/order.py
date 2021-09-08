@@ -117,6 +117,7 @@ def update_order_details():
         order_id = request.form['order_id']
         customer_name = request.form['customer_name']
         customer_email = request.form['customer_email']
+        entered_discount_code = request.form['discount_code']
 
         order = Order.query.get(order_id)
 
@@ -139,12 +140,23 @@ def update_order_details():
             restaurant_user.currently_accepting_orders = False
             db.session.commit()
 
-        if restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and (restaurant_user.stripe_charges_enabled or not restaurant_user.customers_pay_online):
+        correct_discount_code = 'orderpickup22'
+        discount_amt_str_to_set = '10% off'
+
+        if not (restaurant_user.currently_accepting_orders and restaurant_user.active_subscription and (restaurant_user.stripe_charges_enabled or not restaurant_user.customers_pay_online)):
+            return 'not accepting orders'
+        elif entered_discount_code == '':
+            order.discount_amt_str = 'None'
             order.submitted = True
             db.session.commit()
             return 'accepting orders'
+        elif entered_discount_code == correct_discount_code:
+            order.discount_amt_str = discount_amt_str_to_set
+            order.submitted = True
+            db.session.commit()
+            return 'discount applied'
         else:
-            return 'not accepting orders'
+            return 'discount failed'
 
     else:
         customer_name = request.form['customer_name']

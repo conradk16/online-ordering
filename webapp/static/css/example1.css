@@ -32,7 +32,7 @@
 
 .example.example1 label {
   width: 15%;
-  min-width: 70px;
+  min-width: 220px;
   padding: 11px 0;
   color: #000000;
   overflow: hidden;
@@ -133,4 +133,13 @@
 
 .example.example1 .success .reset path {
   fill: #fff;
+}
+
+.error-msg-holder {
+    margin-left: 20px !important;
+    margin-top: 5px !important;
+}
+
+.error-msg {
+    color: black;
 }

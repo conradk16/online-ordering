@@ -119,9 +119,9 @@ function createOrderElement(metaOrder, isPendingTab) {
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
   var metadataDiscount = document.createElement("div");
-  var discount_str = metaOrder['discount_str'];
+  var discount_amt_str = metaOrder['discount_amt_str'];
   metadataDiscount.classList.add("discount");
-  metadataDiscount.innerHTML = "Discount: " + discount_str;
+  metadataDiscount.innerHTML = "Discount: " + discount_amt_str;
   
 
   if ({{customers_pay_online|tojson}}) {
