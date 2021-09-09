@@ -19,21 +19,6 @@ function load_mobile_view() {
     create_element("a", about_us_container, "mobile-home-about-us-content", about_us_text, null, null);
 
     create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-2.jpeg");
-
-    var bottom_pic3 = document.createElement("img");
-    bottom_pic3.setAttribute('src', '../static/media/restaurant-home-3-mobile.jpg');
-    bottom_pic3.classList.add("mobile-home-bottom-pic");
-    main_content.appendChild(bottom_pic3);
-
-    var bottom_pic4 = document.createElement("img");
-    bottom_pic4.setAttribute('src', '../static/media/restaurant-home-4-mobile.jpg');
-    bottom_pic4.classList.add("mobile-home-bottom-pic");
-    main_content.appendChild(bottom_pic4);
-
-    var bottom_pic5 = document.createElement("img");
-    bottom_pic5.setAttribute('src', '../static/media/restaurant-home-5-mobile.jpg');
-    bottom_pic5.classList.add("mobile-home-bottom-pic");
-    main_content.appendChild(bottom_pic5);
 }
 
 
@@ -71,19 +56,4 @@ function load_desktop_view() {
     bottom_pic.setAttribute('src', '../static/media/restaurant-home-2.jpeg');
     bottom_pic.classList.add("desktop-home-bottom-pic");
     main_content.appendChild(bottom_pic);
-
-    var bottom_pic3 = document.createElement("img");
-    bottom_pic3.setAttribute('src', '../static/media/restaurant-home-3.png');
-    bottom_pic3.classList.add("desktop-home-bottom-pic");
-    main_content.appendChild(bottom_pic3);
-
-    var bottom_pic4 = document.createElement("img");
-    bottom_pic4.setAttribute('src', '../static/media/restaurant-home-4.jpg');
-    bottom_pic4.classList.add("desktop-home-bottom-pic");
-    main_content.appendChild(bottom_pic4);
-
-    var bottom_pic5 = document.createElement("img");
-    bottom_pic5.setAttribute('src', '../static/media/restaurant-home-5.jpg');
-    bottom_pic5.classList.add("desktop-home-bottom-pic");
-    main_content.appendChild(bottom_pic5);
 }

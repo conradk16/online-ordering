@@ -1,5 +1,5 @@
-const MAX_MOBILE_WIDTH = 800;
-const TITLE_RESIZE_WIDTH = 1050;
+const MAX_MOBILE_WIDTH = 900;
+const TITLE_RESIZE_WIDTH = 1100;
 var old_width = window.innerWidth;
 
 function open_side_menu() {
@@ -37,7 +37,7 @@ function load_mobile_navbar() {
     var navbar = document.getElementById("navbar");
     navbar.style.height = "80px";
     var restaurant_name = create_element("a", navbar, "restaurant-name", "Embermill Aksum", null, null);
-    restaurant_name.style.fontSize = "30px";
+    restaurant_name.style.fontSize = "25px";
     var menu_img = create_element("img", navbar, "menu-icon", null, null, "../static/media/menu.png");
     menu_img.id = "menu-img";
     menu_img.height = 30;
@@ -49,10 +49,10 @@ function load_desktop_navbar() {
     var navbar = document.getElementById("navbar");
     var restaurant_name = create_element("a", navbar, "restaurant-name", "Embermill Aksum", null, null);
     if (window.innerWidth < TITLE_RESIZE_WIDTH) {
-        restaurant_name.style.fontSize = "30px";
+        restaurant_name.style.fontSize = "25px";
         navbar.style.height = "90px";
     } else {
-        restaurant_name.style.fontSize = "50px";
+        restaurant_name.style.fontSize = "45px";
         navbar.style.height = "120px";
     }
     var desktop_links_holder = create_element("div", navbar, "desktop-links-holder", null, null, null);
@@ -61,6 +61,7 @@ function load_desktop_navbar() {
     create_element("a", desktop_links_holder, "desktop-link", "Order Online", "https://m3orders.com/order/embermill-aksum", null);
     create_element("a", desktop_links_holder, "desktop-link", "Menu", "/menu", null);
     create_element("a", desktop_links_holder, "desktop-link", "Location & Hours", "/hours-and-location", null);
+    create_element("a", desktop_links_holder, "desktop-link", "Instagram", "https://www.instagram.com/aksum805/", null);
 }
 
 function clear_element(element) {
