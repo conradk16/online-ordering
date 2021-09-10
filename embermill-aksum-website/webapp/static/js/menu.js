@@ -14,6 +14,7 @@ menuItems.push(new menuItem("Yedero Wot", "Tender chicken cooked with Ethiopian 
 menuItems.push(new menuItem("Yebeg Siga Wot", "Tender pieces of lamb braised in Ethiopian special barbecue sauce served with bread injera gluten free.", "$21.00"));
 menuItems.push(new menuItem("Meat Combination", "Yebeg siga wot (mild spicy lamb) and yebeg alicha wot (non spicy lamb). Served with side of gluten free bread injera with chicken and beef.", "$23.00"));
 menuItems.push(new menuItem("Vegetarian Combination", "Split lentil, split peas, shio, green beans, cabbage, carrot, potato, collared green.", "$16.00"));
+menuItems.push(new menuItem("Fresh Gluten Free Injera Bread", "", "$20.00"));
 
 
 function get_num_columns() {
