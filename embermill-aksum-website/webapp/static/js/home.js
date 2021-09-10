@@ -1,5 +1,28 @@
 var about_us_text = "Aksum is a city in northern Ethiopia. It's known for its tall, carved obelisks, relics of the ancient Kingdom of Aksum. Most are in the northern Stelae Park, including a huge fallen pillar, now in pieces. Centuries-old St. Mary of Zion is a Christian church and pilgrimage site believed to have housed the biblical Ark of the Covenant. The neighboring Chapel of the Tablet is said to contain the Ark today.";
 
+function add_news_element(_parent) {
+    var news_container = create_element("div", _parent, "desktop-home-news-container", null, null, null);
+    news_container.onclick = function () {
+        window.location.href = 'https://www.independent.com/2021/06/14/ethiopian-food-coming-to-embermill/';
+    }
+
+    create_element("hr", news_container, null, null, null, null); 
+
+    var horizontal_holder = create_element("div", news_container, "desktop-home-horizontal-text-holder", null, null, null);
+
+    var paper_title = create_element("a", horizontal_holder, "desktop-home-paper-title", "Santa Barbara Independent:", null, null);
+
+    var article_title = create_element("a", horizontal_holder, "desktop-home-article-title", "Ethiopian Food Coming to Embermill", null, null);
+
+    var article_caption_holder = create_element("div", news_container, "desktop-home-article-caption-holder", null, null, null);
+    
+    var article_caption = create_element("a", article_caption_holder, "desktop-home-article-caption", "Saba Tewolde Hosting Tigray Benefit on June 20; Starts Serving Lunch at State Street Restaurant", null, null);
+
+    var gray_bar = document.createElement("hr");
+    news_container.appendChild(gray_bar);
+}
+
+
 function load_mobile_view() {
     var welcome_side_bar_link = document.getElementsByClassName("side-menu-link")[0];
     welcome_side_bar_link.style.fontWeight = "700";
@@ -18,18 +41,17 @@ function load_mobile_view() {
     create_element("a", about_us_container, "mobile-home-about-us-title", "Welcome", null, null);
     create_element("a", about_us_container, "mobile-home-about-us-content", about_us_text, null, null);
 
+    add_news_element(main_content);
+
     create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-2.jpeg");
 }
-
 
 function load_desktop_view() {
     var home_desktop_link = document.getElementsByClassName("desktop-link")[0];
     home_desktop_link.style.fontWeight = "700";
 
     var main_content = document.getElementById("main-content");
-    var first_row = document.createElement("div");
-    first_row.classList.add("desktop-home-first-row");
-    main_content.appendChild(first_row);
+    var first_row = create_element("div", main_content, "desktop-home-first-row", null, null, null);
 
     var left_pic = document.createElement("img");
     left_pic.setAttribute('src', '../static/media/restaurant-home-1.jpeg');
@@ -38,19 +60,13 @@ function load_desktop_view() {
     left_pic.height = window.innerWidth * 0.55 * 183 / 275;
     first_row.appendChild(left_pic);
 
-    var about_us_container = document.createElement("div");
-    about_us_container.classList.add("desktop-home-about-us-container");
-    first_row.appendChild(about_us_container);
+    var about_us_container = create_element("div", first_row, "desktop-home-about-us-container", null, null, null);
 
-    var about_us_title = document.createElement("a");
-    about_us_title.innerHTML = "Welcome";
-    about_us_title.classList.add("desktop-home-about-us-title");
-    about_us_container.appendChild(about_us_title);
+    var about_us_title = create_element("a", about_us_container, "desktop-home-about-us-title", "Welcome", null, null);
 
-    var about_us_content = document.createElement("a");
-    about_us_content.innerHTML = about_us_text;
-    about_us_content.classList.add("desktop-home-about-us-content");
-    about_us_container.appendChild(about_us_content);
+    var about_us_content = create_element("a", about_us_container, "desktop-home-about-us-content", about_us_text, null, null);
+
+    add_news_element(main_content);
 
     var bottom_pic = document.createElement("img");
     bottom_pic.setAttribute('src', '../static/media/restaurant-home-2.jpeg');

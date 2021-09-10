@@ -1,7 +1,6 @@
 .desktop-home-first-row {
     display: flex;
     width: 100%;
-    margin-bottom: 30px;
     align-items: center;
 }
 
@@ -32,6 +31,47 @@
 
 .desktop-home-bottom-pic {
     width: 100%;
+}
+
+.desktop-home-news-container {
+    margin: 20px 0px;
+    background-color: #f7f7f7;
+}
+
+.desktop-home-news-container:hover {
+    cursor: pointer;
+}
+
+.desktop-home-horizontal-text-holder {
+    display: flex;
+    margin-left: 15px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.desktop-home-paper-title {
+    font-size: 17px;
+    font-weight: 700;
+    display: block;
+    margin-right: 10px;
+}
+
+.desktop-home-article-title {
+    font-size: 17px;
+    display: block;
+    font-weight: 700;
+}
+
+.desktop-home-article-caption-holder {
+    display: flex;
+    margin-left: 15px;
+    margin-bottom: 20px;
+}
+
+.desktop-home-article-caption {
+    font-size: 16px;
+    display: block;
+    font-style: italic;
 }
 
 .mobile-home-top-container {
