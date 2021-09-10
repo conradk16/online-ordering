@@ -17,3 +17,4 @@ function create_element(type, parent_elem, class_name, innerHTML, href, src) {
     parent_elem.appendChild(elem);
     return elem;
 }
+

@@ -118,6 +118,7 @@ class Order(db.Model):
     customer_name = db.Column(db.String)
     customer_email = db.Column(db.String)
     datetime = db.Column(db.DateTime)
+    discount_amt_str = db.Column(db.String)
 
     def serialize(self):
         d = {}
@@ -127,6 +128,7 @@ class Order(db.Model):
         d['datetime'] = self.datetime
         d['id'] = self.id
         d['customer_name'] = self.customer_name.split()[0][:20] # get first name, 20 characters max
+        d['discount_amt_str'] = self.discount_amt_str
         return d
 
     def __repr__(self):

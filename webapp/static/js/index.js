@@ -15,6 +15,10 @@ if (customers_pay_online) {
 
 var restaurant_display_name = document.getElementById("helper").getAttribute('data-restaurant_display_name');
 
+function set_discount_error_msg() {
+    var msg = document.getElementById("error_msg");
+    msg.innerHTML = "*Invalid Discount Code";
+}
 
 function registerElements(elements, exampleName) {
   var formClass = '.' + exampleName;
@@ -151,6 +155,7 @@ function registerElements(elements, exampleName) {
 
     var name_element = document.getElementById("example1-name");
     var email_element = document.getElementById("example1-email");
+    var discount_code_element = document.getElementById("example1-discount-code");
 
     var order_info_form = document.getElementById("order_info");
     var name_input = document.createElement("input");
@@ -164,6 +169,12 @@ function registerElements(elements, exampleName) {
     email_input.name = "customer_email";
     email_input.value = email_element.value;
     order_info_form.appendChild(email_input);
+
+    var discount_code_input = document.createElement("input");
+    discount_code_input.type = "hidden";
+    discount_code_input.name = "discount_code";
+    discount_code_input.value = discount_code_element.value;
+    order_info_form.appendChild(discount_code_input);
 
     if (!customers_pay_online) {
         var order_id = document.getElementById("helper").getAttribute('data-order_id');
@@ -215,6 +226,26 @@ function registerElements(elements, exampleName) {
                 border.style.stroke = "#de0909";
                 result_title.innerHTML = "Sorry, orders are no longer being accepted.";
                 resetButton.style.display = "none";
+            } else if (event.target.response == "discount applied") {
+                checkmark.setAttribute("d", "M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338");
+                result_title.innerHTML = "Thank you, your order has been placed.";
+                var caption = document.getElementById("caption");
+                caption.innerHTML = "Your discount will be applied when you pay in-store."
+                resetButton.style.display = "none";
+            } else if (event.target.response == "discount failed") {
+                example.classList.remove('submitted');
+                // Show title
+                var title = document.getElementsByClassName("title")[0];
+                title.style.display = "block";
+                set_discount_error_msg();
+                var form = document.getElementById("form");
+                form.reset();
+                var name_inp = document.getElementById("example1-name");
+                var email_inp = document.getElementById("example1-email");
+                var discount_inp = document.getElementById("example1-discount-code");
+                name_inp.disabled = false;
+                email_inp.disabled = false;
+                discount_inp.disabled = false;
             } else {
                 checkmark.setAttribute("d", "M25 25 59 59 M 25 59 59 25");
                 border.style.stroke = "#de0909";

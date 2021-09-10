@@ -118,10 +118,20 @@ function createOrderElement(metaOrder, isPendingTab) {
   var paid = metaOrder['refunded_status'] ? "Refunded" : "Paid";
   metadataPaymentStatus.classList.add("payment-status");
   metadataPaymentStatus.innerHTML = "Status: " + paid;
+  var metadataDiscount = document.createElement("div");
+  var discount_amt_str = metaOrder['discount_amt_str'];
+  metadataDiscount.classList.add("discount");
+  metadataDiscount.innerHTML = "Discount: " + discount_amt_str;
+  
 
   if ({{customers_pay_online|tojson}}) {
     metadataElements.appendChild(metadataPaymentStatus);
   }
+
+  if (!{{customers_pay_online|tojson}}) {
+    metadataElements.appendChild(metadataDiscount);
+  }
+
   metadataElements.appendChild(metadataDateTime);
   metadataElements.appendChild(metadataCustomerName);
 
@@ -816,6 +826,13 @@ options = null;
 }
 
 .payment-status {
+  margin: 4px;
+  font-family: verdana;
+  font-size: 14px;
+  text-align: center;
+}
+
+.discount {
   margin: 4px;
   font-family: verdana;
   font-size: 14px;
