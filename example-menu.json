@@ -1,0 +1,89 @@
+{
+    "menu_items": [
+        {
+            "item_name": "#1 Chorizo Burrito", 
+            "item_description": "Mexican sausage, scrambled eggs, cheese, and potatoes.",
+            "price": 7.99, 
+            "required_choice_sets": [], 
+            "optional_choice_sets": [], 
+            "category": "Breakfast", 
+            "in_stock": true
+        }, 
+        {
+            "item_name": "#14 Breakfast Plate", 
+            "item_description": "Choice of meat, eggs, cheese, rice, beans, and tortillas.", 
+            "price": 7.99, 
+            "required_choice_sets": [
+                {
+                    "title": "Meat", 
+                    "choices": [
+                        {
+                            "name": "Chicken", 
+                            "price": 1.0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Beef", 
+                            "price": 0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Pork", 
+                            "price": 0, 
+                            "in_stock": true
+                        }
+                    ]
+                }, 
+                {
+                    "title": "Egg Style", 
+                    "choices": [
+                        {
+                            "name": "Scrambled", 
+                            "price": 0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Over Easy", 
+                            "price": 0, 
+                            "in_stock": true}, 
+                        {
+                            "name": "Over Medium", 
+                            "price": 0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Over Hard", 
+                            "price": 0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Sunny-Side Up", 
+                            "price": 0, 
+                            "in_stock": true
+                        }
+                    ]
+                }
+            ],
+            "optional_choice_sets": [
+                {
+                    "title": "Goodies", 
+                    "choices": [
+                        {
+                            "name": "Brownies", 
+                            "price": 1.0, 
+                            "in_stock": true
+                        }, 
+                        {
+                            "name": "Sprinkles", 
+                            "price": 0, 
+                            "in_stock": true
+                        }
+                    ]
+                }
+            ], 
+            "category": "Breakfast", 
+            "in_stock": true
+        }
+    ],
+    "order_url": "example-order-url"
+}
