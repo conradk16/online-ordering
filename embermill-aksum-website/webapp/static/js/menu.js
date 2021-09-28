@@ -72,6 +72,7 @@ function load_mobile_view() {
     create_element("br", main_content, null, null, null, null);
     create_element("br", main_content, null, null, null, null);
     load_menu();
+    create_element("img", main_content, "top-pic", null, null, "../static/media/restaurant-menu-2.png");
 }
 
 
@@ -87,4 +88,5 @@ function load_desktop_view() {
     create_element("br", main_content, null, null, null, null);
 
     load_menu();
+    create_element("img", main_content, "top-pic", null, null, "../static/media/restaurant-menu-2.png");
 }

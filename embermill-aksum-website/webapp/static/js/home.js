@@ -31,7 +31,7 @@ function load_mobile_view() {
     var main_content = document.getElementById("main-content");
 
     var top_container = create_element("div", main_content, "mobile-home-top-container", null, null, null);
-    create_element("img", top_container, "mobile-home-top-pic", null, null, "../static/media/restaurant-home-1.jpeg");
+    create_element("img", top_container, "mobile-home-top-pic", null, null, "../static/media/restaurant-home-13.png");
     var btn = create_element("button", top_container, "mobile-home-online-ordering-button", "Order Online", null, null);
     btn.onclick = function () {
       window.location.href = "https://m3orders.com/order/embermill-aksum";
@@ -44,7 +44,7 @@ function load_mobile_view() {
 
     add_news_element(main_content);
 
-    create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-2.jpeg");
+    create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-12.jpg");
 
     create_element("img", main_content, "mobile-home-bottom-pic", null, null, "../static/media/restaurant-home-4.jpg");
 
@@ -74,7 +74,7 @@ function load_desktop_view() {
     var first_row = create_element("div", main_content, "desktop-home-first-row", null, null, null);
 
     var left_pic = document.createElement("img");
-    left_pic.setAttribute('src', '../static/media/restaurant-home-1.jpeg');
+    left_pic.setAttribute('src', '../static/media/restaurant-home-13.png');
     left_pic.classList.add("desktop-home-left-pic");
     left_pic.width = window.innerWidth * 0.55;
     left_pic.height = window.innerWidth * 0.55 * 183 / 275;
@@ -89,7 +89,7 @@ function load_desktop_view() {
     add_news_element(main_content);
 
     var bottom_pic = document.createElement("img");
-    bottom_pic.setAttribute('src', '../static/media/restaurant-home-2.jpeg');
+    bottom_pic.setAttribute('src', '../static/media/restaurant-home-12.jpg');
     bottom_pic.classList.add("desktop-home-bottom-pic");
     main_content.appendChild(bottom_pic);
 
